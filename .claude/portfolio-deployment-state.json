@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-24T10:30:00-04:00",
+  "updatedAt": "2026-07-24T10:25:00-04:00",
   "currentPhase": "production-deployed-and-verified",
   "completedTasks": [
     "Audited the initially empty workspace and local toolchain",
@@ -16,11 +16,11 @@
     "Added progressive reveal, pointer depth, ambient glow, node motion, and scroll-progress interactions with reduced-motion support",
     "Passed live production Lighthouse at 100 performance, accessibility, best practices, and SEO",
     "Verified 18 live HTML routes, production assets, headers, language switching, metadata, and the custom not-found page",
-    "Created the owner-only managed Sites fallback and prepared version 4 from the final source state",
+    "Published and verified owner-only managed Sites version 4 from the final source state",
     "Created and pushed the public trouillard-star/thierry-portfolio repository",
     "Enabled GitHub Issues, Projects, secret scanning, push protection, and Dependabot security updates",
     "Connected the repository to AWS Amplify with automatic main-branch deployments",
-    "Published and verified AWS Amplify production job 2",
+    "Published and verified AWS Amplify production job 3",
     "Created the 5 USD monthly AWS budget with forecasted 50 and 80 percent alerts and an actual 100 percent alert"
   ],
   "pendingTasks": [
@@ -65,16 +65,16 @@
       "accessibility": 100,
       "bestPractices": 100,
       "seo": 100,
-      "firstContentfulPaintSeconds": 1.2,
-      "largestContentfulPaintSeconds": 1.2,
+      "firstContentfulPaintSeconds": 1.3,
+      "largestContentfulPaintSeconds": 1.3,
       "totalBlockingTimeMilliseconds": 0,
       "cumulativeLayoutShift": 0,
       "consoleErrors": 0
     },
-    "motionAndResumeLighthouse": "passed locally for both homepage and CV at 100 performance, accessibility, best practices, and SEO; 1.3 s LCP, 0 ms TBT, and 0 CLS",
+    "motionAndResumeLighthouse": "passed live for both homepage and CV at 100 performance, accessibility, best practices, and SEO; 1.3 s FCP and LCP, 0 ms TBT, and 0 CLS",
     "responsiveBrowser": "passed at desktop, tablet, and mobile viewports",
     "productionBrowser": "passed; French, English, GitHub navigation, and theme control verified",
-    "managedDeployment": "Sites version 4 prepared from the final source commit",
+    "managedDeployment": "Sites version 4 succeeded from the final source commit",
     "security": "passed; live headers present, secret scan clean, and npm audit at zero vulnerabilities"
   },
   "git": {
@@ -106,7 +106,8 @@
       "stage": "PRODUCTION",
       "autoBuildEnabled": true,
       "deploymentUrl": "https://main.d1g34b4b4uw0wu.amplifyapp.com",
-      "verifiedJobId": "2",
+      "verifiedJobId": "3",
+      "verifiedJobCommit": "f3dc0cd26e16506aaf292d5723a66c1fe954d271",
       "verifiedJobStatus": "SUCCEED"
     },
     "budget": {

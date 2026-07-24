@@ -38,11 +38,10 @@ the advanced motion layer was added.
 | Local motion-enhanced homepage |         100 |           100 |            100 | 100 |
 | Local redesigned bilingual CV  |         100 |           100 |            100 | 100 |
 
-The public audit measured a `1.2 s` largest contentful paint, `0 ms` total
-blocking time, `0` cumulative layout shift, and no console errors. After the CV
-and interaction redesign, both local mobile audits remained at 100 in all four
-categories with a `1.3 s` largest contentful paint, `0 ms` total blocking time,
-and `0` cumulative layout shift.
+The final public homepage and CV audits both measured a `1.3 s` first
+contentful paint, `1.3 s` largest contentful paint, `0 ms` total blocking time,
+`0` cumulative layout shift, and no console errors. The local audits produced
+the same four category scores.
 
 ## Failures found and corrected
 
