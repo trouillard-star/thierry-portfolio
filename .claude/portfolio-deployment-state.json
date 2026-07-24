@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-24T09:30:00-04:00",
-  "currentPhase": "validated-source-and-deployment-preparation",
+  "updatedAt": "2026-07-24T09:35:00-04:00",
+  "currentPhase": "managed-site-deployed-external-authentication-pending",
   "completedTasks": [
     "Audited the initially empty workspace and local toolchain",
     "Initialized a Next.js, TypeScript, vinext, and static-export architecture",
@@ -12,11 +12,11 @@
     "Remediated the initial dependency findings to zero known npm vulnerabilities",
     "Passed formatting, lint, type, route, link, security, static-build, managed-runtime-build, and browser checks",
     "Passed production Lighthouse at 93 performance and 100 accessibility, best practices, and SEO",
-    "Created the owner-only managed Sites project and persisted its opaque project ID"
+    "Created the owner-only managed Sites project and persisted its opaque project ID",
+    "Published managed Sites version 1 successfully and confirmed its production URL"
   ],
   "pendingTasks": [
-    "Commit and push the exact validated source to the managed Sites repository",
-    "Save and deploy a managed Sites version, then verify the live URL",
+    "Publish the final canonical-URL metadata update as managed Sites version 2",
     "Authenticate GitHub CLI and publish the approved public repository",
     "Authenticate AWS CLI, verify identity and region, request the budget email, and create budget alerts",
     "Authorize the GitHub connection in AWS Amplify, deploy, and verify the Amplify URL",
@@ -86,11 +86,12 @@
   },
   "sites": {
     "projectConfigured": true,
-    "version": null,
-    "deploymentUrl": null,
-    "verified": false
+    "version": 1,
+    "deploymentUrl": "https://thierry-rouillard-portfolio.beurkg.chatgpt.site",
+    "verified": true,
+    "access": "owner-only; anonymous browser requests require sign-in"
   },
-  "deploymentUrl": null,
+  "deploymentUrl": "https://thierry-rouillard-portfolio.beurkg.chatgpt.site",
   "customDomainStatus": "not configured; no domain will be purchased automatically",
   "securityFindings": [
     "No credentials, private network values, local user paths, customer identities, or private media are present in publishable source",

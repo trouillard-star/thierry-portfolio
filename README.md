@@ -7,6 +7,9 @@ artificial intelligence, databases, and cloud deployment.
 French is the primary language. Complete English routes are available under
 `/en`.
 
+Owner-only managed preview:
+<https://thierry-rouillard-portfolio.beurkg.chatgpt.site>
+
 ## Architecture
 
 - Next.js 16 and TypeScript

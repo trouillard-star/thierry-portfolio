@@ -68,7 +68,9 @@ patched transitive versions were selected. The final package audit reports:
 
 ## External deployment status
 
-GitHub and AWS sessions were not authenticated during the audit. No public
-GitHub repository or AWS resource was created without verified identity. AWS
-region `us-east-2` remains an intended value rather than a verified account
+The managed Sites build was published with owner-only access. Its application
+content requires a valid ChatGPT owner session, so anonymous access is not
+claimed. GitHub and AWS sessions were not authenticated during the audit. No
+public GitHub repository or AWS resource was created without verified identity.
+AWS region `us-east-2` remains an intended value rather than a verified account
 setting until authentication.

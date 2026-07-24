@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 
 const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://thierry-portfolio.pages.dev";
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  "https://thierry-rouillard-portfolio.beurkg.chatgpt.site";
 
 export const dynamic = "force-static";
 
