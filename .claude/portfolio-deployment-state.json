@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-24T09:35:00-04:00",
-  "currentPhase": "managed-site-deployed-external-authentication-pending",
+  "updatedAt": "2026-07-24T09:40:00-04:00",
+  "currentPhase": "github-and-managed-site-published-aws-authentication-pending",
   "completedTasks": [
     "Audited the initially empty workspace and local toolchain",
     "Initialized a Next.js, TypeScript, vinext, and static-export architecture",
@@ -13,10 +13,13 @@
     "Passed formatting, lint, type, route, link, security, static-build, managed-runtime-build, and browser checks",
     "Passed production Lighthouse at 93 performance and 100 accessibility, best practices, and SEO",
     "Created the owner-only managed Sites project and persisted its opaque project ID",
-    "Published managed Sites version 1 successfully and confirmed its production URL"
+    "Published managed Sites version 2 successfully and confirmed its canonical production URL",
+    "Authenticated GitHub as trouillard-star",
+    "Created and pushed the public trouillard-star/thierry-portfolio repository",
+    "Enabled GitHub Issues, Projects, secret scanning, and push protection"
   ],
   "pendingTasks": [
-    "Publish the final canonical-URL metadata update as managed Sites version 2",
+    "Publish the verified GitHub link in the final managed Sites version",
     "Authenticate GitHub CLI and publish the approved public repository",
     "Authenticate AWS CLI, verify identity and region, request the budget email, and create budget alerts",
     "Authorize the GitHub connection in AWS Amplify, deploy, and verify the Amplify URL",
@@ -62,9 +65,14 @@
   "git": {
     "repositoryInitialized": true,
     "branch": "main",
-    "remote": null,
-    "githubAuthenticated": false,
-    "repositoryUrl": null
+    "remote": "origin",
+    "githubAuthenticated": true,
+    "repositoryUrl": "https://github.com/trouillard-star/thierry-portfolio",
+    "visibility": "public",
+    "issuesEnabled": true,
+    "projectsEnabled": true,
+    "secretScanningEnabled": true,
+    "pushProtectionEnabled": true
   },
   "aws": {
     "cliInstalled": true,
@@ -86,7 +94,7 @@
   },
   "sites": {
     "projectConfigured": true,
-    "version": 1,
+    "version": 2,
     "deploymentUrl": "https://thierry-rouillard-portfolio.beurkg.chatgpt.site",
     "verified": true,
     "access": "owner-only; anonymous browser requests require sign-in"

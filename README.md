@@ -10,6 +10,9 @@ French is the primary language. Complete English routes are available under
 Owner-only managed preview:
 <https://thierry-rouillard-portfolio.beurkg.chatgpt.site>
 
+Public source:
+<https://github.com/trouillard-star/thierry-portfolio>
+
 ## Architecture
 
 - Next.js 16 and TypeScript

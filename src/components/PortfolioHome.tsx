@@ -28,6 +28,7 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
       "Systems architecture",
       "Cybersecurity fundamentals",
     ],
+    sameAs: [profile.contact.github],
   };
 
   return (
@@ -216,6 +217,13 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
               <address>
                 <span>{profile.location[locale]}</span>
                 <span>{profile.availability[locale]}</span>
+                <a
+                  href={profile.contact.github}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  GitHub · trouillard-star
+                </a>
                 <span className="placeholder">{copy.contactPlaceholder}</span>
               </address>
             </div>

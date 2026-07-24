@@ -1,4 +1,4 @@
-import { labels, type Locale } from "@/src/data/profile";
+import { labels, profile, type Locale } from "@/src/data/profile";
 import { projects } from "@/src/data/projects";
 import { skillGroups } from "@/src/data/skills";
 import { SiteShell } from "./SiteShell";
@@ -47,7 +47,7 @@ export function EvidencePage({ locale }: { locale: Locale }) {
           status: "Niveau de preuve",
           level: "Documentation + artefact de projet",
           caveat:
-            "Les liens GitHub, démonstrations publiques et badges seront ajoutés après vérification. Leur absence actuelle est visible plutôt que masquée.",
+            "Le dépôt GitHub de ce portfolio est public et vérifié. Les autres démonstrations et badges seront ajoutés seulement après leur propre vérification.",
         }
       : {
           eyebrow: "Competency evidence",
@@ -86,7 +86,7 @@ export function EvidencePage({ locale }: { locale: Locale }) {
           status: "Evidence level",
           level: "Documentation + project artifact",
           caveat:
-            "GitHub links, public demonstrations, and badges will be added after verification. Their current absence is visible rather than hidden.",
+            "This portfolio’s GitHub repository is public and verified. Other demonstrations and badges will be added only after their own verification.",
         };
 
   return (
@@ -154,6 +154,16 @@ export function EvidencePage({ locale }: { locale: Locale }) {
               </table>
             </div>
             <p className="evidence-caveat">{content.caveat}</p>
+            <p>
+              <a
+                className="text-link"
+                href={profile.contact.repository}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {copy.source} <span aria-hidden="true">↗</span>
+              </a>
+            </p>
             <a className="button button-primary" href={`${home}#projets`}>
               {copy.allProjects}
             </a>

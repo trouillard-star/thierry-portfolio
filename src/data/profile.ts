@@ -44,7 +44,8 @@ export const profile = {
   },
   contact: {
     email: null,
-    github: null,
+    github: "https://github.com/trouillard-star",
+    repository: "https://github.com/trouillard-star/thierry-portfolio",
     linkedin: null,
   },
 } as const;
@@ -92,6 +93,7 @@ export const labels = {
     explore: "Explorer l’étude de cas",
     allProjects: "Tous les projets",
     evidence: "Voir les preuves de compétences",
+    source: "Consulter le code source public",
     status: "Statut",
     technologies: "Technologies",
     architecture: "Architecture",
@@ -151,6 +153,7 @@ export const labels = {
     explore: "Explore the case study",
     allProjects: "All projects",
     evidence: "View competency evidence",
+    source: "View the public source code",
     status: "Status",
     technologies: "Technologies",
     architecture: "Architecture",

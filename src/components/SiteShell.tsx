@@ -38,6 +38,9 @@ export function SiteShell({ locale, children, alternatePath }: Props) {
             <a href={locale === "fr" ? "/preuves-competences" : "/en/evidence"}>
               {copy.nav.evidence}
             </a>
+            <a href={profile.contact.github} target="_blank" rel="noreferrer">
+              GitHub
+            </a>
           </nav>
           <div className="header-actions">
             <a
