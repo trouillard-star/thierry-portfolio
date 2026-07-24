@@ -2,7 +2,7 @@
 
 Audit date: 2026-07-24  
 Workspace: local portfolio project on Windows  
-Intended AWS region: `us-east-2` (must still be verified after authentication)
+Verified AWS region: `us-east-2`
 
 ## Summary
 
@@ -20,8 +20,10 @@ were present.
 | GitHub CLI                | `2.96.0`; installed with Windows Package Manager                   |
 | GitHub authentication     | Verified as `trouillard-star`                                      |
 | AWS CLI                   | `2.36.7`; installed with Windows Package Manager                   |
-| AWS identity              | Temporary Web login verified; root authority                       |
+| AWS identity              | Temporary Web login verified; closed after requested operations    |
 | AWS region                | `us-east-2` verified                                               |
+| AWS Amplify               | App `d1g34b4b4uw0wu`; `main` production branch                     |
+| AWS budget                | `thierry-portfolio-monthly`; 5 USD monthly with three alerts       |
 | pnpm                      | Available through npm/corepack command surface (`11.9.0` reported) |
 | Yarn                      | Not installed                                                      |
 | Bun                       | Not installed                                                      |
@@ -56,9 +58,12 @@ winget install --id Amazon.AWSCLI
   written to this report.
 - Package vulnerabilities reported during initial dependency installation were
   remediated. The final dependency audit reports zero known vulnerabilities.
+- The Amplify production URL, connected branch, automatic deployment setting,
+  successful build, live headers, and budget notification configuration were
+  verified before the temporary AWS session was closed.
 
 ## Limitations
 
 GitHub and AWS authentication were completed by the account owner. The AWS
-session is temporary but has root authority; only the requested budget and
-Amplify APIs should be used. No persistent access key or IAM user was created.
+session had root authority but was used only for the requested budget and
+Amplify APIs, then closed. No persistent access key or IAM user was created.

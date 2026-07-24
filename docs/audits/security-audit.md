@@ -29,6 +29,8 @@ the publishable source. `npm audit` reports zero known vulnerabilities.
   `preload` are not enabled without verified control of every subdomain.
 - Downloadable Mermaid files are served as plain text and attachments.
 - Source maps and local machine paths are not exposed by the static export.
+- Motion is progressive enhancement: core content remains available without
+  script, and `prefers-reduced-motion` disables non-essential movement.
 
 ## Public-repository review
 
@@ -58,7 +60,8 @@ patched transitive versions were selected. The final package audit reports:
   output and the early theme bootstrap require them. A deployment-specific
   nonce or hash policy would be stronger.
 - Security headers committed in files are not proof that every host applies
-  them. They must be inspected on each live deployment.
+  them. They must be inspected on each live deployment. The current public
+  Amplify origin was inspected and applies the configured header set.
 - The local secret scanner is a defense-in-depth pattern scanner, not a
   replacement for a hosted secret-scanning service.
 - A public repository cannot make a leaked historical secret private again.
@@ -68,12 +71,22 @@ patched transitive versions were selected. The final package audit reports:
 
 ## External deployment status
 
-The managed Sites build was published with owner-only access. Its application
-content requires a valid ChatGPT owner session, so anonymous access is not
-claimed. The source was published to the verified public GitHub repository
-`trouillard-star/thierry-portfolio` only after the confidentiality scan passed.
-Issues, Projects, secret scanning, and push protection are enabled. AWS was
-authenticated through a temporary Web login, and `us-east-2` was verified.
-That temporary identity has root authority, so its use is restricted to the
-requested budget and Amplify operations. No persistent access key, IAM user, or
-unrequested AWS resource was created.
+The public production deployment is AWS Amplify app `d1g34b4b4uw0wu` in
+`us-east-2`, connected only to `trouillard-star/thierry-portfolio` on `main`.
+The verified live origin is
+`https://main.d1g34b4b4uw0wu.amplifyapp.com`. Eighteen HTML routes, the custom
+not-found response, canonical metadata, sitemap, robots policy, static assets,
+and live response headers passed the remote verification script. The response
+set includes CSP, HSTS for the current host, clickjacking protection,
+MIME-sniffing protection, referrer policy, and permissions policy.
+
+The public repository has Issues, Projects, secret scanning, push protection,
+and Dependabot security updates enabled. The managed Sites fallback remains
+owner-only, so anonymous access is not claimed for that host.
+
+AWS was authenticated through a temporary Web login with root authority.
+Operations were limited to the requested Amplify app and monthly budget. No
+persistent access key, IAM user, AWS account identifier in source, or
+unrequested AWS resource was created. The budget subscriber is configured, but
+its address is intentionally omitted from source and reports. The temporary
+session is closed after final deployment verification.

@@ -21,23 +21,28 @@ Target: production static export and managed Sites worker
 | Tablet viewport                          | Two-column project grid and no horizontal overflow at 768 px |
 | Theme control                            | Passed in the in-app browser                                 |
 | French/English navigation                | Passed in the in-app browser                                 |
-| Managed Sites deployment                 | Version 3 succeeded; production screenshot inspected         |
+| Motion preferences                       | Reduced-motion fallback present and tested                   |
+| Redesigned CV                            | Desktop and mobile captures inspected; print styles retained |
+| Live Amplify route check                 | 18 HTML routes, assets, metadata, headers, and 404 passed    |
+| Managed Sites deployment                 | Version 4 prepared from the final source state               |
 
 ## Lighthouse production audit
 
-The audit ran against the generated `out` directory through the local static
-preview server.
+Audits ran against the generated `out` directory and the public AWS Amplify
+origin. The homepage and redesigned CV were also audited independently after
+the advanced motion layer was added.
 
-| Category       | Score |
-| -------------- | ----: |
-| Performance    |    93 |
-| Accessibility  |   100 |
-| Best practices |   100 |
-| SEO            |   100 |
+| Target                         | Performance | Accessibility | Best practices | SEO |
+| ------------------------------ | ----------: | ------------: | -------------: | --: |
+| Public AWS Amplify homepage    |         100 |           100 |            100 | 100 |
+| Local motion-enhanced homepage |         100 |           100 |            100 | 100 |
+| Local redesigned bilingual CV  |         100 |           100 |            100 | 100 |
 
-Observed measurements included a cumulative layout shift of `0`, total blocking
-time of `50 ms`, and no console errors. Lighthouse estimated the largest
-contentful paint at `3.2 s` under its simulated conditions.
+The public audit measured a `1.2 s` largest contentful paint, `0 ms` total
+blocking time, `0` cumulative layout shift, and no console errors. After the CV
+and interaction redesign, both local mobile audits remained at 100 in all four
+categories with a `1.3 s` largest contentful paint, `0 ms` total blocking time,
+and `0` cumulative layout shift.
 
 ## Failures found and corrected
 
@@ -60,6 +65,19 @@ contentful paint at `3.2 s` under its simulated conditions.
    launcher returned `EPERM` while removing its own temporary directory after
    Chrome exited. The report was parsed and validated independently; this is a
    local cleanup defect, not a site test failure.
+7. The first live Amplify audit scored 88 for performance because the static
+   export still referenced an unused framework browser runtime. The
+   post-generation step now removes those script references, Flight payloads,
+   preloads, and unused chunks. The current build removes `1117 KiB` from 21
+   HTML documents and the live performance score is 100.
+8. The original CV was structurally complete but visually flat. It was rebuilt
+   as a responsive editorial document with a masthead, verified-fact summary,
+   applied-experience timeline, compact skill matrix, print layout, and direct
+   evidence link.
+9. The original interface had limited motion. A native progressive-enhancement
+   layer now provides scroll reveals, pointer-responsive depth, ambient light,
+   system-node motion, and a reading-progress indicator. It adds no animation
+   dependency and yields immediately to `prefers-reduced-motion`.
 
 ## Limitations
 
@@ -71,5 +89,7 @@ contentful paint at `3.2 s` under its simulated conditions.
   independent human translation review.
 - The disabled contact form intentionally sends no data. End-to-end message
   delivery is therefore not applicable.
-- AWS Amplify headers, build logs, and live URLs must be verified only after an
-  authenticated deployment exists.
+- Pointer-responsive depth is available only on fine-pointer devices; touch
+  devices retain the same content and hierarchy without hover dependence.
+- AWS Amplify measurements are point-in-time results and should be rerun after
+  future dependency, content, or hosting changes.

@@ -20,6 +20,27 @@ Amplify CDN + managed HTTPS
 The portfolio requires no database, API, Lambda function, authentication
 service, storage bucket, or paid contact backend.
 
+## Current production deployment
+
+| Setting              | Verified value                                                 |
+| -------------------- | -------------------------------------------------------------- |
+| Public URL           | `https://main.d1g34b4b4uw0wu.amplifyapp.com`                   |
+| AWS region           | `us-east-2`                                                    |
+| Amplify application  | `thierry-portfolio` / `d1g34b4b4uw0wu`                         |
+| Repository           | `https://github.com/trouillard-star/thierry-portfolio`         |
+| Branch               | `main` / `PRODUCTION`                                          |
+| Automatic deployment | Enabled                                                        |
+| Canonical URL input  | `NEXT_PUBLIC_SITE_URL` is set to the public Amplify origin     |
+| Custom not-found     | Unknown routes redirect to the generated bilingual `/404.html` |
+| Budget               | `thierry-portfolio-monthly`, 5 USD monthly                     |
+| Alerts               | Forecasted 50%, forecasted 80%, and actual 100%                |
+| Custom domain        | Not configured; no domain was purchased                        |
+
+The notification subscriber is configured and verified through AWS Budgets.
+Its address is intentionally not stored in the repository or this document.
+Budget notifications warn about spend; they do not automatically stop the
+application or prevent additional charges.
+
 ## Preconditions
 
 1. GitHub repository is created and contains the reviewed `main` branch.
@@ -79,6 +100,15 @@ Verify:
 - sitemap and robots endpoints contain the production origin;
 - generated content contains no secret patterns or local paths;
 - the browser console contains no application errors.
+
+The repeatable live command is:
+
+```bash
+npm run verify:live -- https://main.d1g34b4b4uw0wu.amplifyapp.com
+```
+
+It validates all 18 public HTML routes, both languages, the custom not-found
+behavior, framework-runtime removal, and confidential-pattern invariants.
 
 ## Rollback
 
