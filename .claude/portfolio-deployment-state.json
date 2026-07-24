@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-07-24T09:30:00-04:00",
+  "currentPhase": "validated-source-and-deployment-preparation",
+  "completedTasks": [
+    "Audited the initially empty workspace and local toolchain",
+    "Initialized a Next.js, TypeScript, vinext, and static-export architecture",
+    "Built the complete French Canadian and English portfolio",
+    "Documented six anonymized projects with explicit maturity labels",
+    "Added resume, competency-evidence, SEO, social metadata, and downloadable diagrams",
+    "Added AWS Amplify build, security-header, and budget templates",
+    "Remediated the initial dependency findings to zero known npm vulnerabilities",
+    "Passed formatting, lint, type, route, link, security, static-build, managed-runtime-build, and browser checks",
+    "Passed production Lighthouse at 93 performance and 100 accessibility, best practices, and SEO",
+    "Created the owner-only managed Sites project and persisted its opaque project ID"
+  ],
+  "pendingTasks": [
+    "Commit and push the exact validated source to the managed Sites repository",
+    "Save and deploy a managed Sites version, then verify the live URL",
+    "Authenticate GitHub CLI and publish the approved public repository",
+    "Authenticate AWS CLI, verify identity and region, request the budget email, and create budget alerts",
+    "Authorize the GitHub connection in AWS Amplify, deploy, and verify the Amplify URL",
+    "Add only verified professional contact, social, education, and certification details"
+  ],
+  "decisions": [
+    "Use a static-first Next.js and TypeScript architecture with vinext for the managed Sites runtime",
+    "Use the Next.js static export for AWS Amplify Hosting",
+    "Keep client JavaScript limited to theme preference and print control",
+    "Use document navigation instead of Next route prefetching for generic static-host compatibility",
+    "Keep contact handling backend-free and disabled until verified contact details are supplied",
+    "Treat every named project as anonymized portfolio evidence with an explicit maturity label",
+    "Do not enable HSTS subdomain or preload directives without verified domain control"
+  ],
+  "generatedFiles": [
+    "app and src portfolio source",
+    "public/og.png and public/diagrams",
+    "tests and scripts",
+    "amplify.yml and customHttp.yml",
+    "infra/aws budget templates",
+    "docs/adr, docs/audits, and docs/deployment",
+    ".openai/hosting.json"
+  ],
+  "testResults": {
+    "developmentServer": "passed on http://localhost:3001/",
+    "staticProductionBuild": "passed; 22 pages generated",
+    "managedRuntimeBuild": "passed; 19 routes prerendered",
+    "format": "passed",
+    "lint": "passed",
+    "typecheck": "passed",
+    "unitTests": "passed; 4 of 4",
+    "linkCheck": "passed; 21 HTML pages",
+    "lighthouse": {
+      "performance": 93,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "consoleErrors": 0
+    },
+    "responsiveBrowser": "passed at desktop, tablet, and mobile viewports",
+    "security": "passed; secret scan clean and npm audit at zero vulnerabilities"
+  },
+  "git": {
+    "repositoryInitialized": true,
+    "branch": "main",
+    "remote": null,
+    "githubAuthenticated": false,
+    "repositoryUrl": null
+  },
+  "aws": {
+    "cliInstalled": true,
+    "cliVersion": "2.36.7",
+    "authenticated": false,
+    "region": null,
+    "expectedRegion": "us-east-2",
+    "amplify": {
+      "appId": null,
+      "appName": null,
+      "branch": null,
+      "deploymentUrl": null
+    },
+    "budget": {
+      "monthlyUsd": 5,
+      "notificationEmail": null,
+      "created": false
+    }
+  },
+  "sites": {
+    "projectConfigured": true,
+    "version": null,
+    "deploymentUrl": null,
+    "verified": false
+  },
+  "deploymentUrl": null,
+  "customDomainStatus": "not configured; no domain will be purchased automatically",
+  "securityFindings": [
+    "No credentials, private network values, local user paths, customer identities, or private media are present in publishable source",
+    "The initial 17 dependency findings were remediated; the final npm audit reports zero vulnerabilities",
+    "The contact form is deliberately disabled and stores or transmits no data",
+    "CSP inline allowances and provider header verification remain documented limitations"
+  ],
+  "remainingManualActions": [
+    "Authenticate GitHub in the browser when prompted",
+    "Authenticate AWS in the browser when prompted",
+    "Provide a budget notification email only when AWS budget creation is ready",
+    "Authorize the GitHub App connection in AWS Amplify when prompted",
+    "Supply verified professional email, GitHub, LinkedIn, education, and certification details"
+  ]
+}
