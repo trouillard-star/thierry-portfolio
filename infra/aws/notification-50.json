@@ -1,0 +1,6 @@
+{
+  "NotificationType": "FORECASTED",
+  "ComparisonOperator": "GREATER_THAN",
+  "Threshold": 50,
+  "ThresholdType": "PERCENTAGE"
+}
