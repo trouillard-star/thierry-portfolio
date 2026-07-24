@@ -70,10 +70,12 @@ const themeBootstrap = `
 
 const pageInteractions = `
   (() => {
+    const root = document.documentElement;
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const themeButton = document.querySelector("[data-theme-toggle]");
     if (themeButton instanceof HTMLButtonElement) {
       const syncThemeLabel = () => {
-        const isDark = document.documentElement.dataset.theme !== "light";
+        const isDark = root.dataset.theme !== "light";
         const label = isDark
           ? themeButton.dataset.lightLabel
           : themeButton.dataset.darkLabel;
@@ -86,9 +88,9 @@ const pageInteractions = `
       syncThemeLabel();
       themeButton.addEventListener("click", () => {
         const current =
-          document.documentElement.dataset.theme === "light" ? "light" : "dark";
+          root.dataset.theme === "light" ? "light" : "dark";
         const next = current === "dark" ? "light" : "dark";
-        document.documentElement.dataset.theme = next;
+        root.dataset.theme = next;
         try {
           localStorage.setItem("portfolio-theme", next);
         } catch (_) {}
@@ -99,6 +101,83 @@ const pageInteractions = `
     document.querySelectorAll("[data-print-page]").forEach((button) => {
       button.addEventListener("click", () => window.print());
     });
+
+    const revealSelectors = [
+      ".skill-group",
+      ".responsibility-list article",
+      ".case-facts section",
+      ".case-list-section",
+      ".architecture-section",
+      ".evidence-principles article",
+      ".resume-timeline li",
+    ];
+    document.querySelectorAll(revealSelectors.join(",")).forEach((element) => {
+      element.setAttribute("data-reveal", "");
+    });
+
+    const revealTargets = [...document.querySelectorAll("[data-reveal]")];
+    revealTargets.forEach((element, index) => {
+      element.style.setProperty("--reveal-order", String(index % 5));
+    });
+
+    if (!reducedMotion && "IntersectionObserver" in window) {
+      root.dataset.motionReady = "true";
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("is-visible");
+              observer.unobserve(entry.target);
+            }
+          });
+        },
+        { rootMargin: "0px 0px -8% 0px", threshold: 0.1 },
+      );
+      revealTargets.forEach((element) => observer.observe(element));
+    } else {
+      revealTargets.forEach((element) => element.classList.add("is-visible"));
+    }
+
+    let frame = 0;
+    const updateAmbientMotion = (event) => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        root.style.setProperty("--pointer-x", event.clientX + "px");
+        root.style.setProperty("--pointer-y", event.clientY + "px");
+        frame = 0;
+      });
+    };
+
+    const updateScrollProgress = () => {
+      const distance =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress = distance > 0 ? window.scrollY / distance : 0;
+      root.style.setProperty("--scroll-progress", String(progress));
+    };
+
+    updateScrollProgress();
+    addEventListener("scroll", updateScrollProgress, { passive: true });
+
+    if (!reducedMotion && matchMedia("(pointer: fine)").matches) {
+      addEventListener("pointermove", updateAmbientMotion, { passive: true });
+      document.querySelectorAll("[data-tilt]").forEach((element) => {
+        element.addEventListener("pointermove", (event) => {
+          const bounds = element.getBoundingClientRect();
+          const x = (event.clientX - bounds.left) / bounds.width;
+          const y = (event.clientY - bounds.top) / bounds.height;
+          element.style.setProperty("--tilt-x", ((0.5 - y) * 4).toFixed(2) + "deg");
+          element.style.setProperty("--tilt-y", ((x - 0.5) * 5).toFixed(2) + "deg");
+          element.style.setProperty("--spot-x", (x * 100).toFixed(1) + "%");
+          element.style.setProperty("--spot-y", (y * 100).toFixed(1) + "%");
+        });
+        element.addEventListener("pointerleave", () => {
+          element.style.setProperty("--tilt-x", "0deg");
+          element.style.setProperty("--tilt-y", "0deg");
+          element.style.setProperty("--spot-x", "50%");
+          element.style.setProperty("--spot-y", "50%");
+        });
+      });
+    }
   })();
 `;
 

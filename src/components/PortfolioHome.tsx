@@ -35,7 +35,7 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
     <SiteShell locale={locale}>
       <main id="contenu">
         <section className="hero section-shell" aria-labelledby="hero-title">
-          <div className="hero-copy">
+          <div className="hero-copy" data-reveal>
             <p className="eyebrow">
               <span className="signal-dot" aria-hidden="true" />
               {profile.eyebrow[locale]}
@@ -70,6 +70,8 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
           </div>
           <div
             className="hero-system"
+            data-tilt
+            data-reveal
             aria-label={
               locale === "fr"
                 ? "Carte de capacités techniques"
@@ -121,7 +123,7 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
           aria-labelledby="projects-title"
         >
           <div className="section-shell">
-            <div className="section-heading">
+            <div className="section-heading" data-reveal>
               <div>
                 <p className="eyebrow">{copy.featuredWork}</p>
                 <h2 id="projects-title">{copy.featuredWorkTitle}</h2>
@@ -141,7 +143,7 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
         </section>
 
         <section className="skills-section section-shell" id="competences">
-          <div className="section-heading">
+          <div className="section-heading" data-reveal>
             <div>
               <p className="eyebrow">{copy.skillsEyebrow}</p>
               <h2>{copy.skillsTitle}</h2>
@@ -169,7 +171,7 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
         </section>
 
         <section className="about-section" id="a-propos">
-          <div className="section-shell about-grid">
+          <div className="section-shell about-grid" data-reveal>
             <div>
               <p className="eyebrow">{copy.aboutEyebrow}</p>
               <h2>{copy.aboutTitle}</h2>
@@ -190,7 +192,7 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
         </section>
 
         <section className="experience-section section-shell" id="experience">
-          <div className="section-heading">
+          <div className="section-heading" data-reveal>
             <div>
               <p className="eyebrow">{copy.experienceEyebrow}</p>
               <h2>{copy.experienceTitle}</h2>
@@ -209,7 +211,7 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
         </section>
 
         <section className="contact-section" id="contact">
-          <div className="section-shell contact-grid">
+          <div className="section-shell contact-grid" data-reveal>
             <div>
               <p className="eyebrow">{copy.contactEyebrow}</p>
               <h2>{copy.contactTitle}</h2>

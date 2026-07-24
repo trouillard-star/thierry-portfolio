@@ -12,7 +12,7 @@ export function ProjectCard({
   const copy = labels[locale];
 
   return (
-    <article className="project-card">
+    <article className="project-card" data-tilt data-reveal>
       <div className="project-card-top">
         <span className="project-index">{project.index}</span>
         <span className={`status status-${project.status}`}>

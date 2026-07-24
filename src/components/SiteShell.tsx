@@ -16,6 +16,7 @@ export function SiteShell({ locale, children, alternatePath }: Props) {
 
   return (
     <div lang={locale === "fr" ? "fr-CA" : "en-CA"}>
+      <span className="scroll-progress" aria-hidden="true" />
       <a className="skip-link" href="#contenu">
         {copy.skip}
       </a>

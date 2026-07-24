@@ -23,6 +23,9 @@ Public source:
 - vinext build target for the managed Sites runtime
 - Next static-export target for AWS Amplify Hosting
 - Native theme and print controls without a hydrated React client
+- Native scroll reveals, pointer depth, ambient motion, and reading progress
+- Full `prefers-reduced-motion` fallback
+- Responsive editorial CV with a dedicated print layout
 - Post-build removal of the unused Next.js client runtime from the static export
 - No database, authentication service, analytics, or contact backend
 
@@ -50,6 +53,7 @@ npm run build:static
 npm run links
 npm run security:scan
 npm audit
+npm run verify:live -- https://main.d1g34b4b4uw0wu.amplifyapp.com
 ```
 
 The current results are recorded in
