@@ -21,6 +21,7 @@ Target: production static export and managed Sites worker
 | Tablet viewport                          | Two-column project grid and no horizontal overflow at 768 px |
 | Theme control                            | Passed in the in-app browser                                 |
 | French/English navigation                | Passed in the in-app browser                                 |
+| Managed Sites deployment                 | Version 3 succeeded; production screenshot inspected         |
 
 ## Lighthouse production audit
 

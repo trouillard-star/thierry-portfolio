@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-24T09:40:00-04:00",
-  "currentPhase": "github-and-managed-site-published-aws-authentication-pending",
+  "updatedAt": "2026-07-24T09:45:00-04:00",
+  "currentPhase": "aws-budget-notification-email-required",
   "completedTasks": [
     "Audited the initially empty workspace and local toolchain",
     "Initialized a Next.js, TypeScript, vinext, and static-export architecture",
@@ -13,17 +13,18 @@
     "Passed formatting, lint, type, route, link, security, static-build, managed-runtime-build, and browser checks",
     "Passed production Lighthouse at 93 performance and 100 accessibility, best practices, and SEO",
     "Created the owner-only managed Sites project and persisted its opaque project ID",
-    "Published managed Sites version 2 successfully and confirmed its canonical production URL",
+    "Published managed Sites version 3 with the canonical origin and verified GitHub link",
     "Authenticated GitHub as trouillard-star",
     "Created and pushed the public trouillard-star/thierry-portfolio repository",
-    "Enabled GitHub Issues, Projects, secret scanning, and push protection"
+    "Enabled GitHub Issues, Projects, secret scanning, and push protection",
+    "Authenticated AWS through a temporary web login",
+    "Verified the AWS region as us-east-2",
+    "Verified that no Amplify application or budget currently exists"
   ],
   "pendingTasks": [
-    "Publish the verified GitHub link in the final managed Sites version",
-    "Authenticate GitHub CLI and publish the approved public repository",
-    "Authenticate AWS CLI, verify identity and region, request the budget email, and create budget alerts",
+    "Receive the owner-approved budget notification email and create the 5 USD monthly budget alerts",
     "Authorize the GitHub connection in AWS Amplify, deploy, and verify the Amplify URL",
-    "Add only verified professional contact, social, education, and certification details"
+    "Add only verified professional email, LinkedIn, education, and certification details"
   ],
   "decisions": [
     "Use a static-first Next.js and TypeScript architecture with vinext for the managed Sites runtime",
@@ -32,7 +33,8 @@
     "Use document navigation instead of Next route prefetching for generic static-host compatibility",
     "Keep contact handling backend-free and disabled until verified contact details are supplied",
     "Treat every named project as anonymized portfolio evidence with an explicit maturity label",
-    "Do not enable HSTS subdomain or preload directives without verified domain control"
+    "Do not enable HSTS subdomain or preload directives without verified domain control",
+    "Use the temporary AWS Web session only for the requested budget and Amplify operations"
   ],
   "generatedFiles": [
     "app and src portfolio source",
@@ -60,6 +62,7 @@
       "consoleErrors": 0
     },
     "responsiveBrowser": "passed at desktop, tablet, and mobile viewports",
+    "managedDeployment": "Sites version 3 succeeded; production screenshot inspected",
     "security": "passed; secret scan clean and npm audit at zero vulnerabilities"
   },
   "git": {
@@ -77,10 +80,11 @@
   "aws": {
     "cliInstalled": true,
     "cliVersion": "2.36.7",
-    "authenticated": false,
-    "region": null,
-    "expectedRegion": "us-east-2",
+    "authenticated": true,
+    "identityKind": "temporary web login with root authority",
+    "region": "us-east-2",
     "amplify": {
+      "existingAppDetected": false,
       "appId": null,
       "appName": null,
       "branch": null,
@@ -89,12 +93,13 @@
     "budget": {
       "monthlyUsd": 5,
       "notificationEmail": null,
-      "created": false
+      "created": false,
+      "existingBudgetDetected": false
     }
   },
   "sites": {
     "projectConfigured": true,
-    "version": 2,
+    "version": 3,
     "deploymentUrl": "https://thierry-rouillard-portfolio.beurkg.chatgpt.site",
     "verified": true,
     "access": "owner-only; anonymous browser requests require sign-in"
@@ -105,13 +110,12 @@
     "No credentials, private network values, local user paths, customer identities, or private media are present in publishable source",
     "The initial 17 dependency findings were remediated; the final npm audit reports zero vulnerabilities",
     "The contact form is deliberately disabled and stores or transmits no data",
-    "CSP inline allowances and provider header verification remain documented limitations"
+    "CSP inline allowances and provider header verification remain documented limitations",
+    "The temporary AWS Web identity has root authority and must not be used beyond the requested operations"
   ],
   "remainingManualActions": [
-    "Authenticate GitHub in the browser when prompted",
-    "Authenticate AWS in the browser when prompted",
-    "Provide a budget notification email only when AWS budget creation is ready",
+    "Provide the budget notification email now that AWS budget creation is ready",
     "Authorize the GitHub App connection in AWS Amplify when prompted",
-    "Supply verified professional email, GitHub, LinkedIn, education, and certification details"
+    "Supply verified professional email, LinkedIn, education, and certification details"
   ]
 }

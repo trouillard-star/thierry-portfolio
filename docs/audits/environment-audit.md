@@ -18,10 +18,10 @@ were present.
 | Git                       | `2.53.0.windows.2`                                                 |
 | Initial Git state         | Not a repository; initialized on `main`                            |
 | GitHub CLI                | `2.96.0`; installed with Windows Package Manager                   |
-| GitHub authentication     | No authenticated GitHub host                                       |
+| GitHub authentication     | Verified as `trouillard-star`                                      |
 | AWS CLI                   | `2.36.7`; installed with Windows Package Manager                   |
-| AWS identity              | No credentials; STS identity unavailable                           |
-| AWS region                | No configured region                                               |
+| AWS identity              | Temporary Web login verified; root authority                       |
+| AWS region                | `us-east-2` verified                                               |
 | pnpm                      | Available through npm/corepack command surface (`11.9.0` reported) |
 | Yarn                      | Not installed                                                      |
 | Bun                       | Not installed                                                      |
@@ -50,8 +50,8 @@ winget install --id Amazon.AWSCLI
 
 - The project could be initialized without overwriting user work.
 - The local preview is available during implementation.
-- GitHub and AWS operations remain deliberately blocked until authenticated
-  identity is verified.
+- GitHub and AWS identities were verified before external resources were
+  inspected or created.
 - No authentication token, AWS account identifier, secret, or private URL is
   written to this report.
 - Package vulnerabilities reported during initial dependency installation were
@@ -59,6 +59,6 @@ winget install --id Amazon.AWSCLI
 
 ## Limitations
 
-GitHub and AWS authentication must be completed by the account owner. AWS
-region `us-east-2` remains an expectation, not a verified fact, until an AWS
-identity and account configuration can be inspected.
+GitHub and AWS authentication were completed by the account owner. The AWS
+session is temporary but has root authority; only the requested budget and
+Amplify APIs should be used. No persistent access key or IAM user was created.

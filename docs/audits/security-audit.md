@@ -72,7 +72,8 @@ The managed Sites build was published with owner-only access. Its application
 content requires a valid ChatGPT owner session, so anonymous access is not
 claimed. The source was published to the verified public GitHub repository
 `trouillard-star/thierry-portfolio` only after the confidentiality scan passed.
-Issues, Projects, secret scanning, and push protection are enabled. AWS remains
-unauthenticated, and no AWS resource was created without verified identity. AWS
-region `us-east-2` remains an intended value rather than a verified account
-setting until authentication.
+Issues, Projects, secret scanning, and push protection are enabled. AWS was
+authenticated through a temporary Web login, and `us-east-2` was verified.
+That temporary identity has root authority, so its use is restricted to the
+requested budget and Amplify operations. No persistent access key, IAM user, or
+unrequested AWS resource was created.
