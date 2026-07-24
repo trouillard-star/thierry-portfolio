@@ -1,4 +1,4 @@
-import { certifications, education } from "@/src/data/certifications";
+import { education } from "@/src/data/education";
 import { experience } from "@/src/data/experience";
 import { labels, profile, type Locale } from "@/src/data/profile";
 import { projects } from "@/src/data/projects";
@@ -184,8 +184,6 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
                 <span>{locale === "fr" ? "FORMATION" : "EDUCATION"}</span>
                 <strong>{education[locale].title}</strong>
                 <p>{education[locale].detail}</p>
-                <p>{certifications.current[locale]}</p>
-                <p>{certifications.future[locale]}</p>
               </div>
             </div>
           </div>
@@ -226,36 +224,29 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
                 >
                   GitHub · trouillard-star
                 </a>
-                <span className="placeholder">{copy.contactPlaceholder}</span>
               </address>
             </div>
-            <form className="contact-form" aria-describedby="contact-notice">
-              <label>
-                {copy.name}
-                <input type="text" name="name" autoComplete="name" disabled />
-              </label>
-              <label>
-                {copy.email}
-                <input
-                  type="email"
-                  name="email"
-                  autoComplete="email"
-                  disabled
-                />
-              </label>
-              <label>
-                {copy.message}
-                <textarea name="message" rows={5} disabled />
-              </label>
-              <button className="button button-primary" type="button" disabled>
-                {copy.sendDisabled}
-              </button>
-              <p id="contact-notice">
-                {locale === "fr"
-                  ? "Interface préparée; aucun service de collecte n’est connecté."
-                  : "Interface prepared; no collection service is connected."}
-              </p>
-            </form>
+            <div className="contact-card" data-reveal>
+              <span>CONTACT / GITHUB</span>
+              <strong>{profile.name}</strong>
+              <p>{profile.availability[locale]}</p>
+              <a
+                className="button button-primary"
+                href={profile.contact.github}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {copy.contactAction} <span aria-hidden="true">↗</span>
+              </a>
+              <a
+                className="text-link"
+                href={profile.contact.repository}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {copy.repositoryAction} <span aria-hidden="true">↗</span>
+              </a>
+            </div>
           </div>
         </section>
       </main>

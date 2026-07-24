@@ -112,7 +112,7 @@ test("the contact interface does not transmit or store data", async () => {
   const response = await render(worker, "/");
   const html = await response.text();
 
-  assert.match(html, /aucun service de collecte n’est connecté/i);
-  assert.doesNotMatch(html, /<form[^>]+action=/i);
+  assert.match(html, /github\.com\/trouillard-star/i);
+  assert.doesNotMatch(html, /<form/i);
   assert.doesNotMatch(html, /https?:\/\/(?:formspree|netlify|web3forms)/i);
 });

@@ -14,6 +14,7 @@
     "Removed the unused Next.js browser runtime from the static export",
     "Redesigned the bilingual web resume as a responsive editorial document with print support",
     "Added progressive reveal, pointer depth, ambient glow, node motion, and scroll-progress interactions with reduced-motion support",
+    "Removed provisional contact, certification, form, and PDF copy so the public experience reads as complete",
     "Passed live production Lighthouse at 100 performance, accessibility, best practices, and SEO",
     "Verified 18 live HTML routes, production assets, headers, language switching, metadata, and the custom not-found page",
     "Published and verified owner-only managed Sites version 4 from the final source state",
@@ -24,7 +25,6 @@
     "Created the 5 USD monthly AWS budget with forecasted 50 and 80 percent alerts and an actual 100 percent alert"
   ],
   "pendingTasks": [
-    "Optionally add only verified professional email, LinkedIn, education, and certification details",
     "Optionally configure a custom domain after a separate owner decision",
     "Monitor AWS usage and budget notifications over time"
   ],
@@ -34,7 +34,7 @@
     "Use AWS Amplify as the public canonical deployment and Sites as an owner-only managed fallback",
     "Remove the unused Next.js client runtime after static generation while preserving CSS, metadata, structured data, and native controls",
     "Use document navigation instead of Next route prefetching for generic static-host compatibility",
-    "Keep contact handling backend-free and disabled until verified contact details are supplied",
+    "Use the verified GitHub profile as the sole public contact point and omit unverified details",
     "Treat every named project as anonymized portfolio evidence with an explicit maturity label",
     "Do not enable HSTS subdomain or preload directives without verified domain control",
     "Do not store the budget subscriber address, AWS account identifier, tokens, or temporary credentials",
@@ -51,7 +51,7 @@
   ],
   "testResults": {
     "developmentServer": "passed on http://localhost:3001/",
-    "staticProductionBuild": "passed; 22 pages generated and 1117 KiB of unused runtime removed from 21 HTML documents",
+    "staticProductionBuild": "passed; 22 pages generated and 1115 KiB of unused runtime removed from 21 HTML documents",
     "managedRuntimeBuild": "passed; 19 routes prerendered",
     "format": "passed",
     "lint": "passed",
@@ -140,13 +140,12 @@
   "securityFindings": [
     "No credentials, private network values, local user paths, customer identities, or private media are present in publishable source",
     "The initial 17 dependency findings were remediated; the final npm audit reports zero vulnerabilities",
-    "The contact form is deliberately disabled and stores or transmits no data",
+    "No contact form or message-processing backend is present",
     "The live Amplify responses include the configured CSP, HSTS, clickjacking, MIME, referrer, and permissions headers",
     "CSP inline allowances remain a documented limitation",
     "The temporary AWS Web identity had root authority; no persistent access key or IAM user was created, and the session was closed after completion"
   ],
   "remainingManualActions": [
-    "Optionally supply verified professional email, LinkedIn, education, and certification details",
     "Review AWS usage and budget messages periodically; alerts do not automatically stop charges",
     "Choose and configure a custom domain only if desired"
   ]

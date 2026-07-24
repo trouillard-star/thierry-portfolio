@@ -7,14 +7,14 @@ and safe to publish.
 
 ## Where content lives
 
-| Content                                     | File                         |
-| ------------------------------------------- | ---------------------------- |
-| Name, positioning, biography, contact state | `src/data/profile.ts`        |
-| Case studies and maturity labels            | `src/data/projects.ts`       |
-| Skill groups and evidence mappings          | `src/data/skills.ts`         |
-| Technical responsibilities                  | `src/data/experience.ts`     |
-| Education and certification placeholders    | `src/data/certifications.ts` |
-| Architecture-diagram source                 | `public/diagrams/*.mmd`      |
+| Content                               | File                     |
+| ------------------------------------- | ------------------------ |
+| Name, positioning, biography, contact | `src/data/profile.ts`    |
+| Case studies and maturity labels      | `src/data/projects.ts`   |
+| Skill groups and evidence mappings    | `src/data/skills.ts`     |
+| Technical responsibilities            | `src/data/experience.ts` |
+| Education summary                     | `src/data/education.ts`  |
+| Architecture-diagram source           | `public/diagrams/*.mmd`  |
 
 Every user-visible change must be made in French and English in the same
 commit.
@@ -52,24 +52,24 @@ Before publishing a project update:
 
 ## Contact details
 
-Replace contact placeholders only with details Thierry explicitly approves for
-public release. Add real `mailto`, GitHub, and LinkedIn links together with
-tests that verify the target, protocol, and accessible label.
+GitHub is the verified public contact point. Add another contact path only with
+Thierry’s explicit approval and tests that verify the target, protocol, and
+accessible label.
 
 Do not add a form backend until its privacy policy, spam handling, retention,
 abuse controls, cost, and data residency have been reviewed.
 
-## Education and certifications
+## Education and qualifications
 
-Use official records. List completed courses only when verified. Badge links
-must resolve to a public issuer page. Future certification interests are not
-current credentials and must remain labelled as plans.
+Keep the education summary factual. Add completed courses or credentials only
+from official records, and require every badge link to resolve to a public
+issuer page. Omit unverified items instead of publishing provisional copy.
 
 ## Resume PDF
 
-The web résumé is print-optimized. A downloadable PDF can be generated from the
-browser after verified contact, education, and certification details are
-complete. Review the resulting PDF for hidden metadata before committing it.
+The web résumé is print-optimized and can be saved as PDF directly from the
+browser. Review any exported PDF for layout and hidden metadata before sharing
+it.
 
 ## Canonical URLs
 

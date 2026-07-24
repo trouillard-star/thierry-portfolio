@@ -67,7 +67,7 @@ Portfolio content is kept in typed modules:
 - `src/data/projects.ts`
 - `src/data/skills.ts`
 - `src/data/experience.ts`
-- `src/data/certifications.ts`
+- `src/data/education.ts`
 
 Project diagrams have Mermaid source files under `public/diagrams`. See
 [`docs/portfolio-content-guide.md`](docs/portfolio-content-guide.md) before
@@ -87,8 +87,7 @@ All case studies are anonymized. The repository must never contain employer
 secrets, customer identities, exact private network details, source code from
 private systems, access credentials, or private media.
 
-Public contact and education details remain visibly incomplete until they can be
-verified.
+Public contact is intentionally limited to the verified GitHub profile.
 
 ## License and use
 

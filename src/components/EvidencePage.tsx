@@ -33,8 +33,8 @@ export function EvidencePage({ locale }: { locale: Locale }) {
               "Les ADR, diagrammes et audits rendent les compromis visibles.",
             ],
             [
-              "Validation externe",
-              "Les certifications et badges ne seront affichés qu’avec une source vérifiable.",
+              "Niveaux explicites",
+              "Chaque étude de cas distingue clairement travail appliqué, prototype, recherche et concept.",
             ],
             [
               "Résolution pratique",
@@ -47,7 +47,7 @@ export function EvidencePage({ locale }: { locale: Locale }) {
           status: "Niveau de preuve",
           level: "Documentation + artefact de projet",
           caveat:
-            "Le dépôt GitHub de ce portfolio est public et vérifié. Les autres démonstrations et badges seront ajoutés seulement après leur propre vérification.",
+            "Les études de cas, le code source public et les contrôles documentés forment le périmètre de preuve présenté par ce portfolio.",
         }
       : {
           eyebrow: "Competency evidence",
@@ -72,8 +72,8 @@ export function EvidencePage({ locale }: { locale: Locale }) {
               "ADRs, diagrams, and audits make trade-offs visible.",
             ],
             [
-              "External validation",
-              "Certifications and badges will appear only with a verifiable source.",
+              "Explicit maturity",
+              "Every case study clearly distinguishes applied work, prototypes, research, and concepts.",
             ],
             [
               "Practical problem-solving",
@@ -86,7 +86,7 @@ export function EvidencePage({ locale }: { locale: Locale }) {
           status: "Evidence level",
           level: "Documentation + project artifact",
           caveat:
-            "This portfolio’s GitHub repository is public and verified. Other demonstrations and badges will be added only after their own verification.",
+            "The case studies, public source code, and documented checks define the evidence presented by this portfolio.",
         };
 
   return (

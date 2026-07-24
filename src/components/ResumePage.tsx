@@ -1,4 +1,4 @@
-import { certifications, education } from "@/src/data/certifications";
+import { education } from "@/src/data/education";
 import { experience } from "@/src/data/experience";
 import { profile, type Locale } from "@/src/data/profile";
 import { skillGroups } from "@/src/data/skills";
@@ -17,10 +17,7 @@ export function ResumePage({ locale }: { locale: Locale }) {
           capabilities: "Boîte à outils",
           experience: "Expérience appliquée",
           education: "Parcours et formation",
-          certifications: "Certifications",
-          download: "PDF à venir",
           print: "Imprimer ou enregistrer en PDF",
-          verified: "Coordonnée professionnelle à confirmer",
           availability: "Disponible pour des conversations pertinentes",
           overview: "À propos",
           proof: "Voir les preuves, architectures et études de cas",
@@ -38,10 +35,7 @@ export function ResumePage({ locale }: { locale: Locale }) {
           capabilities: "Toolkit",
           experience: "Applied experience",
           education: "Background and education",
-          certifications: "Certifications",
-          download: "PDF coming soon",
           print: "Print or save as PDF",
-          verified: "Professional contact detail to be confirmed",
           availability: "Available for relevant conversations",
           overview: "About",
           proof: "View evidence, architectures, and case studies",
@@ -73,9 +67,6 @@ export function ResumePage({ locale }: { locale: Locale }) {
           </a>
           <div>
             <PrintButton>{headings.print}</PrintButton>
-            <span className="button button-disabled" aria-disabled="true">
-              {headings.download}
-            </span>
           </div>
         </div>
 
@@ -106,7 +97,6 @@ export function ResumePage({ locale }: { locale: Locale }) {
               <a href={profile.contact.github} target="_blank" rel="noreferrer">
                 github.com/trouillard-star ↗
               </a>
-              <small>{headings.verified}</small>
             </address>
           </header>
 
@@ -155,9 +145,6 @@ export function ResumePage({ locale }: { locale: Locale }) {
                 <h2>{headings.education}</h2>
                 <h3>{education[locale].title}</h3>
                 <p>{education[locale].detail}</p>
-                <h3>{headings.certifications}</h3>
-                <p>{certifications.current[locale]}</p>
-                <p>{certifications.future[locale]}</p>
               </section>
 
               <section className="resume-method" data-reveal>

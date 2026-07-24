@@ -15,7 +15,7 @@ the publishable source. `npm audit` reports zero known vulnerabilities.
 
 - Static-first architecture with no database, login, upload, analytics, or
   contact-processing service.
-- Contact fields are disabled and submit no data.
+- No contact form or message-processing service is present.
 - No cookies are created by the application; a cookie banner would therefore
   be misleading and is not included.
 - Only the color-theme preference is stored locally in the browser.
@@ -40,9 +40,9 @@ templates. It does not contain the generated production directories, audit
 JSON, credentials, AWS account identifiers, deployment tokens, or employer
 source code.
 
-Verified professional contact details, social profiles, certification IDs,
-transcripts, and education documents remain omitted until the owner can provide
-and approve them. Their absence is visible in the interface.
+The verified GitHub profile is the sole public contact point. Unverified social
+profiles, certification IDs, transcripts, and personal documents are omitted
+instead of represented by provisional interface copy.
 
 ## Dependency remediation
 

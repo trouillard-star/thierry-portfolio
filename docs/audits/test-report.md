@@ -86,8 +86,8 @@ the same four category scores.
 - Lighthouse scores are point-in-time laboratory measurements and may vary.
 - English copy was checked structurally and in-browser but has not received
   independent human translation review.
-- The disabled contact form intentionally sends no data. End-to-end message
-  delivery is therefore not applicable.
+- The site has no contact form or message-processing backend. End-to-end
+  message delivery is therefore not applicable.
 - Pointer-responsive depth is available only on fine-pointer devices; touch
   devices retain the same content and hierarchy without hover dependence.
 - AWS Amplify measurements are point-in-time results and should be rerun after

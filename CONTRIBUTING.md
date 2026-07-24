@@ -20,7 +20,7 @@ experience.
   skill ratings.
 - Do not describe Thierry as a senior developer without objective evidence.
 - Add verifiable links only after opening and validating the target.
-- Use a visible “to be confirmed” state when source information is unavailable.
+- Omit information that cannot be verified; do not publish placeholder copy.
 
 ## Development
 

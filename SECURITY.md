@@ -7,8 +7,7 @@ contact-processing backend, tracking script, or user-upload capability.
 
 ## Reporting a concern
 
-Public security contact information is not yet verified. Until it is added, do
-not include vulnerability details in a public issue. Use the repository’s
+Do not include vulnerability details in a public issue. Use the repository’s
 private security-advisory feature when available.
 
 ## Public-repository boundaries
@@ -25,7 +24,7 @@ Never commit or publish:
 ## Design controls
 
 - Static pages minimize the remotely exploitable surface.
-- Contact fields are disabled and transmit nothing.
+- No contact form or message-processing service is present.
 - External links are added only after verification.
 - CSP, HSTS, clickjacking, MIME-sniffing, referrer, and permissions headers are
   configured for supported hosting targets.
