@@ -1,0 +1,5 @@
+flowchart LR
+  CONSENT{"Consentement local"} --> CAPTURE["Capture lecture seule"]
+  CAPTURE --> RELAY["Relais TLS limité"]
+  RELAY --> TECH["Technicien authentifié"]
+  CONSENT -. refus / révocation .-> STOP["Session arrêtée"]

@@ -1,0 +1,5 @@
+flowchart LR
+  CONSOLE["Console opérateur"] --> CONTROL["Plan de contrôle canadien"]
+  CONTROL --> QUEUE[("File de travaux signés")]
+  QUEUE --> AGENT["Agents à privilège limité"]
+  AGENT --> AUDIT["Télémétrie minimale + audit"]

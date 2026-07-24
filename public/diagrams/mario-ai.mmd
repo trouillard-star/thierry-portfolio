@@ -1,0 +1,5 @@
+flowchart LR
+  MEDIA["Médias sources"] --> SCAN["Scan + ffprobe"]
+  SCAN --> FRAMES["Extraction de trames"]
+  FRAMES --> DATASET[("Jeu de données")]
+  DATASET --> REVIEW["File de revue humaine"]

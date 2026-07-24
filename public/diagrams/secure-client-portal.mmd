@@ -1,0 +1,5 @@
+flowchart LR
+  CLIENT["Client authentifié"] --> POLICY{"Politique d'accès"}
+  POLICY --> CATALOG["Catalogue de projets"]
+  CATALOG --> STORE[("Stockage de documents")]
+  POLICY -. refus .-> DENY["Accès refusé + journal"]

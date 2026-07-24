@@ -1,0 +1,7 @@
+flowchart LR
+  MEDIA["Images 360° + stations"] --> CV["Pipeline OpenCV"]
+  CV --> MODEL["Mesures + textures"]
+  MODEL --> PDF["PDF"]
+  MODEL --> PNG["PNG"]
+  MODEL --> CSV["CSV"]
+  MODEL -. exploration .-> VIEWER["Visionneuse Three.js"]

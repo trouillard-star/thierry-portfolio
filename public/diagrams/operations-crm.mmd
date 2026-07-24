@@ -1,0 +1,5 @@
+flowchart LR
+  UI["Interface modulaire"] --> API["API .NET"]
+  API --> SYNC["Moteur de synchronisation"]
+  SYNC --> DB[("PostgreSQL")]
+  DB --> API
