@@ -7,7 +7,10 @@ artificial intelligence, databases, and cloud deployment.
 French is the primary language. Complete English routes are available under
 `/en`.
 
-Owner-only managed preview:
+Public production site:
+<https://main.d1g34b4b4uw0wu.amplifyapp.com>
+
+Owner-only managed fallback:
 <https://thierry-rouillard-portfolio.beurkg.chatgpt.site>
 
 Public source:
@@ -19,7 +22,8 @@ Public source:
 - Static-first pages and typed content modules
 - vinext build target for the managed Sites runtime
 - Next static-export target for AWS Amplify Hosting
-- Minimal client JavaScript for theme preference and print control
+- Native theme and print controls without a hydrated React client
+- Post-build removal of the unused Next.js client runtime from the static export
 - No database, authentication service, analytics, or contact backend
 
 The decision and trade-offs are recorded in

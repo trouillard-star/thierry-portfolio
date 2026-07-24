@@ -3,7 +3,7 @@ import { projects } from "@/src/data/projects";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
-  "https://thierry-rouillard-portfolio.beurkg.chatgpt.site";
+  "https://main.d1g34b4b4uw0wu.amplifyapp.com";
 
 export const dynamic = "force-static";
 

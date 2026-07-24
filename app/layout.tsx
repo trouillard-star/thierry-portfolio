@@ -3,7 +3,7 @@ import "./globals.css";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
-  "https://thierry-rouillard-portfolio.beurkg.chatgpt.site";
+  "https://main.d1g34b4b4uw0wu.amplifyapp.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -68,6 +68,40 @@ const themeBootstrap = `
   } catch (_) {}
 `;
 
+const pageInteractions = `
+  (() => {
+    const themeButton = document.querySelector("[data-theme-toggle]");
+    if (themeButton instanceof HTMLButtonElement) {
+      const syncThemeLabel = () => {
+        const isDark = document.documentElement.dataset.theme !== "light";
+        const label = isDark
+          ? themeButton.dataset.lightLabel
+          : themeButton.dataset.darkLabel;
+        if (label) {
+          themeButton.setAttribute("aria-label", label);
+          themeButton.title = label;
+        }
+      };
+
+      syncThemeLabel();
+      themeButton.addEventListener("click", () => {
+        const current =
+          document.documentElement.dataset.theme === "light" ? "light" : "dark";
+        const next = current === "dark" ? "light" : "dark";
+        document.documentElement.dataset.theme = next;
+        try {
+          localStorage.setItem("portfolio-theme", next);
+        } catch (_) {}
+        syncThemeLabel();
+      });
+    }
+
+    document.querySelectorAll("[data-print-page]").forEach((button) => {
+      button.addEventListener("click", () => window.print());
+    });
+  })();
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -78,7 +112,10 @@ export default function RootLayout({
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <script dangerouslySetInnerHTML={{ __html: pageInteractions }} />
+      </body>
     </html>
   );
 }

@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "cross-env WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext dev",
     "build": "cross-env WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build",
-    "build:static": "next build",
+    "build:static": "next build && node scripts/strip-static-runtime.mjs",
     "preview:static": "node scripts/serve-static.mjs",
     "start": "cross-env WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext start",
     "test": "node --test tests/*.test.mjs",

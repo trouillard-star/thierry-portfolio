@@ -15,8 +15,8 @@ would add risk and cost without providing meaningful value.
 Use a static-first Next.js 16 application written in TypeScript, built through
 the vinext adapter for the managed runtime and through Next static export for
 AWS Amplify. Content lives in typed modules under `src/data`. Server components
-render the content; a very small client component handles the colour-theme and
-mobile-navigation preferences.
+render the content; small native scripts handle colour-theme preference and
+printing.
 
 The site has French-first public routes, an English route group, individual
 bilingual project case studies, résumé and evidence pages, and generated
@@ -48,6 +48,20 @@ constraint, not a claim that Next is universally superior.
 - Theme preference requires a small client-side script.
 - Canonical production URLs must be updated when the final domain is chosen.
 - Contact remains intentionally limited until verified public details exist.
+
+## Static runtime decision
+
+The Amplify target uses ordinary document links and two native inline
+interactions for theme preference and printing. It does not require React
+hydration in the browser. After `next build`, a validated post-build step
+removes Next.js client scripts and Flight data from the static HTML while
+preserving CSS, metadata, structured data, and the native controls.
+
+This removes approximately 1 MiB from the static artifact and avoids loading
+unused framework JavaScript. The post-build step fails if a framework script
+reference remains, and route, link, browser-interaction, accessibility, and
+Lighthouse checks run against the stripped output. The managed Sites/vinext
+target keeps its own runtime because that deployment uses a Worker entrypoint.
 
 ## Security and accessibility
 
