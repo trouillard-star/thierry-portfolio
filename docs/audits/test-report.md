@@ -23,6 +23,7 @@ Target: production static export and managed Sites worker
 | French/English navigation                | Passed in the in-app browser                                 |
 | Motion preferences                       | Reduced-motion fallback present and tested                   |
 | Redesigned CV                            | Desktop and mobile captures inspected; print styles retained |
+| Provisional public copy                  | No placeholder, “coming soon,” or confirmation copy present  |
 | Live Amplify route check                 | 18 HTML routes, assets, metadata, headers, and 404 passed    |
 | Managed Sites deployment                 | Version 4 prepared from the final source state               |
 

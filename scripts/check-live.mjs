@@ -46,6 +46,10 @@ const findings = {
   githubToken: /gh[opsu]_[A-Za-z0-9_]{20,}/.test(combined),
   privateIp: /\b(?:10\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.)/.test(combined),
   budgetEmail: /trouillard@hotmail\.com/i.test(combined),
+  provisionalCopy:
+    /Coordonnée professionnelle à confirmer|Professional contact detail to be confirmed|PDF à venir|PDF coming soon|Interface préparée|Interface prepared|Envoi bientôt disponible|Sending available soon|Certifications actuelles|Current certifications/i.test(
+      combined,
+    ),
   nextRuntime: /self\.__next_f|\/_next\/static\/chunks\/[^"']+\.js/.test(
     combined,
   ),
