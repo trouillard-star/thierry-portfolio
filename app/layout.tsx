@@ -3,7 +3,7 @@ import "./globals.css";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ??
-  "https://main.d1g34b4b4uw0wu.amplifyapp.com";
+  "https://thierry-rouillard-portfolio.beurkg.chatgpt.site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
