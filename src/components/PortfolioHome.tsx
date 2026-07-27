@@ -7,7 +7,11 @@ import {
   quickWins,
 } from "@/src/data/highlights";
 import { labels, profile, type Locale } from "@/src/data/profile";
-import { labProjects, workProjects } from "@/src/data/projects";
+import {
+  additionalProjects,
+  featuredProjects,
+  projects,
+} from "@/src/data/projects";
 import { skillGroups } from "@/src/data/skills";
 import { ProjectCard } from "./ProjectCard";
 import { SiteShell } from "./SiteShell";
@@ -16,6 +20,8 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
   const copy = labels[locale];
   const resume = locale === "fr" ? "/cv" : "/en/resume";
   const evidence = locale === "fr" ? "/preuves-competences" : "/en/evidence";
+  const quickProfile =
+    locale === "fr" ? "/profil-express" : "/en/quick-profile";
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -63,15 +69,31 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
             </p>
             <p className="hero-intro">{profile.introduction[locale]}</p>
             <div className="button-row">
-              <a className="button button-primary" href="#projets">
+              <a className="button button-primary" href={quickProfile}>
+                {copy.quickProfile}
+              </a>
+              <a className="button button-secondary" href="#projets">
                 {copy.viewProjects}
               </a>
-              <a className="button button-secondary" href={resume}>
+              <a className="button button-quiet" href={resume}>
                 {copy.viewResume}
               </a>
-              <a className="button button-quiet" href="#contact">
-                {copy.contactMe}
-              </a>
+            </div>
+            <div className="hero-proofline" aria-label={copy.quickProfile}>
+              <span>
+                <strong>{projects.length}</strong>{" "}
+                {locale === "fr" ? "études de cas" : "case studies"}
+              </span>
+              <span>
+                <strong>FR/EN</strong>{" "}
+                {locale === "fr" ? "parcours bilingue" : "bilingual journey"}
+              </span>
+              <span>
+                <strong>LIVE</strong>{" "}
+                {locale === "fr"
+                  ? "démonstrations fonctionnelles"
+                  : "functional demonstrations"}
+              </span>
             </div>
           </div>
           <div
@@ -155,7 +177,31 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
               <p>{copy.featuredWorkIntro}</p>
             </div>
             <div className="project-grid">
-              {workProjects.map((project) => (
+              {featuredProjects.map((project) => (
+                <ProjectCard
+                  key={project.slug}
+                  project={project}
+                  locale={locale}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section
+          className="projects-section projects-section-secondary"
+          aria-labelledby="all-projects-title"
+        >
+          <div className="section-shell">
+            <div className="section-heading" data-reveal>
+              <div>
+                <p className="eyebrow">{copy.additionalWorkEyebrow}</p>
+                <h2 id="all-projects-title">{copy.additionalWorkTitle}</h2>
+              </div>
+              <p>{copy.additionalWorkIntro}</p>
+            </div>
+            <div className="project-grid">
+              {additionalProjects.map((project) => (
                 <ProjectCard
                   key={project.slug}
                   project={project}
@@ -220,31 +266,6 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
             {methodNote[locale]}
           </p>
         </section>
-
-        {labProjects.length ? (
-          <section
-            className="lab-section section-shell"
-            id="laboratoire"
-            aria-labelledby="lab-title"
-          >
-            <div className="section-heading" data-reveal>
-              <div>
-                <p className="eyebrow">{copy.labEyebrow}</p>
-                <h2 id="lab-title">{copy.labTitle}</h2>
-              </div>
-              <p>{copy.labIntro}</p>
-            </div>
-            <div className="project-grid project-grid-lab">
-              {labProjects.map((project) => (
-                <ProjectCard
-                  key={project.slug}
-                  project={project}
-                  locale={locale}
-                />
-              ))}
-            </div>
-          </section>
-        ) : null}
 
         <section className="skills-section section-shell" id="competences">
           <div className="section-heading" data-reveal>
@@ -340,6 +361,9 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
                 rel="noreferrer"
               >
                 {copy.contactAction} <span aria-hidden="true">↗</span>
+              </a>
+              <a className="button button-secondary" href={resume}>
+                {copy.downloadResume} <span aria-hidden="true">↓</span>
               </a>
               <a
                 className="text-link"

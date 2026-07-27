@@ -1167,6 +1167,33 @@ export const labProjects = projects.filter(
   (project) => project.track === "lab",
 );
 
+export const featuredProjectSlugs = [
+  "operations-crm",
+  "report-automation",
+  "neuro-lens",
+] as const;
+
+export const featuredProjects = featuredProjectSlugs.map((slug) => {
+  const project = projects.find((candidate) => candidate.slug === slug);
+  if (!project) {
+    throw new Error(`Featured project not found: ${slug}`);
+  }
+  return project;
+});
+
+export const additionalProjects = projects.filter(
+  (project) =>
+    !featuredProjectSlugs.includes(
+      project.slug as (typeof featuredProjectSlugs)[number],
+    ),
+);
+
+export function isFeaturedProject(slug: string) {
+  return featuredProjectSlugs.includes(
+    slug as (typeof featuredProjectSlugs)[number],
+  );
+}
+
 export function getProject(slug: string) {
   return projects.find((project) => project.slug === slug);
 }

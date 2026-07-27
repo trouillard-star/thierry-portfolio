@@ -33,6 +33,15 @@ const caseCopy = {
     discover: "Découvrir l’étude de cas",
     download: "Télécharger le diagramme",
     quickFacts: "En bref",
+    proof: "Preuves de réalisation",
+    deliveryRole: "Responsabilité couverte",
+    controlCount: "contrôles documentés",
+    technologyCount: "technologies mobilisées",
+    decision: "Décision structurante",
+    rationale: "Pourquoi ce choix",
+    tradeoff: "Compromis assumé",
+    demonstrated: "Compétences démontrées",
+    viewEvidence: "Relier ce projet aux preuves de compétences",
   },
   en: {
     caseStudy: "Case study",
@@ -62,6 +71,15 @@ const caseCopy = {
     discover: "Explore the case study",
     download: "Download the diagram",
     quickFacts: "At a glance",
+    proof: "Delivery evidence",
+    deliveryRole: "Responsibility covered",
+    controlCount: "documented controls",
+    technologyCount: "technologies involved",
+    decision: "Structuring decision",
+    rationale: "Why this choice",
+    tradeoff: "Accepted trade-off",
+    demonstrated: "Capabilities demonstrated",
+    viewEvidence: "Connect this project to competency evidence",
   },
 } as const;
 
@@ -84,6 +102,25 @@ export function ProjectCaseStudy({
     (candidate) => candidate.slug === project.slug,
   );
   const nextProject = projects[(projectIndex + 1) % projects.length];
+  const evidenceHref =
+    locale === "fr" ? "/preuves-competences" : "/en/evidence";
+  const projectUrl = `https://main.d1g34b4b4uw0wu.amplifyapp.com${base}/${project.slug}/`;
+  const projectJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title[locale],
+    description: project.summary[locale],
+    abstract: project.tagline[locale],
+    creator: {
+      "@type": "Person",
+      name: "Thierry Rouillard",
+    },
+    genre: project.sector[locale],
+    inLanguage: locale === "fr" ? "fr-CA" : "en-CA",
+    isAccessibleForFree: true,
+    keywords: project.technologies,
+    url: projectUrl,
+  };
 
   return (
     <SiteShell locale={locale} alternatePath={alternatePath}>
@@ -128,6 +165,31 @@ export function ProjectCaseStudy({
           <div className="section-shell case-demo-shell">
             <ProjectDemo slug={project.slug} locale={locale} />
           </div>
+
+          <section
+            className="case-proof-band section-shell"
+            aria-labelledby="case-proof-title"
+            data-reveal
+          >
+            <div>
+              <p className="eyebrow">PROOF / DELIVERY</p>
+              <h2 id="case-proof-title">{pageCopy.proof}</h2>
+            </div>
+            <dl>
+              <div>
+                <dt>{project.role[locale]}</dt>
+                <dd>{pageCopy.deliveryRole}</dd>
+              </div>
+              <div>
+                <dt>{project.security.length + project.testing.length}</dt>
+                <dd>{pageCopy.controlCount}</dd>
+              </div>
+              <div>
+                <dt>{project.technologies.length}</dt>
+                <dd>{pageCopy.technologyCount}</dd>
+              </div>
+            </dl>
+          </section>
 
           <div className="case-body case-body-simple section-shell">
             <aside className="case-aside case-aside-simple">
@@ -220,6 +282,20 @@ export function ProjectCaseStudy({
                     {pageCopy.download} <span aria-hidden="true">↓</span>
                   </a>
                 </div>
+                <div className="case-decision-grid">
+                  <article>
+                    <span>{pageCopy.decision}</span>
+                    <strong>{project.architecture[locale][1]}</strong>
+                  </article>
+                  <article>
+                    <span>{pageCopy.rationale}</span>
+                    <p>{project.approach[locale]}</p>
+                  </article>
+                  <article>
+                    <span>{pageCopy.tradeoff}</span>
+                    <p>{project.lessons[0][locale]}</p>
+                  </article>
+                </div>
               </section>
 
               <section
@@ -271,6 +347,19 @@ export function ProjectCaseStudy({
                     items={project.testing.map((item) => item[locale])}
                   />
                 </div>
+                <div className="case-capability-proof">
+                  <div>
+                    <span>{pageCopy.demonstrated}</span>
+                    <ul className="tech-list">
+                      {project.technologies.map((technology) => (
+                        <li key={technology}>{technology}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <a className="button button-secondary" href={evidenceHref}>
+                    {pageCopy.viewEvidence} <span aria-hidden="true">→</span>
+                  </a>
+                </div>
               </section>
             </div>
           </div>
@@ -288,6 +377,10 @@ export function ProjectCaseStudy({
           </nav>
         </article>
       </main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectJsonLd) }}
+      />
     </SiteShell>
   );
 }

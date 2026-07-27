@@ -1,5 +1,5 @@
 import { labels, type Locale } from "@/src/data/profile";
-import type { Project } from "@/src/data/projects";
+import { isFeaturedProject, type Project } from "@/src/data/projects";
 
 export function ProjectCard({
   project,
@@ -10,7 +10,8 @@ export function ProjectCard({
 }) {
   const base = locale === "fr" ? "/projets" : "/en/projects";
   const copy = labels[locale];
-  const isFeatured = project.track === "lab";
+  const isFeatured = isFeaturedProject(project.slug);
+  const isNeuro = project.slug === "neuro-lens";
   const headline = project.impact[0];
 
   return (
@@ -21,9 +22,14 @@ export function ProjectCard({
     >
       <div className="project-card-top">
         <span className="project-index">{project.index}</span>
-        <span className={`status status-${project.status}`}>
-          {project.statusLabel[locale]}
-        </span>
+        <div className="project-card-labels">
+          {isFeatured ? (
+            <span className="featured-label">{copy.featuredBadge}</span>
+          ) : null}
+          <span className={`status status-${project.status}`}>
+            {project.statusLabel[locale]}
+          </span>
+        </div>
       </div>
       <h3>{project.title[locale]}</h3>
       <p className="project-sector">{project.sector[locale]}</p>
@@ -34,7 +40,7 @@ export function ProjectCard({
           <span>{headline.label[locale]}</span>
         </p>
       ) : null}
-      {isFeatured ? (
+      {isNeuro ? (
         <div className="neuro-card-preview" aria-hidden="true">
           <div className="neuro-card-brain">
             <span />

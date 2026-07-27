@@ -346,8 +346,24 @@ export function ProjectDemo({
 }) {
   const [activeTab, setActiveTab] = useState(0);
   const [session, setSession] = useState(0);
+  const [isTouring, setIsTouring] = useState(false);
   const copy = demos[slug]?.[locale];
   const fr = locale === "fr";
+  const tabCount = copy?.tabs.length ?? 0;
+
+  useEffect(() => {
+    if (!isTouring || tabCount < 2) return;
+    const motionPreference = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
+    if (motionPreference.matches) return;
+
+    const timer = window.setInterval(() => {
+      setActiveTab((current) => (current + 1) % tabCount);
+    }, 3200);
+
+    return () => window.clearInterval(timer);
+  }, [isTouring, tabCount]);
 
   if (!copy) return null;
 
@@ -386,16 +402,35 @@ export function ProjectDemo({
                 type="button"
                 key={tab}
                 aria-pressed={activeTab === index}
-                onClick={() => setActiveTab(index)}
+                onClick={() => {
+                  setIsTouring(false);
+                  setActiveTab(index);
+                }}
               >
                 {tab}
               </button>
             ))}
           </nav>
           <button
+            className="demo-tour-toggle"
+            type="button"
+            aria-pressed={isTouring}
+            onClick={() => setIsTouring((current) => !current)}
+          >
+            <span aria-hidden="true">{isTouring ? "Ⅱ" : "▶"}</span>
+            {isTouring
+              ? fr
+                ? "Pause"
+                : "Pause"
+              : fr
+                ? "Visite guidée"
+                : "Guided tour"}
+          </button>
+          <button
             className="demo-reset"
             type="button"
             onClick={() => {
+              setIsTouring(false);
               setSession((value) => value + 1);
               setActiveTab(0);
             }}
@@ -404,6 +439,25 @@ export function ProjectDemo({
           </button>
         </div>
       </header>
+
+      <div
+        className="demo-tour-status"
+        aria-live="polite"
+        aria-label={fr ? "Progression de la visite" : "Tour progress"}
+      >
+        <span>
+          {fr ? "ÉTAPE" : "STEP"} {activeTab + 1}/{copy.tabs.length}
+        </span>
+        <div aria-hidden="true">
+          {copy.tabs.map((tab, index) => (
+            <i
+              key={tab}
+              className={index === activeTab ? "is-active" : undefined}
+            />
+          ))}
+        </div>
+        <strong>{copy.tabs[activeTab]}</strong>
+      </div>
 
       <div className="demo-stage">
         {slug === "operations-crm" ? (
