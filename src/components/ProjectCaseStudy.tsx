@@ -21,25 +21,37 @@ export function ProjectCaseStudy({
   return (
     <SiteShell locale={locale} alternatePath={alternatePath}>
       <main id="contenu">
-        <article className="case-study">
-          <header className="case-hero section-shell">
-            <a className="back-link" href={projectsHref}>
-              <span aria-hidden="true">←</span> {copy.back}
-            </a>
-            <div className="case-title-row">
-              <div>
-                <p className="eyebrow">CASE / {project.index}</p>
-                <h1>{project.title[locale]}</h1>
-                <p className="case-tagline">{project.tagline[locale]}</p>
+        <article
+          className={`case-study${
+            project.slug === "neuro-lens" ? " case-study-neuro" : ""
+          }`}
+        >
+          {project.slug !== "neuro-lens" ? (
+            <header className="case-hero section-shell">
+              <a className="back-link" href={projectsHref}>
+                <span aria-hidden="true">←</span> {copy.back}
+              </a>
+              <div className="case-title-row">
+                <div>
+                  <p className="eyebrow">CASE / {project.index}</p>
+                  <h1>{project.title[locale]}</h1>
+                  <p className="case-tagline">{project.tagline[locale]}</p>
+                </div>
+                <div className="case-status">
+                  <span>{copy.status}</span>
+                  <strong className={`status status-${project.status}`}>
+                    {project.statusLabel[locale]}
+                  </strong>
+                </div>
               </div>
-              <div className="case-status">
-                <span>{copy.status}</span>
-                <strong className={`status status-${project.status}`}>
-                  {project.statusLabel[locale]}
-                </strong>
-              </div>
+            </header>
+          ) : null}
+
+          {project.slug === "neuro-lens" ? (
+            <div className="section-shell neuro-lab-shell">
+              <AlzheimerResearchLab locale={locale} />
             </div>
-          </header>
+          ) : null}
 
           <div className="case-body section-shell">
             <aside className="case-aside">
@@ -59,9 +71,6 @@ export function ProjectCaseStudy({
 
             <div className="case-content">
               <p className="case-summary">{project.summary[locale]}</p>
-              {project.slug === "neuro-lens" ? (
-                <AlzheimerResearchLab locale={locale} />
-              ) : null}
               <div className="case-facts">
                 <section>
                   <span>01</span>

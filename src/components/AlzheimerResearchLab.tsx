@@ -1,13 +1,8 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type RefObject,
-} from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import type { Locale } from "@/src/data/profile";
+import { Brain3DViewer, type BrainRegionId } from "./Brain3DViewer";
 
 type TreatmentId =
   | "baseline"
@@ -18,7 +13,7 @@ type TreatmentId =
   | "trontinemab"
   | "tau-vaccine";
 
-type RegionId = "hippocampus" | "temporal" | "parietal" | "frontal";
+type RegionId = BrainRegionId;
 
 type Treatment = {
   id: TreatmentId;
@@ -252,7 +247,11 @@ function withAlpha(color: string, alpha: number) {
 
 function useCanvasSize(
   canvasRef: RefObject<HTMLCanvasElement | null>,
-  draw: (context: CanvasRenderingContext2D, width: number, height: number) => void,
+  draw: (
+    context: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+  ) => void,
   dependencies: unknown[],
 ) {
   useEffect(() => {
@@ -283,11 +282,14 @@ function useCanvasSize(
 
 export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
   const [year, setYear] = useState(3);
-  const [treatmentId, setTreatmentId] =
-    useState<TreatmentId>("lecanemab");
-  const [selectedRegion, setSelectedRegion] =
-    useState<RegionId>("hippocampus");
+  const [treatmentId, setTreatmentId] = useState<TreatmentId>("lecanemab");
+  const [selectedRegion, setSelectedRegion] = useState<RegionId>("hippocampus");
   const [playing, setPlaying] = useState(false);
+  const [layers, setLayers] = useState({
+    amyloid: true,
+    tau: true,
+    network: true,
+  });
   const brainCanvasRef = useRef<HTMLCanvasElement>(null);
   const chartCanvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -340,8 +342,7 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
       const cx = width / 2;
       const cy = height * 0.49;
       const scale =
-        Math.min(width / 680, height / 500) *
-        (1 - metrics.atrophy * 0.00125);
+        Math.min(width / 680, height / 500) * (1 - metrics.atrophy * 0.00125);
 
       context.save();
       context.translate(cx, cy);
@@ -365,14 +366,7 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
       right.bezierCurveTo(34, 79, 20, 28, 8, 0);
       right.closePath();
 
-      const brainGradient = context.createRadialGradient(
-        0,
-        -20,
-        35,
-        0,
-        0,
-        310,
-      );
+      const brainGradient = context.createRadialGradient(0, -20, 35, 0, 0, 310);
       brainGradient.addColorStop(
         0,
         withAlpha(accent, 0.34 - metrics.atrophy * 0.0018),
@@ -442,7 +436,12 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
       context.restore();
 
       const scanY = (year / 10) * height;
-      const scanGradient = context.createLinearGradient(0, scanY - 18, 0, scanY + 18);
+      const scanGradient = context.createLinearGradient(
+        0,
+        scanY - 18,
+        0,
+        scanY + 18,
+      );
       scanGradient.addColorStop(0, withAlpha(accent, 0));
       scanGradient.addColorStop(0.5, withAlpha(accent, 0.46));
       scanGradient.addColorStop(1, withAlpha(accent, 0));
@@ -526,8 +525,7 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
       );
 
       const markerX = padding.left + (year / 10) * plotWidth;
-      const markerY =
-        padding.top + plotHeight * (1 - metrics.cognition / 100);
+      const markerY = padding.top + plotHeight * (1 - metrics.cognition / 100);
       context.fillStyle = accent;
       context.beginPath();
       context.arc(markerX, markerY, 4.5, 0, Math.PI * 2);
@@ -538,7 +536,8 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
 
   const copy = {
     fr: {
-      kicker: "Laboratoire de recherche interactif",
+      kicker: "NeuroLens / laboratoire de recherche 3D",
+      back: "Retour aux projets",
       title: "Observer une trajectoire, tester une hypothèse.",
       intro:
         "Une démonstration de produit scientifique qui relie imagerie, biomarqueurs, littérature et scénarios comparatifs dans une seule interface.",
@@ -552,7 +551,9 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
       experimental: "Expérimental",
       reference: "Référence",
       brainTitle: "Jumeau cérébral synthétique",
-      brainHint: "Sélectionnez une région pour l'inspecter.",
+      brainHint: "Glissez pour tourner · molette pour zoomer",
+      layers: "Couches 3D",
+      network: "Réseau neuronal",
       cognition: "Indice cognitif",
       hippocampus: "Intégrité hippocampique",
       amyloid: "Charge amyloïde",
@@ -578,7 +579,8 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
         "Démonstration éducative seulement. Les courbes et indices sont synthétiques, ne prédisent aucun résultat individuel et ne doivent jamais guider un diagnostic ou un traitement.",
     },
     en: {
-      kicker: "Interactive research laboratory",
+      kicker: "NeuroLens / interactive 3D research lab",
+      back: "Back to projects",
       title: "Observe a trajectory. Test a hypothesis.",
       intro:
         "A scientific product demonstration connecting imaging, biomarkers, literature, and comparative scenarios in one interface.",
@@ -592,7 +594,9 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
       experimental: "Experimental",
       reference: "Reference",
       brainTitle: "Synthetic brain twin",
-      brainHint: "Select a region to inspect it.",
+      brainHint: "Drag to rotate · scroll to zoom",
+      layers: "3D layers",
+      network: "Neural network",
       cognition: "Cognitive index",
       hippocampus: "Hippocampal integrity",
       amyloid: "Amyloid load",
@@ -626,13 +630,17 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
       : treatment.category === "experimental"
         ? copy.experimental
         : copy.reference;
+  const projectsHref = locale === "fr" ? "/#projets" : "/en#projets";
 
   return (
     <section className="neuro-lab" aria-labelledby="neuro-lab-title">
       <header className="neuro-lab-header">
         <div>
+          <a className="neuro-lab-back" href={projectsHref}>
+            <span aria-hidden="true">←</span> {copy.back}
+          </a>
           <p className="eyebrow">{copy.kicker}</p>
-          <h2 id="neuro-lab-title">{copy.title}</h2>
+          <h1 id="neuro-lab-title">{copy.title}</h1>
           <p>{copy.intro}</p>
         </div>
         <div className="neuro-lab-badges" aria-label={copy.model}>
@@ -736,44 +744,72 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
               T+{year.toFixed(2)} {copy.years}
             </output>
           </div>
+          <div className="neuro-layer-controls" aria-label={copy.layers}>
+            <span>{copy.layers}</span>
+            <button
+              type="button"
+              aria-pressed={layers.network}
+              onClick={() =>
+                setLayers((current) => ({
+                  ...current,
+                  network: !current.network,
+                }))
+              }
+            >
+              {copy.network}
+            </button>
+            <button
+              type="button"
+              aria-pressed={layers.amyloid}
+              onClick={() =>
+                setLayers((current) => ({
+                  ...current,
+                  amyloid: !current.amyloid,
+                }))
+              }
+            >
+              {copy.amyloid}
+            </button>
+            <button
+              type="button"
+              aria-pressed={layers.tau}
+              onClick={() =>
+                setLayers((current) => ({
+                  ...current,
+                  tau: !current.tau,
+                }))
+              }
+            >
+              {copy.tau}
+            </button>
+          </div>
           <div className="neuro-brain-stage">
-            <canvas
-              ref={brainCanvasRef}
-              role="img"
-              aria-label={`${copy.brainTitle}. ${copy.amyloid}: ${Math.round(metrics.amyloid)}. ${copy.tau}: ${Math.round(metrics.tau)}.`}
+            <Brain3DViewer
+              metrics={metrics}
+              year={year}
+              selectedRegion={selectedRegion}
+              layers={layers}
+              onSelectRegion={setSelectedRegion}
+              ariaLabel={`${copy.brainTitle}. ${copy.amyloid}: ${Math.round(metrics.amyloid)}. ${copy.tau}: ${Math.round(metrics.tau)}.`}
             />
-            <button
-              className="neuro-hotspot hotspot-frontal"
-              type="button"
-              aria-pressed={selectedRegion === "frontal"}
-              onClick={() => setSelectedRegion("frontal")}
-            >
-              <span>{regions.frontal.label[locale]}</span>
-            </button>
-            <button
-              className="neuro-hotspot hotspot-parietal"
-              type="button"
-              aria-pressed={selectedRegion === "parietal"}
-              onClick={() => setSelectedRegion("parietal")}
-            >
-              <span>{regions.parietal.label[locale]}</span>
-            </button>
-            <button
-              className="neuro-hotspot hotspot-temporal"
-              type="button"
-              aria-pressed={selectedRegion === "temporal"}
-              onClick={() => setSelectedRegion("temporal")}
-            >
-              <span>{regions.temporal.label[locale]}</span>
-            </button>
-            <button
-              className="neuro-hotspot hotspot-hippocampus"
-              type="button"
-              aria-pressed={selectedRegion === "hippocampus"}
-              onClick={() => setSelectedRegion("hippocampus")}
-            >
-              <span>{regions.hippocampus.label[locale]}</span>
-            </button>
+            <div className="neuro-region-dock" aria-label={copy.region}>
+              {(Object.keys(regions) as RegionId[]).map((regionId, index) => (
+                <button
+                  key={regionId}
+                  type="button"
+                  aria-pressed={selectedRegion === regionId}
+                  onClick={() => setSelectedRegion(regionId)}
+                >
+                  <span>0{index + 1}</span>
+                  {regions[regionId].label[locale]}
+                </button>
+              ))}
+            </div>
+            <div className="neuro-live-readout" aria-hidden="true">
+              <span>LIVE / WEBGL</span>
+              <i />
+              <span>REALTIME</span>
+            </div>
           </div>
           <div className="neuro-legend" aria-hidden="true">
             <span className="legend-amyloid">{copy.amyloid}</span>
