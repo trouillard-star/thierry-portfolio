@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import type { Locale } from "@/src/data/profile";
 import { Brain3DViewer, type BrainRegionId } from "./Brain3DViewer";
+import { NeuroStudyConsole } from "./NeuroStudyConsole";
 
 type TreatmentId =
   | "baseline"
@@ -1308,6 +1309,20 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
           </article>
         </div>
       </section>
+
+      <NeuroStudyConsole
+        locale={locale}
+        year={year}
+        activeTreatmentId={treatmentId}
+        treatments={treatments.map((item) => ({
+          category: item.category,
+          factors: item.factors,
+          id: item.id,
+          name: item.name,
+        }))}
+        pathologyCount={activeDiseases.length}
+        onTreatmentChange={(id) => setTreatmentId(id as TreatmentId)}
+      />
 
       <section
         className="neuro-network-lab"

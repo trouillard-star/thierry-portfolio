@@ -117,3 +117,23 @@ test("the contact interface does not transmit or store data", async () => {
   assert.doesNotMatch(html, /<form/i);
   assert.doesNotMatch(html, /https?:\/\/(?:formspree|netlify|web3forms)/i);
 });
+
+test("NeuroLens exposes the advanced bilingual research console", async () => {
+  const worker = await getWorker();
+  const [frResponse, enResponse] = await Promise.all([
+    render(worker, "/projets/neuro-lens"),
+    render(worker, "/en/projects/neuro-lens"),
+  ]);
+  const [fr, en] = await Promise.all([frResponse.text(), enResponse.text()]);
+
+  for (const html of [fr, en]) {
+    assert.match(html, /STUDY DESIGNER \/ SYNTHETIC TRIAL/);
+    assert.match(html, /NL-AD-042/);
+    assert.match(html, /SUVR/);
+    assert.match(html, /CONNECTOME \/ MULTI-PATHOLOGY/);
+  }
+
+  assert.match(fr, /Exécuter l’analyse/);
+  assert.match(en, /Run analysis/);
+  assert.match(en, /Export ROI data/);
+});

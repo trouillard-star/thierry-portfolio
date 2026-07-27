@@ -3178,6 +3178,321 @@ html[data-motion-ready="true"] [data-reveal].is-visible {
     monospace;
 }
 
+.neuro-study-console {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-bottom: 1px solid var(--line);
+  background:
+    linear-gradient(90deg, rgb(22 49 58 / 20%) 1px, transparent 1px) 0 0 / 4rem
+      4rem,
+    #061118;
+}
+
+.neuro-study-heading {
+  margin-bottom: 1.3rem;
+  display: grid;
+  grid-template-columns: minmax(18rem, 1fr) minmax(16rem, 0.75fr) auto;
+  align-items: end;
+  gap: 2rem;
+}
+
+.neuro-study-heading h3 {
+  margin: 0.3rem 0 0;
+  color: var(--ink-strong);
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+}
+
+.neuro-study-heading > p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.76rem;
+}
+
+.neuro-study-heading > span {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--line-strong);
+  color: var(--accent);
+  font:
+    650 0.55rem/1 var(--font-geist-mono),
+    monospace;
+  text-transform: uppercase;
+}
+
+.neuro-study-grid {
+  display: grid;
+  grid-template-columns: minmax(17rem, 0.75fr) minmax(0, 1.5fr);
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.neuro-study-design,
+.neuro-statistics {
+  min-width: 0;
+  padding: 1rem;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: rgb(2 8 13 / 72%);
+}
+
+.neuro-study-design > span,
+.neuro-statistics > span,
+.neuro-roi-panel > div:first-child > span {
+  display: block;
+  margin-bottom: 0.85rem;
+  color: var(--faint);
+  font:
+    650 0.52rem/1 var(--font-geist-mono),
+    monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.neuro-study-design > label {
+  margin-bottom: 0.75rem;
+  display: grid;
+  grid-template-columns: minmax(8rem, 0.75fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--muted);
+  font-size: 0.66rem;
+}
+
+.neuro-study-design select {
+  width: 100%;
+  min-height: 2.2rem;
+  padding: 0.35rem 0.55rem;
+  border: 1px solid var(--line-strong);
+  border-radius: 0;
+  background: #07131b;
+  color: var(--ink-strong);
+  font:
+    560 0.6rem/1.2 var(--font-geist-mono),
+    monospace;
+}
+
+.neuro-study-range {
+  grid-template-columns: 1fr !important;
+  gap: 0.28rem !important;
+}
+
+.neuro-study-range > span {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.neuro-study-range output {
+  color: var(--accent);
+  font-family: var(--font-geist-mono), monospace;
+}
+
+.neuro-study-range input {
+  width: 100%;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.neuro-run-analysis {
+  width: 100%;
+  min-height: 3rem;
+  margin-top: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  border: 1px solid var(--accent);
+  background: rgb(75 212 196 / 10%);
+  color: var(--accent-strong);
+  font:
+    680 0.62rem/1 var(--font-geist-mono),
+    monospace;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.neuro-run-analysis:hover:not(:disabled) {
+  background: rgb(75 212 196 / 18%);
+  box-shadow: 0 0 1.4rem rgb(75 212 196 / 12%);
+}
+
+.neuro-run-analysis:disabled {
+  cursor: progress;
+  opacity: 0.72;
+}
+
+.neuro-run-analysis > i {
+  width: 0.48rem;
+  height: 0.48rem;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0.7rem currentColor;
+}
+
+.neuro-run-analysis:disabled > i {
+  background: transparent;
+  animation: signal-pulse 0.8s ease-in-out infinite;
+}
+
+.neuro-statistics > div {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.neuro-statistics article {
+  min-height: 7.2rem;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.35rem;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: rgb(7 19 27 / 58%);
+}
+
+.neuro-statistics small,
+.neuro-statistics em {
+  color: var(--faint);
+  font:
+    normal 560 0.5rem/1.25 var(--font-geist-mono),
+    monospace;
+  text-transform: uppercase;
+}
+
+.neuro-statistics strong {
+  overflow: hidden;
+  color: var(--accent-strong);
+  font:
+    580 clamp(1.2rem, 2vw, 1.75rem) / 1.05 var(--font-geist-mono),
+    monospace;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.neuro-statistics article > i {
+  position: relative;
+  height: 2px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.neuro-statistics article > i > b {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, var(--accent), #8ed9ff);
+}
+
+.neuro-statistics > p {
+  margin: 0.85rem 0 0;
+  color: var(--faint);
+  font-size: 0.6rem;
+}
+
+.neuro-roi-panel {
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+  background: #041016;
+}
+
+.neuro-roi-panel > div:first-child {
+  min-height: 3rem;
+  padding: 0.7rem 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.neuro-roi-panel > div:first-child > span {
+  margin: 0;
+}
+
+.neuro-roi-panel button {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--muted);
+  font:
+    620 0.52rem/1 var(--font-geist-mono),
+    monospace;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.neuro-roi-panel button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.neuro-roi-table-wrap {
+  overflow-x: auto;
+}
+
+.neuro-roi-panel table {
+  width: 100%;
+  min-width: 58rem;
+  border-collapse: collapse;
+  color: var(--muted);
+  font:
+    560 0.58rem/1.25 var(--font-geist-mono),
+    monospace;
+}
+
+.neuro-roi-panel th,
+.neuro-roi-panel td {
+  padding: 0.72rem 0.8rem;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+}
+
+.neuro-roi-panel thead th {
+  color: var(--faint);
+  font-size: 0.5rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.neuro-roi-panel th:nth-child(-n + 2),
+.neuro-roi-panel td:nth-child(-n + 2) {
+  text-align: left;
+}
+
+.neuro-roi-panel tbody th {
+  color: var(--ink-strong);
+  font-weight: 620;
+}
+
+.neuro-roi-panel tbody td:first-child {
+  color: var(--accent);
+}
+
+.neuro-roi-panel tbody td:last-child {
+  min-width: 8rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+}
+
+.neuro-roi-panel tbody td:last-child > span {
+  position: relative;
+  width: 3.8rem;
+  height: 2px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.neuro-roi-panel tbody td:last-child i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--accent);
+}
+
 .neuro-network-lab {
   padding: clamp(1.25rem, 3vw, 2rem);
   border-bottom: 1px solid var(--line);
@@ -3457,6 +3772,20 @@ html[data-motion-ready="true"] [data-reveal].is-visible {
   }
 
   .neuro-differential {
+    grid-template-columns: 1fr;
+  }
+
+  .neuro-study-heading {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 1rem;
+  }
+
+  .neuro-study-heading > p {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .neuro-study-grid {
     grid-template-columns: 1fr;
   }
 
@@ -3755,6 +4084,33 @@ html[data-motion-ready="true"] [data-reveal].is-visible {
 
   .neuro-delta-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .neuro-study-heading {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .neuro-study-heading > p {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .neuro-study-heading > span {
+    width: fit-content;
+  }
+
+  .neuro-study-design > label {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+
+  .neuro-statistics > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .neuro-statistics article {
+    min-height: 6.7rem;
   }
 
   .neuro-network-heading {

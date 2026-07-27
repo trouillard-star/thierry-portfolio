@@ -41,8 +41,8 @@ export const projects: Project[] = [
       en: "Compare neurodegenerative trajectories, brain networks, and treatment hypotheses in an interactive 3D twin.",
     },
     summary: {
-      fr: "Un laboratoire bilingue multi-pathologies qui transforme la littérature scientifique en scénarios explorables : cerveau anatomique en temps réel, connectome, ligne de temps, biomarqueurs et traitements approuvés ou expérimentaux.",
-      en: "A bilingual multi-pathology research lab that turns scientific literature into explorable scenarios: a real-time anatomical brain, connectome, timeline, biomarkers, and approved or experimental treatments.",
+      fr: "Un laboratoire bilingue multi-pathologies qui transforme la littérature scientifique en scénarios explorables : cerveau anatomique en temps réel, connectome, concepteur d’étude, statistiques, analyses ROI et traitements approuvés ou expérimentaux.",
+      en: "A bilingual multi-pathology research lab that turns scientific literature into explorable scenarios: a real-time anatomical brain, connectome, study designer, statistics, ROI analyses, and approved or experimental treatments.",
     },
     context: {
       fr: "La recherche sur Alzheimer évolue rapidement et combine imagerie, biomarqueurs, scores cognitifs, essais cliniques et niveaux de preuve difficiles à relier pour un lecteur non spécialiste.",
@@ -79,6 +79,7 @@ export const projects: Project[] = [
       "TypeScript",
       "Three.js / WebGL",
       "Connectome modelling",
+      "Statistical modelling",
       "Data visualization",
       "Scientific UX",
       "Accessibility",
