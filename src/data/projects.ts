@@ -1163,7 +1163,9 @@ export const workProjects = projects.filter(
   (project) => project.track === "work",
 );
 
-export const labProjects = projects.filter((project) => project.track === "lab");
+export const labProjects = projects.filter(
+  (project) => project.track === "lab",
+);
 
 export function getProject(slug: string) {
   return projects.find((project) => project.slug === slug);

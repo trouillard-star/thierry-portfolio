@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import test from "node:test";
 
 const slugs = [
@@ -198,4 +200,54 @@ test("every product demo exposes a project-specific animated visual", async () =
     );
     assert.match(html, /data-motion-tab=["']0["']/);
   }
+});
+
+test("the public worker rejects every mutating request", async () => {
+  const worker = await getWorker();
+  const response = await worker.fetch(
+    new Request("https://portfolio.test/", { method: "POST" }),
+    {},
+    {
+      waitUntil() {},
+      passThroughOnException() {},
+    },
+  );
+
+  assert.equal(response.status, 405);
+  assert.equal(response.headers.get("allow"), "GET, HEAD");
+  assert.equal(response.headers.get("cache-control"), "no-store");
+});
+
+test("live verification covers every declared project", async () => {
+  const projectSource = await readFile(
+    new URL("../src/data/projects.ts", import.meta.url),
+    "utf8",
+  );
+  const liveCheck = await readFile(
+    new URL("../scripts/check-live.mjs", import.meta.url),
+    "utf8",
+  );
+  const declaredSlugs = [...projectSource.matchAll(/\bslug:\s*"([^"]+)"/g)].map(
+    (match) => match[1],
+  );
+
+  assert.deepEqual(new Set(declaredSlugs), new Set(slugs));
+  for (const slug of declaredSlugs) {
+    assert.match(liveCheck, new RegExp(`"${slug}"`));
+  }
+});
+
+test("Sites metadata is optional for public-source builds", async () => {
+  const { loadHostingConfig } = await import(
+    new URL("../build/hosting-config.mjs", import.meta.url)
+  );
+  const missingConfig = join(
+    process.cwd(),
+    `.missing-hosting-${process.pid}-${Date.now()}.json`,
+  );
+
+  assert.deepEqual(await loadHostingConfig(missingConfig), {
+    d1: null,
+    r2: null,
+  });
 });

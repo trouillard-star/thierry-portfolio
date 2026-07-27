@@ -9,6 +9,7 @@ if (!base || !base.startsWith("https://")) {
 const slugs = [
   "neuro-lens",
   "operations-crm",
+  "report-automation",
   "secure-client-portal",
   "mario-ai",
   "remote-assist",
@@ -30,10 +31,22 @@ const interactiveRoutes = slugs.flatMap((slug) => [
 ]);
 const routes = [...informationalRoutes, ...interactiveRoutes];
 
+async function fetchProduction(path, init) {
+  return fetch(`${base}${path}`, {
+    ...init,
+    headers: {
+      "cache-control": "no-cache",
+      ...init?.headers,
+    },
+    signal: AbortSignal.timeout(15_000),
+  });
+}
+
 const pages = await Promise.all(
   routes.map(async (route) => {
-    const response = await fetch(`${base}${route}`);
+    const response = await fetchProduction(route);
     return {
+      headers: response.headers,
       route,
       status: response.status,
       text: await response.text(),
@@ -66,16 +79,25 @@ const findings = {
       ({ text }) =>
         !/self\.__next_f|\/_next\/static\/chunks\/[^"']+\.js/.test(text),
     ),
+  missingSecurityHeaders: [
+    "content-security-policy",
+    "permissions-policy",
+    "referrer-policy",
+    "strict-transport-security",
+    "x-content-type-options",
+  ].filter((header) => !pages[0]?.headers.has(header)),
 };
 
 const frenchHome = pages.find(({ route }) => route === "/")?.text ?? "";
 const englishHome = pages.find(({ route }) => route === "/en/")?.text ?? "";
-const notFound = await fetch(`${base}/route-inexistante-test/`, {
+const notFound = await fetchProduction("/route-inexistante-test/", {
   redirect: "manual",
 });
 const notFoundTarget = notFound.headers.get("location");
 const notFoundTargetResponse = notFoundTarget
-  ? await fetch(new URL(notFoundTarget, base))
+  ? await fetch(new URL(notFoundTarget, base), {
+      signal: AbortSignal.timeout(15_000),
+    })
   : notFound;
 const notFoundText = await notFoundTargetResponse.text();
 const validNotFound =
@@ -105,7 +127,9 @@ console.log(JSON.stringify(result, null, 2));
 
 if (
   failedRoutes.length ||
-  Object.values(findings).some(Boolean) ||
+  Object.values(findings).some((finding) =>
+    Array.isArray(finding) ? finding.length > 0 : finding,
+  ) ||
   !result.languageContent.french ||
   !result.languageContent.english ||
   !validNotFound

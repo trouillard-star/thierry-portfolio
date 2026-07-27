@@ -27,6 +27,8 @@ Public source:
 - Full `prefers-reduced-motion` fallback
 - Responsive editorial CV with a dedicated print layout
 - Selective hydration for the NeuroLens 3D research lab
+- Read-only production worker that rejects mutating HTTP methods
+- Portable Sites build with optional local deployment metadata
 - Post-build removal of the unused Next.js client runtime from informational pages
 - No database, authentication service, analytics, or contact backend
 
@@ -53,12 +55,15 @@ npm run test
 npm run build:static
 npm run links
 npm run security:scan
-npm audit
+npm run security:dependencies
+npm run verify
 npm run verify:live -- https://main.d1g34b4b4uw0wu.amplifyapp.com
 ```
 
 The current results are recorded in
 [`docs/audits/test-report.md`](docs/audits/test-report.md).
+The latest runtime and dependency hardening is recorded in
+[`docs/audits/backend-audit-2026-07-27.md`](docs/audits/backend-audit-2026-07-27.md).
 
 ## Content
 
