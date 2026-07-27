@@ -37,12 +37,12 @@ export const projects: Project[] = [
       en: "Research demonstrator",
     },
     tagline: {
-      fr: "Explorer la progression d'Alzheimer et comparer les hypothèses thérapeutiques dans un jumeau cérébral interactif.",
-      en: "Explore Alzheimer's progression and compare treatment hypotheses in an interactive brain twin.",
+      fr: "Comparer les trajectoires neurodégénératives, les réseaux cérébraux et les hypothèses thérapeutiques dans un jumeau 3D interactif.",
+      en: "Compare neurodegenerative trajectories, brain networks, and treatment hypotheses in an interactive 3D twin.",
     },
     summary: {
-      fr: "Un laboratoire documentaire et visuel bilingue qui transforme la littérature scientifique en scénarios explorables : cerveau en temps réel, ligne de temps sur dix ans, biomarqueurs, régions cérébrales et traitements approuvés ou expérimentaux.",
-      en: "A bilingual visual research lab that turns scientific literature into explorable scenarios: a real-time brain, ten-year timeline, biomarkers, brain regions, and approved or experimental treatments.",
+      fr: "Un laboratoire bilingue multi-pathologies qui transforme la littérature scientifique en scénarios explorables : cerveau anatomique en temps réel, connectome, ligne de temps, biomarqueurs et traitements approuvés ou expérimentaux.",
+      en: "A bilingual multi-pathology research lab that turns scientific literature into explorable scenarios: a real-time anatomical brain, connectome, timeline, biomarkers, and approved or experimental treatments.",
     },
     context: {
       fr: "La recherche sur Alzheimer évolue rapidement et combine imagerie, biomarqueurs, scores cognitifs, essais cliniques et niveaux de preuve difficiles à relier pour un lecteur non spécialiste.",
@@ -57,27 +57,28 @@ export const projects: Project[] = [
       en: "Product design, data modelling, interactive experience, real-time visualization, documentation architecture, accessibility, and medical safeguards.",
     },
     approach: {
-      fr: "Séparer strictement les faits sourcés des paramètres synthétiques. Chaque traitement indique son statut, son mécanisme, ses limites et sa source. Le cerveau et les trajectoires répondent en temps réel, mais restent explicitement des scénarios éducatifs.",
-      en: "Strictly separate sourced facts from synthetic parameters. Every treatment exposes its status, mechanism, limitations, and source. The brain and trajectories respond in real time while remaining explicitly educational scenarios.",
+      fr: "Séparer strictement les faits sourcés des paramètres synthétiques. Chaque traitement indique son statut, son mécanisme, ses limites et sa source. Le cerveau, les trajectoires et les réseaux réagissent en temps réel, tout en restant explicitement des scénarios éducatifs.",
+      en: "Strictly separate sourced facts from synthetic parameters. Every treatment exposes its status, mechanism, limitations, and source. The brain, trajectories, and networks respond in real time while remaining explicitly educational scenarios.",
     },
     architecture: {
       fr: [
         "Sources scientifiques",
         "Base de connaissances",
         "Moteur de scénarios",
-        "Jumeau cérébral interactif",
+        "Jumeau cérébral + connectome",
       ],
       en: [
         "Scientific sources",
         "Knowledge base",
         "Scenario engine",
-        "Interactive brain twin",
+        "Brain twin + connectome",
       ],
     },
     technologies: [
       "React",
       "TypeScript",
       "Three.js / WebGL",
+      "Connectome modelling",
       "Data visualization",
       "Scientific UX",
       "Accessibility",

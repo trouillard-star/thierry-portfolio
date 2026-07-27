@@ -14,6 +14,8 @@ type TreatmentId =
   | "tau-vaccine";
 
 type RegionId = BrainRegionId;
+type DiseaseId = "alzheimer" | "parkinson" | "frontotemporal" | "lewy";
+type NetworkId = "default" | "salience" | "executive" | "visual";
 
 type Treatment = {
   id: TreatmentId;
@@ -30,6 +32,114 @@ type Treatment = {
     symptomLift: number;
   };
 };
+
+const diseaseModels: Array<{
+  id: DiseaseId;
+  name: { fr: string; en: string };
+  signature: { fr: string; en: string };
+  color: string;
+  networkWeights: Record<NetworkId, number>;
+}> = [
+  {
+    id: "alzheimer",
+    name: { fr: "Alzheimer", en: "Alzheimer’s" },
+    signature: {
+      fr: "Mémoire · hippocampe · réseau par défaut",
+      en: "Memory · hippocampus · default mode network",
+    },
+    color: "#55e6d7",
+    networkWeights: {
+      default: 0.88,
+      salience: 0.48,
+      executive: 0.56,
+      visual: 0.3,
+    },
+  },
+  {
+    id: "parkinson",
+    name: { fr: "Parkinson", en: "Parkinson’s" },
+    signature: {
+      fr: "Boucles motrices · ganglions de la base",
+      en: "Motor loops · basal ganglia",
+    },
+    color: "#7aa7ff",
+    networkWeights: {
+      default: 0.28,
+      salience: 0.52,
+      executive: 0.64,
+      visual: 0.26,
+    },
+  },
+  {
+    id: "frontotemporal",
+    name: { fr: "Démence frontotemporale", en: "Frontotemporal dementia" },
+    signature: {
+      fr: "Réseaux frontaux · langage · comportement",
+      en: "Frontal networks · language · behaviour",
+    },
+    color: "#ff8d73",
+    networkWeights: {
+      default: 0.42,
+      salience: 0.8,
+      executive: 0.9,
+      visual: 0.18,
+    },
+  },
+  {
+    id: "lewy",
+    name: { fr: "Corps de Lewy", en: "Lewy body disease" },
+    signature: {
+      fr: "Attention · perception · réseau visuel",
+      en: "Attention · perception · visual network",
+    },
+    color: "#d696ff",
+    networkWeights: {
+      default: 0.58,
+      salience: 0.68,
+      executive: 0.55,
+      visual: 0.86,
+    },
+  },
+];
+
+const networkModels: Array<{
+  id: NetworkId;
+  label: { fr: string; en: string };
+  function: { fr: string; en: string };
+}> = [
+  {
+    id: "default",
+    label: { fr: "Réseau par défaut", en: "Default mode network" },
+    function: {
+      fr: "Mémoire autobiographique et intégration interne",
+      en: "Autobiographical memory and internal integration",
+    },
+  },
+  {
+    id: "salience",
+    label: { fr: "Réseau de saillance", en: "Salience network" },
+    function: {
+      fr: "Détection des signaux pertinents et bascule attentionnelle",
+      en: "Relevant-signal detection and attentional switching",
+    },
+  },
+  {
+    id: "executive",
+    label: { fr: "Frontopariétal exécutif", en: "Executive frontoparietal" },
+    function: {
+      fr: "Planification, contrôle et mémoire de travail",
+      en: "Planning, control, and working memory",
+    },
+  },
+  {
+    id: "visual",
+    label: { fr: "Réseau visuel", en: "Visual network" },
+    function: {
+      fr: "Traitement visuel et intégration perceptive",
+      en: "Visual processing and perceptual integration",
+    },
+  },
+];
 
 const treatments: Treatment[] = [
   {
@@ -239,6 +349,22 @@ function clamp(value: number, minimum: number, maximum: number) {
   return Math.min(maximum, Math.max(minimum, value));
 }
 
+function calculateMetrics(treatment: Treatment, year: number) {
+  const { factors } = treatment;
+  const amyloid = clamp(30 + year * 6.2 * factors.amyloid, 0, 100);
+  const tau = clamp(15 + year * 6.6 * factors.tau, 0, 100);
+  const atrophy = clamp(5 + year * 5.8 * factors.atrophy, 0, 100);
+  const symptomSupport =
+    factors.symptomLift * Math.exp(-Math.max(0, year - 1) / 4);
+  const cognition = clamp(
+    100 - year * 7.2 * factors.cognition + symptomSupport,
+    12,
+    100,
+  );
+  const hippocampus = clamp(100 - atrophy * 0.72, 18, 100);
+  return { amyloid, tau, atrophy, cognition, hippocampus };
+}
+
 function withAlpha(color: string, alpha: number) {
   const rgb = color.match(/\d+(?:\.\d+)?/g);
   if (!rgb || rgb.length < 3) return color;
@@ -284,33 +410,67 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
   const [year, setYear] = useState(3);
   const [treatmentId, setTreatmentId] = useState<TreatmentId>("lecanemab");
   const [selectedRegion, setSelectedRegion] = useState<RegionId>("hippocampus");
+  const [activeDiseases, setActiveDiseases] = useState<DiseaseId[]>([
+    "alzheimer",
+  ]);
+  const [selectedNetwork, setSelectedNetwork] = useState<NetworkId>("default");
   const [playing, setPlaying] = useState(false);
+  const [exported, setExported] = useState(false);
   const [layers, setLayers] = useState({
     amyloid: true,
+    delta: true,
     tau: true,
     network: true,
   });
   const brainCanvasRef = useRef<HTMLCanvasElement>(null);
   const chartCanvasRef = useRef<HTMLCanvasElement>(null);
+  const networkCanvasRef = useRef<HTMLCanvasElement>(null);
 
   const treatment =
     treatments.find((item) => item.id === treatmentId) ?? treatments[0];
 
-  const metrics = useMemo(() => {
-    const { factors } = treatment;
-    const amyloid = clamp(30 + year * 6.2 * factors.amyloid, 0, 100);
-    const tau = clamp(15 + year * 6.6 * factors.tau, 0, 100);
-    const atrophy = clamp(5 + year * 5.8 * factors.atrophy, 0, 100);
-    const symptomSupport =
-      factors.symptomLift * Math.exp(-Math.max(0, year - 1) / 4);
-    const cognition = clamp(
-      100 - year * 7.2 * factors.cognition + symptomSupport,
-      12,
-      100,
-    );
-    const hippocampus = clamp(100 - atrophy * 0.72, 18, 100);
-    return { amyloid, tau, atrophy, cognition, hippocampus };
-  }, [treatment, year]);
+  const metrics = useMemo(
+    () => calculateMetrics(treatment, year),
+    [treatment, year],
+  );
+  const baselineMetrics = useMemo(
+    () => calculateMetrics(treatments[0], year),
+    [year],
+  );
+  const deltas = {
+    amyloid: baselineMetrics.amyloid - metrics.amyloid,
+    cognition: metrics.cognition - baselineMetrics.cognition,
+    hippocampus: metrics.hippocampus - baselineMetrics.hippocampus,
+    tau: baselineMetrics.tau - metrics.tau,
+  };
+  const comparisonStrength = clamp(
+    (Math.max(0, deltas.amyloid) +
+      Math.max(0, deltas.tau) +
+      Math.max(0, deltas.cognition) * 1.4) /
+      72,
+    0,
+    1,
+  );
+  const networkScores = useMemo(
+    () =>
+      networkModels.map((network) => {
+        const diseasePressure =
+          activeDiseases.reduce((total, diseaseId) => {
+            const disease = diseaseModels.find(
+              (candidate) => candidate.id === diseaseId,
+            );
+            return total + (disease?.networkWeights[network.id] ?? 0);
+          }, 0) / Math.max(1, activeDiseases.length);
+        const progressionPressure =
+          diseasePressure * (year * 4.1 + metrics.tau * 0.19);
+        const treatmentSupport = Math.max(0, deltas.cognition) * 0.48;
+        return {
+          ...network,
+          score: clamp(96 - progressionPressure + treatmentSupport, 18, 99),
+        };
+      }),
+    [activeDiseases, deltas.cognition, metrics.tau, year],
+  );
 
   useEffect(() => {
     if (!playing) return;
@@ -534,6 +694,119 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
     [metrics.cognition, treatment, year],
   );
 
+  useCanvasSize(
+    networkCanvasRef,
+    (context, width, height) => {
+      context.clearRect(0, 0, width, height);
+      context.fillStyle = "#041016";
+      context.fillRect(0, 0, width, height);
+
+      context.strokeStyle = "rgba(87, 226, 213, 0.08)";
+      context.lineWidth = 1;
+      for (let x = 24; x < width; x += 34) {
+        context.beginPath();
+        context.moveTo(x, 0);
+        context.lineTo(x, height);
+        context.stroke();
+      }
+      for (let y = 22; y < height; y += 34) {
+        context.beginPath();
+        context.moveTo(0, y);
+        context.lineTo(width, y);
+        context.stroke();
+      }
+
+      const nodes: Array<{
+        x: number;
+        y: number;
+        network: NetworkId;
+      }> = [
+        { x: 0.12, y: 0.32, network: "default" },
+        { x: 0.28, y: 0.18, network: "default" },
+        { x: 0.48, y: 0.28, network: "default" },
+        { x: 0.72, y: 0.2, network: "default" },
+        { x: 0.88, y: 0.34, network: "default" },
+        { x: 0.22, y: 0.58, network: "salience" },
+        { x: 0.46, y: 0.48, network: "salience" },
+        { x: 0.74, y: 0.52, network: "salience" },
+        { x: 0.14, y: 0.78, network: "executive" },
+        { x: 0.38, y: 0.72, network: "executive" },
+        { x: 0.64, y: 0.76, network: "executive" },
+        { x: 0.87, y: 0.7, network: "executive" },
+        { x: 0.35, y: 0.9, network: "visual" },
+        { x: 0.58, y: 0.91, network: "visual" },
+      ];
+      const edges = [
+        [0, 1],
+        [1, 2],
+        [2, 3],
+        [3, 4],
+        [0, 5],
+        [1, 6],
+        [2, 6],
+        [2, 7],
+        [4, 7],
+        [5, 6],
+        [6, 7],
+        [5, 8],
+        [6, 9],
+        [6, 10],
+        [7, 11],
+        [8, 9],
+        [9, 10],
+        [10, 11],
+        [9, 12],
+        [10, 13],
+        [12, 13],
+        [1, 9],
+        [3, 10],
+      ];
+
+      for (const [startIndex, endIndex] of edges) {
+        const start = nodes[startIndex];
+        const end = nodes[endIndex];
+        const selected =
+          start.network === selectedNetwork || end.network === selectedNetwork;
+        context.strokeStyle = selected
+          ? "rgba(100, 244, 230, 0.68)"
+          : "rgba(107, 174, 185, 0.2)";
+        context.lineWidth = selected ? 1.8 : 0.8;
+        context.beginPath();
+        context.moveTo(start.x * width, start.y * height);
+        context.lineTo(end.x * width, end.y * height);
+        context.stroke();
+      }
+
+      for (const node of nodes) {
+        const strongestDisease = activeDiseases
+          .map((diseaseId) =>
+            diseaseModels.find((disease) => disease.id === diseaseId),
+          )
+          .filter((disease) => disease !== undefined)
+          .sort(
+            (a, b) =>
+              b.networkWeights[node.network] - a.networkWeights[node.network],
+          )[0];
+        const selected = node.network === selectedNetwork;
+        const x = node.x * width;
+        const y = node.y * height;
+        const radius = selected ? 6.5 : 4;
+        context.fillStyle = strongestDisease?.color ?? "#55e6d7";
+        context.shadowColor = context.fillStyle;
+        context.shadowBlur = selected ? 18 : 8;
+        context.beginPath();
+        context.arc(x, y, radius, 0, Math.PI * 2);
+        context.fill();
+        context.shadowBlur = 0;
+      }
+    },
+    [
+      activeDiseases.join("|"),
+      networkScores.map((network) => network.score.toFixed(1)).join("|"),
+      selectedNetwork,
+    ],
+  );
+
   const copy = {
     fr: {
       kicker: "NeuroLens / laboratoire de recherche 3D",
@@ -543,6 +816,16 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
         "Une démonstration de produit scientifique qui relie imagerie, biomarqueurs, littérature et scénarios comparatifs dans une seule interface.",
       model: "Modèle éducatif",
       synthetic: "Données synthétiques",
+      protocol: "Protocole",
+      cohort: "Cohorte",
+      cohortValue: "MCI · amyloïde+ · synthétique",
+      modality: "Modalités",
+      modalityValue: "IRM · TEP amyloïde/tau · connectome",
+      quality: "Contrôle qualité",
+      qualityValue: "QC PASS · 98,4 %",
+      reset: "Réinitialiser",
+      export: "Exporter le rapport",
+      exported: "Rapport généré",
       year: "Année",
       play: "Lire la progression",
       pause: "Mettre en pause",
@@ -554,6 +837,7 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
       brainHint: "Glissez pour tourner · molette pour zoomer",
       layers: "Couches 3D",
       network: "Réseau neuronal",
+      deltaMap: "Carte delta",
       cognition: "Indice cognitif",
       hippocampus: "Intégrité hippocampique",
       amyloid: "Charge amyloïde",
@@ -562,6 +846,15 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
       trajectory: "Trajectoire cognitive comparée",
       current: "Scénario sélectionné",
       natural: "Référence sans intervention",
+      comparisonTitle: "Analyse différentielle",
+      comparisonIntro:
+        "Écart synthétique entre le scénario actif et la trajectoire de référence au même temps.",
+      pathologies: "Comparaison multi-pathologies",
+      pathologiesIntro:
+        "Superposez plusieurs signatures pour explorer leurs réseaux vulnérables.",
+      connectome: "Explorateur du connectome",
+      networkScore: "Connectivité synthétique",
+      networkHint: "Sélectionnez un réseau pour isoler ses connexions.",
       years: "années",
       region: "Région active",
       signal: "Signal observé",
@@ -586,6 +879,16 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
         "A scientific product demonstration connecting imaging, biomarkers, literature, and comparative scenarios in one interface.",
       model: "Educational model",
       synthetic: "Synthetic data",
+      protocol: "Protocol",
+      cohort: "Cohort",
+      cohortValue: "MCI · amyloid+ · synthetic",
+      modality: "Modalities",
+      modalityValue: "MRI · amyloid/tau PET · connectome",
+      quality: "Quality control",
+      qualityValue: "QC PASS · 98.4%",
+      reset: "Reset",
+      export: "Export report",
+      exported: "Report generated",
       year: "Year",
       play: "Play progression",
       pause: "Pause progression",
@@ -597,6 +900,7 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
       brainHint: "Drag to rotate · scroll to zoom",
       layers: "3D layers",
       network: "Neural network",
+      deltaMap: "Delta map",
       cognition: "Cognitive index",
       hippocampus: "Hippocampal integrity",
       amyloid: "Amyloid load",
@@ -605,6 +909,15 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
       trajectory: "Compared cognitive trajectory",
       current: "Selected scenario",
       natural: "Reference without intervention",
+      comparisonTitle: "Differential analysis",
+      comparisonIntro:
+        "Synthetic difference between the active scenario and the reference trajectory at the same time point.",
+      pathologies: "Multi-pathology comparison",
+      pathologiesIntro:
+        "Overlay multiple signatures to explore their vulnerable networks.",
+      connectome: "Connectome explorer",
+      networkScore: "Synthetic connectivity",
+      networkHint: "Select a network to isolate its connections.",
       years: "years",
       region: "Active region",
       signal: "Observed signal",
@@ -631,6 +944,61 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
         ? copy.experimental
         : copy.reference;
   const projectsHref = locale === "fr" ? "/#projets" : "/en#projets";
+  const formatDelta = (value: number, inverse = false) => {
+    const signedValue = inverse ? -value : value;
+    return `${signedValue >= 0 ? "+" : ""}${signedValue.toFixed(1)}`;
+  };
+  const resetLab = () => {
+    setYear(3);
+    setTreatmentId("lecanemab");
+    setSelectedRegion("hippocampus");
+    setActiveDiseases(["alzheimer"]);
+    setSelectedNetwork("default");
+    setLayers({ amyloid: true, delta: true, network: true, tau: true });
+    setPlaying(false);
+    setExported(false);
+  };
+  const toggleDisease = (diseaseId: DiseaseId) => {
+    setActiveDiseases((current) => {
+      if (current.includes(diseaseId)) {
+        return current.length === 1
+          ? current
+          : current.filter((item) => item !== diseaseId);
+      }
+      return [...current, diseaseId];
+    });
+  };
+  const exportReport = () => {
+    const report = {
+      protocol: "NL-AD-042",
+      generatedAt: new Date().toISOString(),
+      educationalModel: true,
+      timepointYears: year,
+      scenario: {
+        treatment: treatment.name,
+        category: treatment.category,
+        stage: treatment.stage[locale],
+      },
+      syntheticMetrics: metrics,
+      referenceMetrics: baselineMetrics,
+      differential: deltas,
+      activePathologies: activeDiseases,
+      networkScores: Object.fromEntries(
+        networkScores.map((network) => [network.id, network.score]),
+      ),
+      disclaimer: copy.disclaimer,
+    };
+    const blob = new Blob([JSON.stringify(report, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `neurolens-NL-AD-042-T${year.toFixed(2)}.json`;
+    anchor.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    setExported(true);
+  };
 
   return (
     <section className="neuro-lab" aria-labelledby="neuro-lab-title">
@@ -648,6 +1016,35 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
           <span>{copy.synthetic}</span>
         </div>
       </header>
+
+      <div className="neuro-protocol-bar" aria-label={copy.protocol}>
+        <div>
+          <span>{copy.protocol}</span>
+          <strong>NL-AD-042</strong>
+        </div>
+        <div>
+          <span>{copy.cohort}</span>
+          <strong>{copy.cohortValue}</strong>
+        </div>
+        <div>
+          <span>{copy.modality}</span>
+          <strong>{copy.modalityValue}</strong>
+        </div>
+        <div>
+          <span>{copy.quality}</span>
+          <strong className="is-qc-pass">{copy.qualityValue}</strong>
+        </div>
+        <div className="neuro-protocol-actions">
+          <button type="button" onClick={resetLab}>
+            <span aria-hidden="true">↺</span>
+            {copy.reset}
+          </button>
+          <button type="button" onClick={exportReport}>
+            <span aria-hidden="true">↓</span>
+            {exported ? copy.exported : copy.export}
+          </button>
+        </div>
+      </div>
 
       <div className="neuro-metrics" aria-label={copy.syntheticIndex}>
         <article>
@@ -782,6 +1179,18 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
             >
               {copy.tau}
             </button>
+            <button
+              type="button"
+              aria-pressed={layers.delta}
+              onClick={() =>
+                setLayers((current) => ({
+                  ...current,
+                  delta: !current.delta,
+                }))
+              }
+            >
+              {copy.deltaMap}
+            </button>
           </div>
           <div className="neuro-brain-stage">
             <Brain3DViewer
@@ -789,6 +1198,7 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
               year={year}
               selectedRegion={selectedRegion}
               layers={layers}
+              comparisonStrength={comparisonStrength}
               onSelectRegion={setSelectedRegion}
               ariaLabel={`${copy.brainTitle}. ${copy.amyloid}: ${Math.round(metrics.amyloid)}. ${copy.tau}: ${Math.round(metrics.tau)}.`}
             />
@@ -815,6 +1225,7 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
             <span className="legend-amyloid">{copy.amyloid}</span>
             <span className="legend-tau">{copy.tau}</span>
             <span className="legend-region">{copy.region}</span>
+            <span className="legend-delta">{copy.deltaMap}</span>
           </div>
         </div>
 
@@ -864,6 +1275,119 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
           aria-label={`${copy.trajectory}: ${treatment.name}, ${Math.round(metrics.cognition)} sur 100 à l'année ${year.toFixed(2)}.`}
         />
       </div>
+
+      <section
+        className="neuro-differential"
+        aria-labelledby="neuro-differential-title"
+      >
+        <div>
+          <p className="eyebrow">A/B · ACTIVE VS REFERENCE</p>
+          <h3 id="neuro-differential-title">{copy.comparisonTitle}</h3>
+          <p>{copy.comparisonIntro}</p>
+        </div>
+        <div className="neuro-delta-grid">
+          <article>
+            <span>Δ {copy.cognition}</span>
+            <strong>{formatDelta(deltas.cognition)}</strong>
+            <small>{treatment.name}</small>
+          </article>
+          <article>
+            <span>Δ {copy.amyloid}</span>
+            <strong>{formatDelta(deltas.amyloid, true)}</strong>
+            <small>{copy.natural}</small>
+          </article>
+          <article>
+            <span>Δ {copy.tau}</span>
+            <strong>{formatDelta(deltas.tau, true)}</strong>
+            <small>{copy.natural}</small>
+          </article>
+          <article>
+            <span>Δ {copy.hippocampus}</span>
+            <strong>{formatDelta(deltas.hippocampus)}</strong>
+            <small>T+{year.toFixed(2)}</small>
+          </article>
+        </div>
+      </section>
+
+      <section
+        className="neuro-network-lab"
+        aria-labelledby="neuro-network-title"
+      >
+        <div className="neuro-network-heading">
+          <div>
+            <p className="eyebrow">CONNECTOME / MULTI-PATHOLOGY</p>
+            <h3 id="neuro-network-title">{copy.connectome}</h3>
+          </div>
+          <p>{copy.networkHint}</p>
+        </div>
+        <div className="neuro-network-layout">
+          <fieldset className="neuro-disease-selector">
+            <legend>{copy.pathologies}</legend>
+            <p>{copy.pathologiesIntro}</p>
+            {diseaseModels.map((disease) => {
+              const active = activeDiseases.includes(disease.id);
+              return (
+                <button
+                  key={disease.id}
+                  type="button"
+                  data-disease={disease.id}
+                  aria-pressed={active}
+                  onClick={() => toggleDisease(disease.id)}
+                >
+                  <i aria-hidden="true" />
+                  <span>
+                    <strong>{disease.name[locale]}</strong>
+                    <small>{disease.signature[locale]}</small>
+                  </span>
+                </button>
+              );
+            })}
+          </fieldset>
+
+          <div className="neuro-connectome-canvas">
+            <div>
+              <span>{copy.connectome}</span>
+              <strong>
+                {activeDiseases.length.toString().padStart(2, "0")} / 04
+              </strong>
+            </div>
+            <canvas
+              ref={networkCanvasRef}
+              role="img"
+              aria-label={`${copy.connectome}. ${activeDiseases
+                .map(
+                  (id) =>
+                    diseaseModels.find((disease) => disease.id === id)?.name[
+                      locale
+                    ],
+                )
+                .filter(Boolean)
+                .join(", ")}.`}
+            />
+          </div>
+
+          <div className="neuro-network-scores">
+            <span>{copy.networkScore}</span>
+            {networkScores.map((network) => (
+              <button
+                key={network.id}
+                type="button"
+                aria-pressed={selectedNetwork === network.id}
+                onClick={() => setSelectedNetwork(network.id)}
+              >
+                <span>
+                  <strong>{network.label[locale]}</strong>
+                  <small>{network.function[locale]}</small>
+                </span>
+                <output>{Math.round(network.score)}%</output>
+                <i aria-hidden="true">
+                  <b style={{ width: `${network.score}%` }} />
+                </i>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section className="neuro-research-record">
         <div className="neuro-record-heading">
