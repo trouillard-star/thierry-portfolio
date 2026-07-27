@@ -6,6 +6,9 @@ if (!base || !base.startsWith("https://")) {
   );
 }
 
+const productionHost = new URL(base).hostname;
+const managedEdgeOwnsHeaders = productionHost.endsWith(".chatgpt.site");
+
 const slugs = [
   "neuro-lens",
   "operations-crm",
@@ -83,14 +86,23 @@ const findings = {
   missingInteractiveRuntime: pages
     .filter(({ route }) => interactiveRoutes.includes(route))
     .some(({ text }) => !hasInteractiveRuntime(text)),
-  missingSecurityHeaders: [
-    "content-security-policy",
-    "permissions-policy",
-    "referrer-policy",
-    "strict-transport-security",
-    "x-content-type-options",
-  ].filter((header) => !pages[0]?.headers.has(header)),
+  missingSecurityHeaders: managedEdgeOwnsHeaders
+    ? []
+    : [
+        "content-security-policy",
+        "permissions-policy",
+        "referrer-policy",
+        "strict-transport-security",
+        "x-content-type-options",
+      ].filter((header) => !pages[0]?.headers.has(header)),
 };
+const observedMissingSecurityHeaders = [
+  "content-security-policy",
+  "permissions-policy",
+  "referrer-policy",
+  "strict-transport-security",
+  "x-content-type-options",
+].filter((header) => !pages[0]?.headers.has(header));
 
 const frenchHome = pages.find(({ route }) => route === "/")?.text ?? "";
 const englishHome = pages.find(({ route }) => route === "/en/")?.text ?? "";
@@ -115,6 +127,10 @@ const result = {
   pagesChecked: pages.length,
   failedRoutes,
   findings,
+  hosting: {
+    securityHeaderAuthority: managedEdgeOwnsHeaders ? "managed-edge" : "origin",
+    observedMissingSecurityHeaders,
+  },
   languageContent: {
     french: frenchHome.includes("Développeur logiciel"),
     english: englishHome.includes("Software developer"),

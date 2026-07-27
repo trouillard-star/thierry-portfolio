@@ -72,5 +72,9 @@ public clone, and covered by explicit regression tests.
   only for the interactive 3D experience and remains separately cacheable.
 - The CSP still permits inline framework scripts and styles. Removing that
   allowance would require deployment-specific nonces or hashes.
+- The managed Sites edge owns and filters headers on prerendered responses.
+  The Worker applies the security baseline whenever it handles a response, and
+  the edge independently rejects mutating requests with `405`; the primary AWS
+  origin remains the verifiable authority for the complete public header set.
 - Automated checks reduce regressions but do not replace an independent
   penetration test.
