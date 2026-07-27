@@ -1,7 +1,13 @@
 import { education } from "@/src/data/education";
 import { experience } from "@/src/data/experience";
+import {
+  impactHighlights,
+  methodNote,
+  methodSteps,
+  quickWins,
+} from "@/src/data/highlights";
 import { labels, profile, type Locale } from "@/src/data/profile";
-import { projects } from "@/src/data/projects";
+import { labProjects, workProjects } from "@/src/data/projects";
 import { skillGroups } from "@/src/data/skills";
 import { ProjectCard } from "./ProjectCard";
 import { SiteShell } from "./SiteShell";
@@ -79,7 +85,7 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
             }
           >
             <div className="system-heading">
-              <span>SYS.MAP / 06</span>
+              <span>SYS.MAP / 07</span>
               <span className="system-state">ONLINE</span>
             </div>
             <div className="system-grid">
@@ -118,6 +124,24 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
         </section>
 
         <section
+          className="impact-section section-shell"
+          aria-labelledby="impact-title"
+        >
+          <div className="impact-heading" data-reveal>
+            <p className="eyebrow">{copy.impactEyebrow}</p>
+            <h2 id="impact-title">{copy.impactTitle}</h2>
+          </div>
+          <dl className="impact-band" data-reveal>
+            {impactHighlights.map((item) => (
+              <div className="impact-tile" key={item.label.en}>
+                <dt>{item.value}</dt>
+                <dd>{item.label[locale]}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        <section
           className="projects-section"
           id="projets"
           aria-labelledby="projects-title"
@@ -131,7 +155,7 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
               <p>{copy.featuredWorkIntro}</p>
             </div>
             <div className="project-grid">
-              {projects.map((project) => (
+              {workProjects.map((project) => (
                 <ProjectCard
                   key={project.slug}
                   project={project}
@@ -141,6 +165,86 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
             </div>
           </div>
         </section>
+
+        <section
+          className="quickwins-section section-shell"
+          id="realisations"
+          aria-labelledby="quickwins-title"
+        >
+          <div className="section-heading" data-reveal>
+            <div>
+              <p className="eyebrow">{copy.quickWinsEyebrow}</p>
+              <h2 id="quickwins-title">{copy.quickWinsTitle}</h2>
+            </div>
+            <p>{copy.quickWinsIntro}</p>
+          </div>
+          <ul className="quickwin-grid">
+            {quickWins.map((win) => (
+              <li className="quickwin-card" key={win.title.en} data-reveal>
+                <h3>{win.title[locale]}</h3>
+                <p>{win.removed[locale]}</p>
+                <ul className="tech-list" aria-label={copy.technologies}>
+                  {win.tags.map((tag) => (
+                    <li key={tag}>{tag}</li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <section
+          className="method-section section-shell"
+          id="methode"
+          aria-labelledby="method-title"
+        >
+          <div className="section-heading" data-reveal>
+            <div>
+              <p className="eyebrow">{copy.methodEyebrow}</p>
+              <h2 id="method-title">{copy.methodTitle}</h2>
+            </div>
+            <p>{copy.methodIntro}</p>
+          </div>
+          <ol className="method-list">
+            {methodSteps.map((step, index) => (
+              <li key={step.title.en} data-reveal>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <h3>{step.title[locale]}</h3>
+                  <p>{step.detail[locale]}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <p className="method-note" data-reveal>
+            {methodNote[locale]}
+          </p>
+        </section>
+
+        {labProjects.length ? (
+          <section
+            className="lab-section section-shell"
+            id="laboratoire"
+            aria-labelledby="lab-title"
+          >
+            <div className="section-heading" data-reveal>
+              <div>
+                <p className="eyebrow">{copy.labEyebrow}</p>
+                <h2 id="lab-title">{copy.labTitle}</h2>
+              </div>
+              <p>{copy.labIntro}</p>
+            </div>
+            <div className="project-grid project-grid-lab">
+              {labProjects.map((project) => (
+                <ProjectCard
+                  key={project.slug}
+                  project={project}
+                  locale={locale}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <section className="skills-section section-shell" id="competences">
           <div className="section-heading" data-reveal>
@@ -216,7 +320,6 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
               <p className="contact-intro">{copy.contactIntro}</p>
               <address>
                 <span>{profile.location[locale]}</span>
-                <span>{profile.availability[locale]}</span>
                 <a
                   href={profile.contact.github}
                   target="_blank"
@@ -229,7 +332,7 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
             <div className="contact-card" data-reveal>
               <span>CONTACT / GITHUB</span>
               <strong>{profile.name}</strong>
-              <p>{profile.availability[locale]}</p>
+              <p>{profile.location[locale]}</p>
               <a
                 className="button button-primary"
                 href={profile.contact.github}

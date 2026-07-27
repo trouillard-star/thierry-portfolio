@@ -15,6 +15,9 @@ const caseCopy = {
     mandate: "Le mandat",
     challenge: "Le défi",
     contribution: "Ma contribution",
+    keyResults: "Résultats clés",
+    beforeLabel: "Avant",
+    afterLabel: "Après",
     design: "La réponse conçue",
     delivery: "Architecture de la solution",
     deliveryIntro:
@@ -41,6 +44,9 @@ const caseCopy = {
     mandate: "The mandate",
     challenge: "The challenge",
     contribution: "My contribution",
+    keyResults: "Key results",
+    beforeLabel: "Before",
+    afterLabel: "After",
     design: "The designed response",
     delivery: "Solution architecture",
     deliveryIntro:
@@ -95,11 +101,21 @@ export function ProjectCaseStudy({
               <span className={`status status-${project.status}`}>
                 {project.statusLabel[locale]}
               </span>
+              <span className="case-sector">{project.sector[locale]}</span>
             </div>
 
             <h1>{project.title[locale]}</h1>
             <p className="case-tagline">{project.tagline[locale]}</p>
             <p className="case-lead">{project.summary[locale]}</p>
+
+            <dl className="case-impact" aria-label={pageCopy.keyResults}>
+              {project.impact.map((metric) => (
+                <div key={metric.label.en}>
+                  <dt>{metric.value}</dt>
+                  <dd>{metric.label[locale]}</dd>
+                </div>
+              ))}
+            </dl>
 
             <nav className="case-local-nav" aria-label={pageCopy.caseStudy}>
               <a href="#vue-ensemble">01 · {pageCopy.overview}</a>
@@ -158,6 +174,20 @@ export function ProjectCaseStudy({
                   <article>
                     <span>{pageCopy.contribution}</span>
                     <p>{project.role[locale]}</p>
+                  </article>
+                </div>
+
+                <div className="case-shift">
+                  <article className="case-shift-before">
+                    <span>{pageCopy.beforeLabel}</span>
+                    <p>{project.before[locale]}</p>
+                  </article>
+                  <span className="case-shift-arrow" aria-hidden="true">
+                    →
+                  </span>
+                  <article className="case-shift-after">
+                    <span>{pageCopy.afterLabel}</span>
+                    <p>{project.after[locale]}</p>
                   </article>
                 </div>
               </section>
@@ -241,11 +271,6 @@ export function ProjectCaseStudy({
                     items={project.testing.map((item) => item[locale])}
                   />
                 </div>
-              </section>
-
-              <section className="case-final case-final-simple" data-reveal>
-                <span>{pageCopy.statusNote}</span>
-                <p>{project.currentStatus[locale]}</p>
               </section>
             </div>
           </div>

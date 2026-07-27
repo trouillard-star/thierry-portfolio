@@ -53,6 +53,18 @@ const demos: Record<string, Record<Locale, DemoCopy>> = {
       tabs: ["Overview", "Project flow", "Intelligence"],
     },
   },
+  "report-automation": {
+    fr: {
+      title: "Chaîne de production documentaire",
+      subtitle: "Inventaire, validation et fusion reproductible",
+      tabs: ["Sources", "Assemblage", "Livrable"],
+    },
+    en: {
+      title: "Document production pipeline",
+      subtitle: "Inventory, validation, and reproducible merging",
+      tabs: ["Sources", "Assembly", "Deliverable"],
+    },
+  },
   "secure-client-portal": {
     fr: {
       title: "Espace client sécurisé",
@@ -153,6 +165,178 @@ function DemoFeedback({ message }: { message: string }) {
   );
 }
 
+type MotionVariant =
+  "crm" | "report" | "portal" | "mario" | "assist" | "pipe" | "boreal";
+
+function ProjectMotionVisual({
+  variant,
+  activeTab,
+}: {
+  variant: MotionVariant;
+  activeTab: number;
+}) {
+  return (
+    <div
+      className={`project-motion project-motion-${variant}`}
+      data-motion-tab={activeTab}
+      aria-hidden="true"
+    >
+      <span className="project-motion-grid" />
+
+      {variant === "crm" ? (
+        <>
+          <div className="motion-crm-rail">
+            {Array.from({ length: 5 }, (_, index) => (
+              <span key={index}>
+                <i />
+                <b />
+              </span>
+            ))}
+            <em className="motion-packet motion-packet-a" />
+            <em className="motion-packet motion-packet-b" />
+          </div>
+          <div className="motion-crm-bars">
+            {[34, 58, 46, 82, 64, 91, 72, 88].map((height, index) => (
+              <i
+                key={index}
+                style={{ "--motion-value": `${height}%` } as CSSProperties}
+              />
+            ))}
+          </div>
+        </>
+      ) : null}
+
+      {variant === "report" ? (
+        <>
+          <div className="motion-report-feeder">
+            <i />
+            <i />
+            <i />
+          </div>
+          <div className="motion-report-channel">
+            <i />
+            <i />
+            <i />
+          </div>
+          <div className="motion-report-engine">
+            <i />
+            <b />
+          </div>
+          <div className="motion-report-stack">
+            <i />
+            <i />
+            <i />
+          </div>
+        </>
+      ) : null}
+
+      {variant === "portal" ? (
+        <>
+          <div className="motion-portal-document">
+            <i />
+            <i />
+            <i />
+          </div>
+          <div className="motion-portal-channel">
+            <i />
+            <i />
+            <i />
+          </div>
+          <div className="motion-portal-shield">
+            <i />
+          </div>
+          <div className="motion-portal-vault">
+            <i />
+            <b />
+          </div>
+        </>
+      ) : null}
+
+      {variant === "mario" ? (
+        <>
+          <div className="motion-mario-sources">
+            <i />
+            <i />
+            <i />
+            <i />
+          </div>
+          <div className="motion-mario-core">
+            <i />
+            <b />
+            <em />
+          </div>
+          <div className="motion-mario-output">
+            <i />
+            <i />
+            <i />
+          </div>
+          <span className="motion-mario-signal motion-mario-signal-a" />
+          <span className="motion-mario-signal motion-mario-signal-b" />
+        </>
+      ) : null}
+
+      {variant === "assist" ? (
+        <>
+          <div className="motion-assist-devices">
+            {Array.from({ length: 5 }, (_, index) => (
+              <i key={index} />
+            ))}
+          </div>
+          <div className="motion-assist-tunnel">
+            <i />
+            <i />
+            <i />
+          </div>
+          <div className="motion-assist-screen">
+            <i />
+            <b />
+            <em />
+          </div>
+        </>
+      ) : null}
+
+      {variant === "pipe" ? (
+        <>
+          <div className="motion-pipe-shell">
+            <i />
+            <b />
+            <em />
+          </div>
+          <div className="motion-pipe-wave">
+            {[42, 51, 63, 58, 76, 92, 68, 55, 47, 61, 52, 45].map(
+              (height, index) => (
+                <i
+                  key={index}
+                  style={{ "--motion-value": `${height}%` } as CSSProperties}
+                />
+              ),
+            )}
+            <b />
+          </div>
+        </>
+      ) : null}
+
+      {variant === "boreal" ? (
+        <>
+          <div className="motion-boreal-route">
+            <i />
+            <i />
+            <i />
+            <i />
+            <b />
+          </div>
+          <div className="motion-boreal-assets">
+            <i />
+            <i />
+            <i />
+          </div>
+          <span className="motion-boreal-scan" />
+        </>
+      ) : null}
+    </div>
+  );
+}
+
 export function ProjectDemo({
   slug,
   locale,
@@ -225,6 +409,9 @@ export function ProjectDemo({
         {slug === "operations-crm" ? (
           <CrmDemo key={session} locale={locale} activeTab={activeTab} />
         ) : null}
+        {slug === "report-automation" ? (
+          <ReportDemo key={session} locale={locale} activeTab={activeTab} />
+        ) : null}
         {slug === "secure-client-portal" ? (
           <PortalDemo key={session} locale={locale} activeTab={activeTab} />
         ) : null}
@@ -245,6 +432,364 @@ export function ProjectDemo({
         ) : null}
       </div>
     </section>
+  );
+}
+
+type ReportSource = {
+  id: string;
+  name: string;
+  type: "PDF" | "XLSX" | "MP4";
+  pages: number;
+  valid: boolean;
+  enabled: boolean;
+};
+
+function ReportDemo({ locale, activeTab }: DemoProps) {
+  const fr = locale === "fr";
+  const [sources, setSources] = useState<ReportSource[]>([
+    {
+      id: "SRC-01",
+      name: fr ? "Rapport CCTV principal" : "Main CCTV report",
+      type: "PDF",
+      pages: 48,
+      valid: true,
+      enabled: true,
+    },
+    {
+      id: "SRC-02",
+      name: fr ? "Graphiques de profilométrie" : "Profilometry charts",
+      type: "PDF",
+      pages: 29,
+      valid: true,
+      enabled: true,
+    },
+    {
+      id: "SRC-03",
+      name: fr ? "Index des observations" : "Observation index",
+      type: "XLSX",
+      pages: 6,
+      valid: true,
+      enabled: true,
+    },
+    {
+      id: "SRC-04",
+      name: fr ? "Médias de télé-observation" : "Remote-observation media",
+      type: "MP4",
+      pages: 12,
+      valid: true,
+      enabled: true,
+    },
+  ]);
+  const [progress, setProgress] = useState(100);
+  const [running, setRunning] = useState(false);
+  const [buildNumber, setBuildNumber] = useState(7);
+  const [feedback, setFeedback] = useState(
+    fr
+      ? "Lot vérifié · livrable reproductible."
+      : "Batch verified · reproducible deliverable.",
+  );
+
+  const enabledSources = sources.filter((source) => source.enabled);
+  const totalPages = enabledSources.reduce(
+    (total, source) => total + source.pages,
+    0,
+  );
+  const validSources = enabledSources.filter((source) => source.valid).length;
+
+  useEffect(() => {
+    if (!running) return;
+    let currentProgress = 0;
+    const timer = window.setInterval(() => {
+      currentProgress = Math.min(100, currentProgress + 8);
+      setProgress(currentProgress);
+      if (currentProgress >= 100) {
+        window.clearInterval(timer);
+        setRunning(false);
+        setBuildNumber((value) => value + 1);
+        setFeedback(
+          fr
+            ? "Assemblage terminé · index et pagination validés."
+            : "Assembly complete · index and pagination validated.",
+        );
+      }
+    }, 150);
+    return () => window.clearInterval(timer);
+  }, [fr, running]);
+
+  function startAssembly() {
+    if (!enabledSources.length || validSources !== enabledSources.length) {
+      setFeedback(
+        fr
+          ? "Corrigez les sources avant de lancer l’assemblage."
+          : "Fix the sources before starting assembly.",
+      );
+      return;
+    }
+    setProgress(0);
+    setRunning(true);
+    setFeedback(
+      fr
+        ? "Validation, classement et fusion en cours…"
+        : "Validation, ordering, and merging in progress…",
+    );
+  }
+
+  return (
+    <div className="demo-app demo-report-pro">
+      <ProjectMotionVisual variant="report" activeTab={activeTab} />
+      <div className="demo-metrics">
+        {[
+          [
+            String(enabledSources.length),
+            fr ? "Sources retenues" : "Selected sources",
+            `${validSources}/${enabledSources.length}`,
+          ],
+          [
+            String(totalPages),
+            fr ? "Pages générées" : "Generated pages",
+            "PDF",
+          ],
+          [`#${buildNumber}`, fr ? "Version du lot" : "Batch version", "Git"],
+          [
+            progress === 100 ? "100 %" : `${progress} %`,
+            fr ? "Intégrité" : "Integrity",
+            progress === 100 ? "OK" : "RUN",
+          ],
+        ].map(([value, label, trend]) => (
+          <article key={label}>
+            <span>{label}</span>
+            <strong>{value}</strong>
+            <small>{trend}</small>
+          </article>
+        ))}
+      </div>
+
+      {activeTab === 0 ? (
+        <div className="demo-workspace demo-report-workspace">
+          <article className="demo-panel">
+            <header className="demo-panel-header">
+              <div>
+                <span>
+                  {fr ? "Inventaire contrôlé" : "Controlled inventory"}
+                </span>
+                <h3>{fr ? "Fichiers source" : "Source files"}</h3>
+              </div>
+              <small>
+                {validSources}/{enabledSources.length}{" "}
+                {fr ? "valides" : "valid"}
+              </small>
+            </header>
+            <div className="demo-report-file-list">
+              {sources.map((source) => (
+                <button
+                  type="button"
+                  key={source.id}
+                  className={source.enabled ? "is-enabled" : ""}
+                  aria-pressed={source.enabled}
+                  onClick={() => {
+                    setSources((items) =>
+                      items.map((item) =>
+                        item.id === source.id
+                          ? { ...item, enabled: !item.enabled }
+                          : item,
+                      ),
+                    );
+                    setFeedback(
+                      fr
+                        ? `${source.name} ${source.enabled ? "retiré" : "ajouté"} du lot.`
+                        : `${source.name} ${source.enabled ? "removed from" : "added to"} the batch.`,
+                    );
+                  }}
+                >
+                  <b>{source.type}</b>
+                  <span>
+                    <strong>{source.name}</strong>
+                    <small>
+                      {source.id} · {source.pages}{" "}
+                      {fr ? "pages/éléments" : "pages/items"}
+                    </small>
+                  </span>
+                  <em>{source.enabled ? "✓" : "+"}</em>
+                </button>
+              ))}
+            </div>
+          </article>
+          <aside className="demo-panel demo-report-rules">
+            <span>{fr ? "Règles déterministes" : "Deterministic rules"}</span>
+            <h3>{fr ? "Ordre de production" : "Production order"}</h3>
+            <ol>
+              <li>01 · {fr ? "Valider les formats" : "Validate formats"}</li>
+              <li>
+                02 ·{" "}
+                {fr
+                  ? "Trier par regard et section"
+                  : "Sort by manhole and section"}
+              </li>
+              <li>
+                03 ·{" "}
+                {fr
+                  ? "Fusionner sans modifier les sources"
+                  : "Merge without changing sources"}
+              </li>
+              <li>
+                04 ·{" "}
+                {fr
+                  ? "Générer index et pagination"
+                  : "Generate index and pagination"}
+              </li>
+            </ol>
+          </aside>
+        </div>
+      ) : null}
+
+      {activeTab === 1 ? (
+        <div className="demo-workspace demo-report-workspace">
+          <article className="demo-panel demo-report-builder">
+            <header className="demo-panel-header">
+              <div>
+                <span>
+                  {fr ? "Pipeline reproductible" : "Reproducible pipeline"}
+                </span>
+                <h3>
+                  {fr ? "Assemblage du livrable" : "Deliverable assembly"}
+                </h3>
+              </div>
+              <strong>{progress} %</strong>
+            </header>
+            <div className="demo-report-pipeline">
+              {[
+                fr ? "Inventaire" : "Inventory",
+                fr ? "Validation" : "Validation",
+                fr ? "Fusion" : "Merge",
+                fr ? "Contrôle" : "Quality check",
+              ].map((label, index) => (
+                <div
+                  key={label}
+                  className={progress >= (index + 1) * 24 ? "is-complete" : ""}
+                >
+                  <b>0{index + 1}</b>
+                  <span>{label}</span>
+                  <i />
+                </div>
+              ))}
+            </div>
+            <div className="demo-report-progress">
+              <i style={{ "--value": `${progress}%` } as CSSProperties} />
+            </div>
+            <button
+              type="button"
+              className="demo-primary"
+              disabled={running}
+              onClick={startAssembly}
+            >
+              {running
+                ? fr
+                  ? "Assemblage en cours…"
+                  : "Assembly running…"
+                : fr
+                  ? "Reconstruire le rapport"
+                  : "Rebuild report"}
+            </button>
+          </article>
+          <aside className="demo-panel demo-timeline">
+            <span>{fr ? "Journal du lot" : "Batch audit log"}</span>
+            <h3>{fr ? "Contrôles appliqués" : "Applied checks"}</h3>
+            <ol>
+              {[
+                fr ? "Sources conservées intactes" : "Source files preserved",
+                fr ? "Ordre des sections vérifié" : "Section order verified",
+                fr ? "Pagination continue" : "Continuous pagination",
+                fr ? "Index régénéré" : "Index regenerated",
+              ].map((item, index) => (
+                <li key={item}>
+                  <i />
+                  <div>
+                    <strong>{item}</strong>
+                    <small>
+                      {index < 3 || progress === 100 ? "OK" : "WAIT"}
+                    </small>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </aside>
+        </div>
+      ) : null}
+
+      {activeTab === 2 ? (
+        <div className="demo-workspace demo-report-workspace">
+          <article className="demo-panel demo-report-deliverable">
+            <span>{fr ? "Livrable généré" : "Generated deliverable"}</span>
+            <div className="demo-report-pages">
+              <i />
+              <i />
+              <i />
+              <b>PDF</b>
+            </div>
+            <h3>INSPECTION_DEMO_R{buildNumber}.pdf</h3>
+            <p>
+              {totalPages}{" "}
+              {fr
+                ? "pages · index inclus · ordre validé"
+                : "pages · index included · order validated"}
+            </p>
+            <button
+              type="button"
+              className="demo-primary"
+              onClick={() => {
+                downloadText(
+                  `rapport-demo-r${buildNumber}.txt`,
+                  enabledSources
+                    .map(
+                      (source, index) =>
+                        `${String(index + 1).padStart(2, "0")} · ${source.id} · ${source.name}`,
+                    )
+                    .join("\n"),
+                );
+                setFeedback(
+                  fr
+                    ? "Manifest du livrable téléchargé."
+                    : "Deliverable manifest downloaded.",
+                );
+              }}
+            >
+              ↓ {fr ? "Télécharger le manifest" : "Download manifest"}
+            </button>
+          </article>
+          <aside className="demo-panel demo-report-summary">
+            <span>{fr ? "Résumé de sortie" : "Output summary"}</span>
+            <dl className="demo-kv">
+              <div>
+                <dt>{fr ? "Sources" : "Sources"}</dt>
+                <dd>{enabledSources.length}</dd>
+              </div>
+              <div>
+                <dt>{fr ? "Pages" : "Pages"}</dt>
+                <dd>{totalPages}</dd>
+              </div>
+              <div>
+                <dt>SHA</dt>
+                <dd>8f2a…c91d</dd>
+              </div>
+              <div>
+                <dt>{fr ? "État" : "Status"}</dt>
+                <dd>
+                  {progress === 100
+                    ? fr
+                      ? "Prêt"
+                      : "Ready"
+                    : fr
+                      ? "En cours"
+                      : "Running"}
+                </dd>
+              </div>
+            </dl>
+          </aside>
+        </div>
+      ) : null}
+
+      <DemoFeedback message={feedback} />
+    </div>
   );
 }
 
@@ -408,6 +953,7 @@ function CrmDemo({ locale, activeTab }: DemoProps) {
 
   return (
     <div className="demo-app demo-crm-pro">
+      <ProjectMotionVisual variant="crm" activeTab={activeTab} />
       <div className="demo-metrics">
         {[
           [
@@ -933,6 +1479,7 @@ function PortalDemo({ locale, activeTab }: DemoProps) {
 
   return (
     <div className="demo-app demo-portal-pro">
+      <ProjectMotionVisual variant="portal" activeTab={activeTab} />
       <div className="demo-portal-topbar">
         <strong>CLIENT/</strong>
         <span>
@@ -1372,6 +1919,7 @@ function MarioDemo({ locale, activeTab }: DemoProps) {
 
   return (
     <div className="demo-app demo-mario-pro">
+      <ProjectMotionVisual variant="mario" activeTab={activeTab} />
       <div className="demo-ai-status">
         <div className="demo-ai-orb">M</div>
         <div>
@@ -1671,6 +2219,7 @@ function AssistDemo({ locale, activeTab }: DemoProps) {
 
   return (
     <div className="demo-app demo-assist-pro">
+      <ProjectMotionVisual variant="assist" activeTab={activeTab} />
       <div className="demo-metrics">
         {[
           ["47 / 50", fr ? "Postes en ligne" : "Devices online", "94 %"],
@@ -2140,6 +2689,7 @@ function PipeDemo({ locale, activeTab }: DemoProps) {
 
   return (
     <div className="demo-app demo-pipe-pro">
+      <ProjectMotionVisual variant="pipe" activeTab={activeTab} />
       <div className="demo-pipe-toolbar">
         <label>
           <span>{fr ? "Station active" : "Active station"}</span>
@@ -2847,6 +3397,7 @@ function BorealDemo({ locale, activeTab }: DemoProps) {
 
   return (
     <div className="demo-app demo-boreal-pro">
+      <ProjectMotionVisual variant="boreal" activeTab={activeTab} />
       <div className="demo-boreal-brand">
         <span>BORÉAL / OPS</span>
         <strong>

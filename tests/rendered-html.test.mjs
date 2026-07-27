@@ -4,6 +4,7 @@ import test from "node:test";
 const slugs = [
   "neuro-lens",
   "operations-crm",
+  "report-automation",
   "secure-client-portal",
   "mario-ai",
   "remote-assist",
@@ -172,4 +173,29 @@ test("NeuroLens renders the interactive anatomical brain without development con
   assert.match(fr, />Étude</i);
   assert.doesNotMatch(fr, /3D DEBUG/i);
   assert.doesNotMatch(en, /3D DEBUG/i);
+});
+
+test("every product demo exposes a project-specific animated visual", async () => {
+  const worker = await getWorker();
+  const motionVisuals = {
+    "operations-crm": "crm",
+    "report-automation": "report",
+    "secure-client-portal": "portal",
+    "mario-ai": "mario",
+    "remote-assist": "assist",
+    "pipe360-profiler": "pipe",
+    boreal: "boreal",
+  };
+
+  for (const [slug, variant] of Object.entries(motionVisuals)) {
+    const response = await render(worker, `/projets/${slug}`);
+    const html = await response.text();
+
+    assert.match(
+      html,
+      new RegExp(`project-motion project-motion-${variant}`),
+      `${slug} should render its animated product visual`,
+    );
+    assert.match(html, /data-motion-tab=["']0["']/);
+  }
 });

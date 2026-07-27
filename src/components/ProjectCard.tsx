@@ -10,7 +10,8 @@ export function ProjectCard({
 }) {
   const base = locale === "fr" ? "/projets" : "/en/projects";
   const copy = labels[locale];
-  const isFeatured = project.slug === "neuro-lens";
+  const isFeatured = project.track === "lab";
+  const headline = project.impact[0];
 
   return (
     <article
@@ -25,7 +26,14 @@ export function ProjectCard({
         </span>
       </div>
       <h3>{project.title[locale]}</h3>
+      <p className="project-sector">{project.sector[locale]}</p>
       <p className="project-tagline">{project.tagline[locale]}</p>
+      {headline ? (
+        <p className="project-headline">
+          <b>{headline.value}</b>
+          <span>{headline.label[locale]}</span>
+        </p>
+      ) : null}
       {isFeatured ? (
         <div className="neuro-card-preview" aria-hidden="true">
           <div className="neuro-card-brain">

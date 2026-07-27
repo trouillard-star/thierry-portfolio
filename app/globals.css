@@ -8609,6 +8609,1554 @@ html[data-motion-ready="true"] [data-reveal].is-visible {
   }
 }
 
+/* Animated product visuals */
+.project-motion {
+  --motion-accent: #4bd4c4;
+  --motion-accent-soft: rgb(75 212 196 / 24%);
+  position: relative;
+  height: 8.5rem;
+  margin-bottom: 0.85rem;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid #244451;
+  background:
+    radial-gradient(
+      circle at 50% 45%,
+      var(--motion-accent-soft),
+      transparent 42%
+    ),
+    linear-gradient(135deg, rgb(5 19 27 / 96%), rgb(2 10 15 / 98%));
+}
+
+.project-motion[data-motion-tab="1"] {
+  --motion-accent: #f0b458;
+  --motion-accent-soft: rgb(240 180 88 / 20%);
+}
+
+.project-motion[data-motion-tab="2"] {
+  --motion-accent: #8bb9ff;
+  --motion-accent-soft: rgb(139 185 255 / 20%);
+}
+
+.project-motion::before {
+  position: absolute;
+  z-index: 5;
+  inset: 0 auto 0 -22%;
+  width: 20%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--motion-accent) 13%, transparent),
+    transparent
+  );
+  content: "";
+  animation: project-motion-sweep 6s linear infinite;
+  pointer-events: none;
+}
+
+.project-motion::after {
+  position: absolute;
+  z-index: 4;
+  right: 0.7rem;
+  bottom: 0.55rem;
+  width: 2.2rem;
+  height: 0.18rem;
+  border-right: 0.55rem solid var(--motion-accent);
+  border-left: 1.25rem solid rgb(255 255 255 / 18%);
+  content: "";
+  opacity: 0.7;
+}
+
+.project-motion-grid {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background:
+    linear-gradient(rgb(67 113 128 / 13%) 1px, transparent 1px) 0 0 / 2rem 2rem,
+    linear-gradient(90deg, rgb(67 113 128 / 13%) 1px, transparent 1px) 0 0 /
+      2rem 2rem;
+  opacity: 0.72;
+}
+
+/* CRM — live project pipeline */
+.motion-crm-rail {
+  position: absolute;
+  top: 50%;
+  right: 34%;
+  left: 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transform: translateY(-50%);
+}
+
+.motion-crm-rail::before {
+  position: absolute;
+  right: 1rem;
+  left: 1rem;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--motion-accent),
+    transparent
+  );
+  content: "";
+  opacity: 0.48;
+}
+
+.motion-crm-rail > span {
+  position: relative;
+  z-index: 2;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 1px solid color-mix(in srgb, var(--motion-accent) 55%, #26434f);
+  border-radius: 0.28rem;
+  background: #071720;
+  box-shadow:
+    0 0 0 0.28rem rgb(5 18 25 / 82%),
+    0 0 1.2rem var(--motion-accent-soft);
+  animation: project-node-pulse 2.8s ease-in-out infinite;
+}
+
+.motion-crm-rail > span:nth-child(2) {
+  animation-delay: -2.2s;
+}
+
+.motion-crm-rail > span:nth-child(3) {
+  animation-delay: -1.7s;
+}
+
+.motion-crm-rail > span:nth-child(4) {
+  animation-delay: -1.1s;
+}
+
+.motion-crm-rail > span:nth-child(5) {
+  animation-delay: -0.5s;
+}
+
+.motion-crm-rail > span i,
+.motion-crm-rail > span b {
+  position: absolute;
+  right: 0.42rem;
+  left: 0.42rem;
+  display: block;
+  height: 0.18rem;
+  background: var(--motion-accent);
+  content: "";
+}
+
+.motion-crm-rail > span i {
+  top: 0.7rem;
+}
+
+.motion-crm-rail > span b {
+  top: 1.18rem;
+  right: 0.75rem;
+  opacity: 0.48;
+}
+
+.motion-packet {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 1rem;
+  width: 0.44rem;
+  height: 0.44rem;
+  border: 1px solid #d7fff9;
+  border-radius: 50%;
+  background: var(--motion-accent);
+  box-shadow: 0 0 1rem var(--motion-accent);
+  transform: translate(-50%, -50%);
+  animation: project-packet-flow 4.2s linear infinite;
+}
+
+.motion-packet-b {
+  animation-delay: -2.1s;
+}
+
+.motion-crm-bars {
+  position: absolute;
+  right: 5%;
+  bottom: 1.15rem;
+  width: 22%;
+  height: 5.4rem;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.26rem;
+  border-bottom: 1px solid rgb(115 157 170 / 36%);
+}
+
+.motion-crm-bars i {
+  width: 100%;
+  height: var(--motion-value);
+  background: linear-gradient(180deg, var(--motion-accent), transparent);
+  transform-origin: bottom;
+  animation: project-bar-breathe 3.2s ease-in-out infinite alternate;
+}
+
+.motion-crm-bars i:nth-child(2n) {
+  animation-delay: -1.4s;
+}
+
+/* Report automation — ordered source-to-deliverable assembly */
+.motion-report-feeder,
+.motion-report-stack {
+  position: absolute;
+  top: 50%;
+  width: 4.8rem;
+  height: 5.5rem;
+  transform: translateY(-50%);
+}
+
+.motion-report-feeder {
+  left: 8%;
+}
+
+.motion-report-stack {
+  right: 8%;
+}
+
+.motion-report-feeder i,
+.motion-report-stack i {
+  position: absolute;
+  width: 3.2rem;
+  height: 4.1rem;
+  border: 1px solid color-mix(in srgb, var(--motion-accent) 55%, #294754);
+  border-radius: 0.18rem;
+  background:
+    linear-gradient(var(--motion-accent-soft) 0.16rem, transparent 0.16rem)
+      0.55rem 0.8rem / 1.85rem 0.55rem repeat-y,
+    #071821;
+  box-shadow: 0 0 1.1rem rgb(0 0 0 / 30%);
+}
+
+.motion-report-feeder i:nth-child(1) {
+  top: 0.7rem;
+  left: 0;
+  transform: rotate(-10deg);
+}
+
+.motion-report-feeder i:nth-child(2) {
+  top: 0.35rem;
+  left: 0.75rem;
+  transform: rotate(2deg);
+}
+
+.motion-report-feeder i:nth-child(3) {
+  top: 0;
+  left: 1.45rem;
+  transform: rotate(10deg);
+}
+
+.motion-report-stack i:nth-child(1) {
+  top: 0.8rem;
+  left: 0;
+}
+
+.motion-report-stack i:nth-child(2) {
+  top: 0.4rem;
+  left: 0.58rem;
+}
+
+.motion-report-stack i:nth-child(3) {
+  top: 0;
+  left: 1.15rem;
+  border-color: var(--motion-accent);
+  box-shadow: 0 0 1.4rem var(--motion-accent-soft);
+}
+
+.motion-report-channel {
+  position: absolute;
+  top: 50%;
+  right: 17%;
+  left: 17%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--motion-accent),
+    transparent
+  );
+}
+
+.motion-report-channel i {
+  position: absolute;
+  top: -0.22rem;
+  left: 0;
+  width: 0.46rem;
+  height: 0.46rem;
+  border: 1px solid #e6fffb;
+  background: var(--motion-accent);
+  box-shadow: 0 0 0.9rem var(--motion-accent);
+  animation: portal-packet-flow 3.5s linear infinite;
+}
+
+.motion-report-channel i:nth-child(2) {
+  animation-delay: -1.15s;
+}
+
+.motion-report-channel i:nth-child(3) {
+  animation-delay: -2.3s;
+}
+
+.motion-report-engine {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  width: 4.7rem;
+  height: 4.7rem;
+  border: 1px solid var(--motion-accent);
+  border-radius: 50%;
+  background: #071820;
+  box-shadow:
+    inset 0 0 1.7rem var(--motion-accent-soft),
+    0 0 1.7rem var(--motion-accent-soft);
+  transform: translate(-50%, -50%);
+}
+
+.motion-report-engine i {
+  position: absolute;
+  inset: 0.45rem;
+  border: 0.18rem dashed var(--motion-accent);
+  border-radius: 50%;
+  animation: portal-vault-spin 7s linear infinite;
+}
+
+.motion-report-engine b {
+  position: absolute;
+  inset: 1.45rem;
+  border-radius: 0.35rem;
+  background: var(--motion-accent);
+  box-shadow: 0 0 1rem var(--motion-accent);
+  animation: project-node-pulse 2.3s ease-in-out infinite;
+}
+
+/* Secure client portal — encrypted document transfer */
+.motion-portal-document,
+.motion-portal-vault {
+  position: absolute;
+  top: 50%;
+  width: 4rem;
+  height: 5rem;
+  border: 1px solid color-mix(in srgb, var(--motion-accent) 62%, #26434f);
+  background: linear-gradient(145deg, #0b222c, #06131a);
+  box-shadow: 0 0 1.8rem var(--motion-accent-soft);
+  transform: translateY(-50%);
+}
+
+.motion-portal-document {
+  left: 8%;
+  border-radius: 0.2rem 0.7rem 0.2rem 0.2rem;
+}
+
+.motion-portal-document::after {
+  position: absolute;
+  top: -1px;
+  right: -1px;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-bottom: 1px solid var(--motion-accent);
+  border-left: 1px solid var(--motion-accent);
+  background: #06131a;
+  content: "";
+}
+
+.motion-portal-document i {
+  display: block;
+  width: 2.35rem;
+  height: 0.18rem;
+  margin: 0.72rem 0 0 0.7rem;
+  background: var(--motion-accent);
+  opacity: 0.62;
+}
+
+.motion-portal-document i:nth-child(2) {
+  width: 1.7rem;
+}
+
+.motion-portal-document i:nth-child(3) {
+  width: 2.6rem;
+  opacity: 0.28;
+}
+
+.motion-portal-channel {
+  position: absolute;
+  top: 50%;
+  right: 17%;
+  left: 17%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--motion-accent),
+    transparent
+  );
+}
+
+.motion-portal-channel i {
+  position: absolute;
+  top: -0.24rem;
+  left: 0;
+  width: 0.48rem;
+  height: 0.48rem;
+  border: 1px solid #dffffa;
+  background: var(--motion-accent);
+  box-shadow: 0 0 1rem var(--motion-accent);
+  transform: rotate(45deg);
+  animation: portal-packet-flow 3.8s linear infinite;
+}
+
+.motion-portal-channel i:nth-child(2) {
+  animation-delay: -1.25s;
+}
+
+.motion-portal-channel i:nth-child(3) {
+  animation-delay: -2.5s;
+}
+
+.motion-portal-shield {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 50%;
+  width: 4.2rem;
+  height: 4.8rem;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--motion-accent) 68%, white),
+    color-mix(in srgb, var(--motion-accent) 38%, #06202a)
+  );
+  clip-path: polygon(50% 0, 92% 17%, 83% 72%, 50% 100%, 17% 72%, 8% 17%);
+  filter: drop-shadow(0 0 1.1rem var(--motion-accent-soft));
+  transform: translate(-50%, -50%);
+  animation: portal-shield-breathe 2.8s ease-in-out infinite;
+}
+
+.motion-portal-shield::before {
+  position: absolute;
+  inset: 0.28rem;
+  background: #071922;
+  clip-path: inherit;
+  content: "";
+}
+
+.motion-portal-shield i {
+  position: absolute;
+  z-index: 2;
+  top: 1.5rem;
+  left: 1.55rem;
+  width: 1.1rem;
+  height: 1.25rem;
+  border: 0.18rem solid var(--motion-accent);
+  border-radius: 0.18rem;
+}
+
+.motion-portal-shield i::before {
+  position: absolute;
+  top: -0.9rem;
+  left: 0.08rem;
+  width: 0.58rem;
+  height: 0.7rem;
+  border: 0.18rem solid var(--motion-accent);
+  border-bottom: 0;
+  border-radius: 1rem 1rem 0 0;
+  content: "";
+}
+
+.motion-portal-vault {
+  right: 8%;
+  border-radius: 0.45rem;
+}
+
+.motion-portal-vault i {
+  position: absolute;
+  inset: 0.62rem;
+  border: 1px solid rgb(143 195 207 / 32%);
+  border-radius: 50%;
+  animation: portal-vault-spin 7s linear infinite;
+}
+
+.motion-portal-vault i::before,
+.motion-portal-vault i::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: var(--motion-accent);
+  content: "";
+  transform: translate(-50%, -50%);
+}
+
+.motion-portal-vault i::before {
+  width: 1.7rem;
+  height: 1px;
+}
+
+.motion-portal-vault i::after {
+  width: 1px;
+  height: 1.7rem;
+}
+
+.motion-portal-vault b {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--motion-accent);
+  box-shadow: 0 0 0.8rem var(--motion-accent);
+  transform: translate(-50%, -50%);
+}
+
+/* MarioAI — sources transformed into structured actions */
+.motion-mario-sources,
+.motion-mario-output {
+  position: absolute;
+  top: 1.4rem;
+  bottom: 1.4rem;
+  width: 25%;
+  display: grid;
+  align-content: center;
+  gap: 0.52rem;
+}
+
+.motion-mario-sources {
+  left: 6%;
+}
+
+.motion-mario-output {
+  right: 6%;
+}
+
+.motion-mario-sources i,
+.motion-mario-output i {
+  position: relative;
+  display: block;
+  height: 0.62rem;
+  border: 1px solid rgb(93 148 162 / 36%);
+  background: linear-gradient(
+    90deg,
+    var(--motion-accent-soft),
+    rgb(8 28 36 / 70%)
+  );
+  overflow: hidden;
+}
+
+.motion-mario-sources i::after,
+.motion-mario-output i::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--motion-accent),
+    transparent
+  );
+  content: "";
+  transform: translateX(-110%);
+  animation: mario-row-scan 3.4s ease-in-out infinite;
+}
+
+.motion-mario-sources i:nth-child(2)::after,
+.motion-mario-output i:nth-child(2)::after {
+  animation-delay: -1.2s;
+}
+
+.motion-mario-sources i:nth-child(3)::after,
+.motion-mario-output i:nth-child(3)::after {
+  animation-delay: -2.2s;
+}
+
+.motion-mario-core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4.4rem;
+  height: 4.4rem;
+  border: 1px solid var(--motion-accent);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 1.8rem var(--motion-accent-soft),
+    0 0 2rem var(--motion-accent-soft);
+  transform: translate(-50%, -50%);
+  animation: mario-core-breathe 3s ease-in-out infinite;
+}
+
+.motion-mario-core i,
+.motion-mario-core b,
+.motion-mario-core em {
+  position: absolute;
+  border: 1px solid color-mix(in srgb, var(--motion-accent) 70%, transparent);
+  border-radius: 50%;
+}
+
+.motion-mario-core i {
+  inset: 0.42rem;
+  border-style: dashed;
+  animation: portal-vault-spin 8s linear infinite;
+}
+
+.motion-mario-core b {
+  inset: 1.15rem;
+  background: var(--motion-accent);
+  box-shadow: 0 0 1.1rem var(--motion-accent);
+  animation: project-node-pulse 2s ease-in-out infinite;
+}
+
+.motion-mario-core em {
+  inset: -0.8rem;
+  border-color: rgb(116 161 176 / 24%);
+  animation: portal-vault-spin 13s linear infinite reverse;
+}
+
+.motion-mario-signal {
+  position: absolute;
+  z-index: 3;
+  top: 50%;
+  left: 28%;
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: var(--motion-accent);
+  box-shadow: 0 0 1rem var(--motion-accent);
+  animation: mario-signal-in 2.8s linear infinite;
+}
+
+.motion-mario-signal-b {
+  left: 51%;
+  animation-name: mario-signal-out;
+  animation-delay: -1.4s;
+}
+
+/* Remote Assist — secure telemetry tunnel */
+.motion-assist-devices {
+  position: absolute;
+  top: 1.25rem;
+  bottom: 1.25rem;
+  left: 7%;
+  width: 24%;
+}
+
+.motion-assist-devices i {
+  position: absolute;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid var(--motion-accent);
+  border-radius: 0.2rem;
+  background: #09202a;
+  box-shadow: 0 0 0.9rem var(--motion-accent-soft);
+  animation: project-node-pulse 2.6s ease-in-out infinite;
+}
+
+.motion-assist-devices i:nth-child(1) {
+  top: 8%;
+  left: 10%;
+}
+
+.motion-assist-devices i:nth-child(2) {
+  top: 34%;
+  left: 62%;
+  animation-delay: -0.5s;
+}
+
+.motion-assist-devices i:nth-child(3) {
+  bottom: 8%;
+  left: 22%;
+  animation-delay: -1s;
+}
+
+.motion-assist-devices i:nth-child(4) {
+  right: 2%;
+  bottom: 16%;
+  animation-delay: -1.5s;
+}
+
+.motion-assist-devices i:nth-child(5) {
+  top: 3%;
+  right: 8%;
+  animation-delay: -2s;
+}
+
+.motion-assist-devices::before {
+  position: absolute;
+  inset: 0.5rem;
+  background:
+    linear-gradient(
+      25deg,
+      transparent 49%,
+      rgb(75 212 196 / 28%) 50%,
+      transparent 51%
+    ),
+    linear-gradient(
+      -34deg,
+      transparent 49%,
+      rgb(75 212 196 / 22%) 50%,
+      transparent 51%
+    );
+  content: "";
+}
+
+.motion-assist-tunnel {
+  position: absolute;
+  top: 50%;
+  left: 47%;
+  width: 26%;
+  height: 2.35rem;
+  overflow: hidden;
+  border: 1px solid rgb(91 153 168 / 32%);
+  border-radius: 999px;
+  background: rgb(5 19 26 / 86%);
+  transform: translate(-50%, -50%);
+}
+
+.motion-assist-tunnel::before,
+.motion-assist-tunnel::after {
+  position: absolute;
+  top: 50%;
+  width: 70%;
+  height: 160%;
+  border: 1px solid var(--motion-accent);
+  border-radius: 50%;
+  content: "";
+  opacity: 0.25;
+  transform: translateY(-50%);
+}
+
+.motion-assist-tunnel::before {
+  left: -56%;
+}
+
+.motion-assist-tunnel::after {
+  right: -56%;
+}
+
+.motion-assist-tunnel i {
+  position: absolute;
+  top: 50%;
+  left: -0.7rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--motion-accent);
+  box-shadow: 0 0 1rem var(--motion-accent);
+  transform: translateY(-50%);
+  animation: assist-tunnel-flow 3.2s linear infinite;
+}
+
+.motion-assist-tunnel i:nth-child(2) {
+  animation-delay: -1.05s;
+}
+
+.motion-assist-tunnel i:nth-child(3) {
+  animation-delay: -2.1s;
+}
+
+.motion-assist-screen {
+  position: absolute;
+  top: 50%;
+  right: 7%;
+  width: 22%;
+  height: 5.15rem;
+  border: 1px solid color-mix(in srgb, var(--motion-accent) 65%, #26434f);
+  border-radius: 0.28rem;
+  background:
+    linear-gradient(90deg, rgb(66 116 130 / 13%) 1px, transparent 1px) 0 0 /
+      1.1rem 1.1rem,
+    #06131a;
+  box-shadow: 0 0 1.6rem var(--motion-accent-soft);
+  transform: translateY(-50%);
+}
+
+.motion-assist-screen::after {
+  position: absolute;
+  right: 22%;
+  bottom: -0.42rem;
+  left: 22%;
+  height: 0.42rem;
+  border-top: 1px solid #35515d;
+  background: #071821;
+  content: "";
+}
+
+.motion-assist-screen i,
+.motion-assist-screen b {
+  position: absolute;
+  left: 0.7rem;
+  height: 0.22rem;
+  background: var(--motion-accent);
+}
+
+.motion-assist-screen i {
+  top: 0.8rem;
+  width: 58%;
+}
+
+.motion-assist-screen b {
+  top: 1.35rem;
+  width: 36%;
+  opacity: 0.38;
+}
+
+.motion-assist-screen em {
+  position: absolute;
+  top: 52%;
+  left: 45%;
+  width: 0;
+  height: 0;
+  border-top: 0.7rem solid var(--motion-accent);
+  border-right: 0.42rem solid transparent;
+  border-left: 0.42rem solid transparent;
+  filter: drop-shadow(0 0 0.5rem var(--motion-accent));
+  transform: rotate(-35deg);
+  animation: assist-cursor 4.6s ease-in-out infinite alternate;
+}
+
+/* Pipe360 — animated radial scan and waveform */
+.motion-pipe-shell {
+  position: absolute;
+  top: 50%;
+  left: 19%;
+  width: 5.8rem;
+  height: 5.8rem;
+  overflow: hidden;
+  border: 1px solid var(--motion-accent);
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle,
+      transparent 42%,
+      rgb(75 212 196 / 10%) 43% 46%,
+      transparent 47%
+    ),
+    #06151c;
+  box-shadow:
+    inset 0 0 1.8rem var(--motion-accent-soft),
+    0 0 1.5rem var(--motion-accent-soft);
+  transform: translate(-50%, -50%) scaleY(0.88);
+}
+
+.motion-pipe-shell::before,
+.motion-pipe-shell::after {
+  position: absolute;
+  background: rgb(105 157 170 / 24%);
+  content: "";
+}
+
+.motion-pipe-shell::before {
+  top: 50%;
+  right: 0;
+  left: 0;
+  height: 1px;
+}
+
+.motion-pipe-shell::after {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+}
+
+.motion-pipe-shell i {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 47%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--motion-accent), transparent);
+  box-shadow: 0 0 0.7rem var(--motion-accent);
+  transform-origin: left center;
+  animation: pipe-radar-spin 3s linear infinite;
+}
+
+.motion-pipe-shell b {
+  position: absolute;
+  top: 18%;
+  right: 12%;
+  width: 0.58rem;
+  height: 0.58rem;
+  border-radius: 50%;
+  background: #f0b458;
+  box-shadow: 0 0 1rem #f0b458;
+  animation: project-node-pulse 1.8s ease-in-out infinite;
+}
+
+.motion-pipe-shell em {
+  position: absolute;
+  inset: 0.56rem;
+  border: 1px dashed rgb(164 226 220 / 38%);
+  border-radius: 48% 52% 46% 54%;
+}
+
+.motion-pipe-wave {
+  position: absolute;
+  top: 1.3rem;
+  right: 5%;
+  bottom: 1.3rem;
+  left: 35%;
+  display: flex;
+  align-items: center;
+  gap: 0.28rem;
+  border-bottom: 1px solid rgb(97 149 161 / 28%);
+}
+
+.motion-pipe-wave i {
+  width: 100%;
+  height: var(--motion-value);
+  border-radius: 0.14rem;
+  background: linear-gradient(
+    180deg,
+    var(--motion-accent),
+    rgb(75 212 196 / 6%)
+  );
+  opacity: 0.72;
+  transform-origin: center;
+  animation: pipe-wave-breathe 2.8s ease-in-out infinite alternate;
+}
+
+.motion-pipe-wave i:nth-child(3n) {
+  animation-delay: -1.2s;
+}
+
+.motion-pipe-wave b {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  background: #f0b458;
+  box-shadow: 0 0 0.8rem #f0b458;
+  animation: pipe-wave-cursor 4.2s ease-in-out infinite;
+}
+
+/* Boréal — operational route and asset telemetry */
+.motion-boreal-route {
+  position: absolute;
+  top: 17%;
+  right: 34%;
+  bottom: 17%;
+  left: 5%;
+  border: 1px solid rgb(84 135 149 / 18%);
+  border-radius: 52% 48% 45% 55%;
+  transform: rotate(-4deg);
+}
+
+.motion-boreal-route::before {
+  position: absolute;
+  top: 52%;
+  right: -3%;
+  left: -2%;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--motion-accent),
+    rgb(240 180 88 / 85%),
+    transparent
+  );
+  content: "";
+  clip-path: polygon(
+    0 48%,
+    18% 20%,
+    37% 70%,
+    55% 36%,
+    74% 60%,
+    100% 26%,
+    100% 74%,
+    75% 100%,
+    55% 68%,
+    37% 100%,
+    18% 52%,
+    0 80%
+  );
+}
+
+.motion-boreal-route i {
+  position: absolute;
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 1px solid var(--motion-accent);
+  border-radius: 50%;
+  background: #071a22;
+  box-shadow: 0 0 0.8rem var(--motion-accent-soft);
+  animation: project-node-pulse 2.5s ease-in-out infinite;
+}
+
+.motion-boreal-route i:nth-child(1) {
+  top: 42%;
+  left: 8%;
+}
+
+.motion-boreal-route i:nth-child(2) {
+  top: 58%;
+  left: 38%;
+  animation-delay: -0.7s;
+}
+
+.motion-boreal-route i:nth-child(3) {
+  top: 34%;
+  left: 67%;
+  animation-delay: -1.4s;
+}
+
+.motion-boreal-route i:nth-child(4) {
+  top: 47%;
+  right: 4%;
+  animation-delay: -2s;
+}
+
+.motion-boreal-route b {
+  position: absolute;
+  z-index: 3;
+  top: calc(52% - 0.35rem);
+  left: 4%;
+  width: 1rem;
+  height: 0.68rem;
+  border: 1px solid #effffb;
+  border-radius: 0.16rem;
+  background: var(--motion-accent);
+  box-shadow: 0 0 1rem var(--motion-accent);
+  animation: boreal-vehicle 5.8s ease-in-out infinite;
+}
+
+.motion-boreal-assets {
+  position: absolute;
+  top: 1.15rem;
+  right: 5%;
+  bottom: 1.15rem;
+  width: 24%;
+  display: grid;
+  gap: 0.42rem;
+}
+
+.motion-boreal-assets i {
+  position: relative;
+  display: block;
+  border: 1px solid rgb(80 133 146 / 34%);
+  background: rgb(6 24 31 / 80%);
+  overflow: hidden;
+}
+
+.motion-boreal-assets i::before {
+  position: absolute;
+  inset: 0.35rem auto 0.35rem 0.4rem;
+  width: 0.36rem;
+  border-radius: 1rem;
+  background: var(--motion-accent);
+  box-shadow: 0 0 0.8rem var(--motion-accent);
+  content: "";
+}
+
+.motion-boreal-assets i::after {
+  position: absolute;
+  top: 50%;
+  right: 0.55rem;
+  left: 1.15rem;
+  height: 0.22rem;
+  background: linear-gradient(90deg, var(--motion-accent), transparent);
+  content: "";
+  transform: translateY(-50%);
+  animation: boreal-asset-load 3s ease-in-out infinite;
+}
+
+.motion-boreal-scan {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  background: linear-gradient(transparent, var(--motion-accent), transparent);
+  box-shadow: 0 0 1rem var(--motion-accent);
+  animation: boreal-scan 6.5s linear infinite;
+}
+
+.demo-report-workspace {
+  align-items: stretch;
+}
+
+.demo-report-file-list {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.demo-report-file-list button {
+  display: grid;
+  grid-template-columns: 3.2rem minmax(0, 1fr) 2rem;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.72rem;
+  border: 1px solid #29444f;
+  background: #081821;
+  color: #9db0b7;
+  text-align: left;
+  opacity: 0.62;
+}
+
+.demo-report-file-list button.is-enabled {
+  border-color: rgb(75 212 196 / 42%);
+  background: rgb(75 212 196 / 7%);
+  opacity: 1;
+}
+
+.demo-report-file-list button > b {
+  padding: 0.45rem 0.3rem;
+  border: 1px solid #35535e;
+  color: var(--demo-cyan);
+  font:
+    750 0.58rem/1 var(--font-geist-mono),
+    monospace;
+  text-align: center;
+}
+
+.demo-report-file-list button > span {
+  display: grid;
+  gap: 0.28rem;
+}
+
+.demo-report-file-list button strong {
+  color: #e8f0f1;
+  font-size: 0.78rem;
+}
+
+.demo-report-file-list button small {
+  color: #66808a;
+  font:
+    600 0.56rem/1.3 var(--font-geist-mono),
+    monospace;
+}
+
+.demo-report-file-list button em {
+  color: var(--demo-cyan);
+  font-style: normal;
+  text-align: center;
+}
+
+.demo-report-rules ol {
+  display: grid;
+  gap: 0.55rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.demo-report-rules li {
+  padding: 0.68rem;
+  border-left: 2px solid rgb(75 212 196 / 50%);
+  background: rgb(75 212 196 / 5%);
+  color: #9db0b7;
+  font-size: 0.7rem;
+}
+
+.demo-report-builder {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+}
+
+.demo-report-pipeline {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.demo-report-pipeline > div {
+  position: relative;
+  min-height: 5.6rem;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.4rem;
+  border: 1px solid #29444f;
+  background: #071821;
+  color: #728892;
+  text-align: center;
+}
+
+.demo-report-pipeline > div:not(:last-child)::after {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  right: -0.8rem;
+  width: 1rem;
+  height: 1px;
+  background: #35535e;
+  content: "";
+}
+
+.demo-report-pipeline > div.is-complete {
+  border-color: rgb(75 212 196 / 55%);
+  color: #d8f6f1;
+  box-shadow: inset 0 0 1.3rem rgb(75 212 196 / 7%);
+}
+
+.demo-report-pipeline b {
+  color: var(--demo-cyan);
+  font:
+    750 0.58rem/1 var(--font-geist-mono),
+    monospace;
+}
+
+.demo-report-pipeline span {
+  font-size: 0.65rem;
+}
+
+.demo-report-pipeline i {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: #2b444e;
+}
+
+.demo-report-pipeline > div.is-complete i {
+  background: var(--demo-cyan);
+  box-shadow: 0 0 0.8rem var(--demo-cyan);
+}
+
+.demo-report-progress {
+  height: 0.34rem;
+  overflow: hidden;
+  background: #142a34;
+}
+
+.demo-report-progress i {
+  display: block;
+  width: var(--value);
+  height: 100%;
+  background: linear-gradient(90deg, #2a8b84, var(--demo-cyan));
+  box-shadow: 0 0 1rem var(--demo-cyan);
+  transition: width 160ms linear;
+}
+
+.demo-report-deliverable {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.demo-report-pages {
+  position: relative;
+  width: 8rem;
+  height: 9rem;
+  margin: 1rem auto;
+}
+
+.demo-report-pages i {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 5.8rem;
+  height: 7.8rem;
+  border: 1px solid #31505b;
+  background:
+    linear-gradient(rgb(75 212 196 / 22%) 0.18rem, transparent 0.18rem) 0.8rem
+      1.2rem / 3.7rem 0.72rem repeat-y,
+    #081922;
+  transform: translateX(-50%);
+}
+
+.demo-report-pages i:nth-child(1) {
+  transform: translateX(-68%) rotate(-6deg);
+  opacity: 0.45;
+}
+
+.demo-report-pages i:nth-child(2) {
+  transform: translateX(-32%) rotate(6deg);
+  opacity: 0.65;
+}
+
+.demo-report-pages i:nth-child(3) {
+  border-color: var(--demo-cyan);
+  box-shadow: 0 0 1.6rem rgb(75 212 196 / 14%);
+}
+
+.demo-report-pages b {
+  position: absolute;
+  z-index: 3;
+  top: 1.15rem;
+  left: 50%;
+  padding: 0.35rem 0.5rem;
+  background: var(--demo-cyan);
+  color: #041218;
+  font:
+    800 0.6rem/1 var(--font-geist-mono),
+    monospace;
+  transform: translateX(-50%);
+}
+
+.demo-report-deliverable h3 {
+  margin: 0;
+  color: #f3f6f5;
+  font-size: 1rem;
+}
+
+.demo-report-deliverable p {
+  color: #77909a;
+  font-size: 0.68rem;
+}
+
+@keyframes project-motion-sweep {
+  to {
+    transform: translateX(620%);
+  }
+}
+
+@keyframes project-node-pulse {
+  50% {
+    border-color: #e0fff9;
+    box-shadow:
+      0 0 0 0.28rem rgb(5 18 25 / 72%),
+      0 0 1.5rem var(--motion-accent);
+  }
+}
+
+@keyframes project-packet-flow {
+  from {
+    left: 1rem;
+  }
+
+  to {
+    left: calc(100% - 1rem);
+  }
+}
+
+@keyframes project-bar-breathe {
+  50% {
+    transform: scaleY(0.62);
+    opacity: 0.42;
+  }
+}
+
+@keyframes portal-packet-flow {
+  from {
+    left: 0;
+  }
+
+  to {
+    left: calc(100% - 0.5rem);
+  }
+}
+
+@keyframes portal-shield-breathe {
+  50% {
+    filter: drop-shadow(0 0 1.8rem var(--motion-accent));
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+}
+
+@keyframes portal-vault-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes mario-row-scan {
+  45%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes mario-core-breathe {
+  50% {
+    box-shadow:
+      inset 0 0 2.4rem var(--motion-accent-soft),
+      0 0 2.8rem var(--motion-accent-soft);
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+}
+
+@keyframes mario-signal-in {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(8.5rem);
+  }
+}
+
+@keyframes mario-signal-out {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(8.5rem);
+  }
+}
+
+@keyframes assist-tunnel-flow {
+  from {
+    left: -0.7rem;
+  }
+
+  to {
+    left: calc(100% + 0.2rem);
+  }
+}
+
+@keyframes assist-cursor {
+  from {
+    transform: translate(-1.1rem, -0.8rem) rotate(-35deg);
+  }
+
+  to {
+    transform: translate(2rem, 1.25rem) rotate(-35deg);
+  }
+}
+
+@keyframes pipe-radar-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pipe-wave-breathe {
+  50% {
+    transform: scaleY(0.72);
+    opacity: 0.46;
+  }
+}
+
+@keyframes pipe-wave-cursor {
+  0%,
+  100% {
+    left: 0;
+  }
+
+  50% {
+    left: 100%;
+  }
+}
+
+@keyframes boreal-vehicle {
+  0%,
+  100% {
+    left: 4%;
+    transform: rotate(10deg);
+  }
+
+  38% {
+    left: 39%;
+    transform: translateY(0.7rem) rotate(-8deg);
+  }
+
+  72% {
+    left: 73%;
+    transform: translateY(-0.5rem) rotate(6deg);
+  }
+}
+
+@keyframes boreal-asset-load {
+  50% {
+    right: 18%;
+    opacity: 0.45;
+  }
+}
+
+@keyframes boreal-scan {
+  to {
+    left: 100%;
+  }
+}
+
+@media (max-width: 680px) {
+  .project-motion {
+    height: 7.25rem;
+  }
+
+  .motion-report-feeder {
+    left: 3%;
+  }
+
+  .motion-report-stack {
+    right: 3%;
+  }
+
+  .motion-report-feeder,
+  .motion-report-stack {
+    transform: translateY(-50%) scale(0.82);
+  }
+
+  .motion-crm-rail {
+    right: 42%;
+  }
+
+  .motion-crm-bars {
+    width: 28%;
+  }
+
+  .motion-portal-document {
+    left: 4%;
+  }
+
+  .motion-portal-vault {
+    right: 4%;
+  }
+
+  .motion-mario-sources {
+    left: 3%;
+    width: 23%;
+  }
+
+  .motion-mario-output {
+    right: 3%;
+    width: 23%;
+  }
+
+  .motion-assist-devices {
+    left: 3%;
+  }
+
+  .motion-assist-screen {
+    right: 3%;
+    width: 27%;
+  }
+
+  .motion-pipe-shell {
+    left: 22%;
+    width: 4.9rem;
+    height: 4.9rem;
+  }
+
+  .motion-pipe-wave {
+    left: 41%;
+  }
+
+  .motion-boreal-route {
+    right: 42%;
+  }
+
+  .motion-boreal-assets {
+    right: 3%;
+    width: 30%;
+  }
+
+  .demo-report-pipeline {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .demo-report-pipeline > div::after {
+    display: none;
+  }
+
+  .demo-report-file-list button {
+    grid-template-columns: 2.8rem minmax(0, 1fr) 1.4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-motion::before,
+  .project-motion *,
+  .project-motion *::before,
+  .project-motion *::after {
+    animation: none !important;
+  }
+}
+
 /* NeuroLens anatomical WebGL brain */
 .demo-brain-3d {
   position: relative;

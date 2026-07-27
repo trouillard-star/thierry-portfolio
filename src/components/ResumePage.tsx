@@ -1,6 +1,8 @@
 import { education } from "@/src/data/education";
 import { experience } from "@/src/data/experience";
+import { methodSteps } from "@/src/data/highlights";
 import { profile, type Locale } from "@/src/data/profile";
+import { projects } from "@/src/data/projects";
 import { skillGroups } from "@/src/data/skills";
 import { PrintButton } from "./PrintButton";
 import { SiteShell } from "./SiteShell";
@@ -18,14 +20,13 @@ export function ResumePage({ locale }: { locale: Locale }) {
           experience: "Expérience appliquée",
           education: "Parcours et formation",
           print: "Imprimer ou enregistrer en PDF",
-          availability: "Disponible pour des conversations pertinentes",
           overview: "À propos",
           proof: "Voir les preuves, architectures et études de cas",
           proofNote:
             "Chaque compétence est reliée à un contexte, une démarche et un niveau de maturité explicite.",
           selectedPractice: "Champs de pratique",
           method: "Méthode de travail",
-          appliedWork: "responsabilités techniques",
+          appliedWork: "projets documentés",
           practiceAreas: "domaines de compétence",
           bilingual: "portfolio bilingue",
         }
@@ -36,27 +37,23 @@ export function ResumePage({ locale }: { locale: Locale }) {
           experience: "Applied experience",
           education: "Background and education",
           print: "Print or save as PDF",
-          availability: "Available for relevant conversations",
           overview: "About",
           proof: "View evidence, architectures, and case studies",
           proofNote:
             "Every capability is connected to context, an approach, and an explicit maturity level.",
           selectedPractice: "Practice areas",
           method: "Working method",
-          appliedWork: "technical responsibilities",
+          appliedWork: "documented projects",
           practiceAreas: "capability areas",
           bilingual: "bilingual portfolio",
         };
 
   const highlights = [
-    { value: "06", label: headings.appliedWork },
-    { value: "10", label: headings.practiceAreas },
+    { value: String(projects.length), label: headings.appliedWork },
+    { value: String(skillGroups.length), label: headings.practiceAreas },
     { value: "FR/EN", label: headings.bilingual },
   ];
-  const method =
-    locale === "fr"
-      ? ["Observer", "Modéliser", "Construire", "Vérifier"]
-      : ["Observe", "Model", "Build", "Verify"];
+  const method = methodSteps.map((step) => step.title[locale]);
 
   return (
     <SiteShell locale={locale} alternatePath={alternate}>
@@ -93,7 +90,6 @@ export function ResumePage({ locale }: { locale: Locale }) {
             <address className="resume-contact-card">
               <span>LOCALISATION / LOCATION</span>
               <strong>{profile.location[locale]}</strong>
-              <span>{headings.availability}</span>
               <a href={profile.contact.github} target="_blank" rel="noreferrer">
                 github.com/trouillard-star ↗
               </a>

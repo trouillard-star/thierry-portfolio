@@ -25,22 +25,18 @@ export const profile = {
     ],
   },
   introduction: {
-    fr: "Je transforme des problèmes opérationnels concrets en logiciels, automatisations et systèmes fiables — avec une attention particulière à la sécurité, à la maintenabilité et aux personnes qui les utilisent.",
-    en: "I turn practical operational problems into reliable software, automations, and systems—with close attention to security, maintainability, and the people who use them.",
+    fr: "Je construis les outils internes d’une firme d’inspection d’infrastructures municipales : le CRM qui relie les projets à la facturation, les chaînes qui transforment l’imagerie terrain en livrables, et le soutien TI qui garde tout ça debout.",
+    en: "I build the internal tools of a municipal infrastructure inspection firm: the CRM connecting projects to billing, the pipelines that turn field imagery into deliverables, and the IT support that keeps it all running.",
   },
   about: {
     fr: [
-      "Mon parcours technique est pratique et non traditionnel. J’ai entrepris des études collégiales en informatique, puis j’ai surtout développé mes compétences en appliquant la technologie à des besoins opérationnels réels.",
-      "Cette expérience m’amène à passer naturellement du développement au soutien, des systèmes aux opérations, et de l’analyse à la documentation. J’apprends en continu, je cherche la cause avant le correctif et je privilégie les solutions qui restent compréhensibles après leur livraison.",
+      "Mon parcours technique est pratique et non traditionnel. J’ai entrepris des études collégiales en informatique, puis j’ai construit l’essentiel de mes compétences en livrant des systèmes qui devaient fonctionner dès le lundi matin, pour des collègues qui m’en donnaient le retour directement.",
+      "Cette réalité m’oblige à passer sans transition du développement au soutien, des systèmes aux opérations, et de l’analyse à la documentation. Je cherche la cause avant le correctif, je documente ce que je livre, et je privilégie les solutions qui restent compréhensibles par quelqu’un d’autre après mon passage.",
     ],
     en: [
-      "My technical path is practical and non-traditional. I began college studies in computer science, then built most of my skills by applying technology to real operational needs.",
-      "That experience lets me move naturally between development and support, systems and operations, and analysis and documentation. I keep learning, look for causes before fixes, and favour solutions that remain understandable after delivery.",
+      "My technical path is practical and non-traditional. I began college studies in computer science, then built most of my skills by delivering systems that had to work by Monday morning, for colleagues who gave me feedback directly.",
+      "That reality means moving without transition between development and support, systems and operations, analysis and documentation. I look for causes before fixes, document what I ship, and favour solutions that stay understandable to someone else after I move on.",
     ],
-  },
-  availability: {
-    fr: "Ouvert aux conversations professionnelles pertinentes",
-    en: "Open to relevant professional conversations",
   },
   contact: {
     email: null,
@@ -71,10 +67,24 @@ export const labels = {
     viewProjects: "Voir les projets",
     viewResume: "Consulter le CV",
     contactMe: "Me contacter",
+    impactEyebrow: "En chiffres",
+    impactTitle: "Ce que ça a changé",
     featuredWork: "Études de cas",
     featuredWorkTitle: "Des systèmes pensés pour le terrain",
     featuredWorkIntro:
-      "Six projets anonymisés montrent la démarche, les compromis et le niveau de maturité — sans exposer de données confidentielles.",
+      "Sept projets tirés de mon travail réel, anonymisés quant aux clients mais concrets quant à la démarche, aux compromis et au niveau de maturité de chacun.",
+    quickWinsEyebrow: "Cadence de livraison",
+    quickWinsTitle: "Les petits outils qui font gagner des heures",
+    quickWinsIntro:
+      "À côté des grands systèmes, une partie constante de mon travail consiste à supprimer les tâches répétitives dès qu’elles apparaissent.",
+    labEyebrow: "Laboratoire",
+    labTitle: "Ce que je construis pour apprendre",
+    labIntro:
+      "Un projet personnel, sans lien avec mon travail, où je pousse volontairement la technique plus loin que ce qu’un mandat exigerait.",
+    methodEyebrow: "Méthode",
+    methodTitle: "Comment je travaille",
+    methodIntro:
+      "La même démarche, du petit script au système complet — c’est elle qui rend le résultat vérifiable par quelqu’un d’autre.",
     skillsEyebrow: "Champ de pratique",
     skillsTitle: "Une expertise transversale, démontrée par le travail",
     aboutEyebrow: "Parcours",
@@ -84,7 +94,7 @@ export const labels = {
     contactEyebrow: "Échange",
     contactTitle: "Parlons d’un problème qui mérite une bonne solution",
     contactIntro:
-      "Basé à Sherbrooke et ouvert aux conversations professionnelles pertinentes. Mon travail public et mon point de contact sont réunis sur GitHub.",
+      "Basé à Sherbrooke. Mon travail public et mon point de contact sont réunis sur GitHub.",
     contactAction: "Ouvrir mon profil GitHub",
     repositoryAction: "Voir le code de ce portfolio",
     explore: "Explorer l’étude de cas",
@@ -92,6 +102,7 @@ export const labels = {
     evidence: "Voir les preuves de compétences",
     source: "Consulter le code source public",
     status: "Statut",
+    sector: "Contexte",
     technologies: "Technologies",
     architecture: "Architecture",
     security: "Sécurité",
@@ -128,10 +139,24 @@ export const labels = {
     viewProjects: "View projects",
     viewResume: "Read résumé",
     contactMe: "Contact me",
+    impactEyebrow: "In numbers",
+    impactTitle: "What actually changed",
     featuredWork: "Case studies",
     featuredWorkTitle: "Systems designed for real operations",
     featuredWorkIntro:
-      "Six anonymized projects show the method, trade-offs, and maturity level—without exposing confidential information.",
+      "Seven projects drawn from my real work—anonymized about clients, but concrete about the method, the trade-offs, and each project's maturity.",
+    quickWinsEyebrow: "Delivery cadence",
+    quickWinsTitle: "The small tools that save hours",
+    quickWinsIntro:
+      "Alongside the larger systems, a constant part of my work is removing repetitive tasks as soon as they show up.",
+    labEyebrow: "Laboratory",
+    labTitle: "What I build to learn",
+    labIntro:
+      "A personal project, unrelated to my work, where I deliberately push the technique further than any mandate would require.",
+    methodEyebrow: "Method",
+    methodTitle: "How I work",
+    methodIntro:
+      "The same approach, from a small script to a full system—it is what makes the result verifiable by someone else.",
     skillsEyebrow: "Practice areas",
     skillsTitle: "Cross-functional capability, demonstrated through work",
     aboutEyebrow: "Background",
@@ -141,7 +166,7 @@ export const labels = {
     contactEyebrow: "Conversation",
     contactTitle: "Let’s discuss a problem worth solving well",
     contactIntro:
-      "Based in Sherbrooke and open to relevant professional conversations. My public work and contact point are available on GitHub.",
+      "Based in Sherbrooke. My public work and contact point are available on GitHub.",
     contactAction: "Open my GitHub profile",
     repositoryAction: "View this portfolio’s source",
     explore: "Explore the case study",
@@ -149,6 +174,7 @@ export const labels = {
     evidence: "View competency evidence",
     source: "View the public source code",
     status: "Status",
+    sector: "Context",
     technologies: "Technologies",
     architecture: "Architecture",
     security: "Security",
