@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 const slugs = [
+  "neuro-lens",
   "operations-crm",
   "secure-client-portal",
   "mario-ai",

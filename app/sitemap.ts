@@ -23,7 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [...staticRoutes, ...projectRoutes].map((route) => ({
     url: `${siteUrl}${route}`,
-    lastModified: new Date("2026-07-24"),
+    lastModified: new Date("2026-07-27"),
     changeFrequency: route === "" || route === "/en" ? "monthly" : "yearly",
     priority: route === "" || route === "/en" ? 1 : 0.7,
   }));

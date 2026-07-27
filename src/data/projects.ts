@@ -28,6 +28,114 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "neuro-lens",
+    index: "LAB-01",
+    title: { fr: "NeuroLens", en: "NeuroLens" },
+    status: "research",
+    statusLabel: {
+      fr: "Démonstrateur recherche",
+      en: "Research demonstrator",
+    },
+    tagline: {
+      fr: "Explorer la progression d'Alzheimer et comparer les hypothèses thérapeutiques dans un jumeau cérébral interactif.",
+      en: "Explore Alzheimer's progression and compare treatment hypotheses in an interactive brain twin.",
+    },
+    summary: {
+      fr: "Un laboratoire documentaire et visuel bilingue qui transforme la littérature scientifique en scénarios explorables : cerveau en temps réel, ligne de temps sur dix ans, biomarqueurs, régions cérébrales et traitements approuvés ou expérimentaux.",
+      en: "A bilingual visual research lab that turns scientific literature into explorable scenarios: a real-time brain, ten-year timeline, biomarkers, brain regions, and approved or experimental treatments.",
+    },
+    context: {
+      fr: "La recherche sur Alzheimer évolue rapidement et combine imagerie, biomarqueurs, scores cognitifs, essais cliniques et niveaux de preuve difficiles à relier pour un lecteur non spécialiste.",
+      en: "Alzheimer's research evolves quickly and combines imaging, biomarkers, cognitive scores, clinical trials, and evidence levels that are difficult for non-specialists to connect.",
+    },
+    problem: {
+      fr: "Les sources sont dispersées et une courbe isolée peut facilement être confondue avec une prédiction clinique. Il faut permettre l'exploration sans masquer l'incertitude ni inventer une précision médicale.",
+      en: "Sources are scattered, and an isolated chart can easily be mistaken for a clinical prediction. Exploration must remain possible without hiding uncertainty or inventing medical precision.",
+    },
+    role: {
+      fr: "Conception produit, modélisation de données, expérience interactive, visualisation en temps réel, architecture documentaire, accessibilité et garde-fous médicaux.",
+      en: "Product design, data modelling, interactive experience, real-time visualization, documentation architecture, accessibility, and medical safeguards.",
+    },
+    approach: {
+      fr: "Séparer strictement les faits sourcés des paramètres synthétiques. Chaque traitement indique son statut, son mécanisme, ses limites et sa source. Le cerveau et les trajectoires répondent en temps réel, mais restent explicitement des scénarios éducatifs.",
+      en: "Strictly separate sourced facts from synthetic parameters. Every treatment exposes its status, mechanism, limitations, and source. The brain and trajectories respond in real time while remaining explicitly educational scenarios.",
+    },
+    architecture: {
+      fr: [
+        "Sources scientifiques",
+        "Base de connaissances",
+        "Moteur de scénarios",
+        "Jumeau cérébral interactif",
+      ],
+      en: [
+        "Scientific sources",
+        "Knowledge base",
+        "Scenario engine",
+        "Interactive brain twin",
+      ],
+    },
+    technologies: [
+      "React",
+      "TypeScript",
+      "Canvas 2D",
+      "Data visualization",
+      "Scientific UX",
+      "Accessibility",
+    ],
+    security: [
+      {
+        fr: "Aucune donnée de patient : tous les profils, indices et trajectoires sont synthétiques.",
+        en: "No patient data: all profiles, indices, and trajectories are synthetic.",
+      },
+      {
+        fr: "Séparation visible entre traitements approuvés, essais expérimentaux et trajectoire de référence.",
+        en: "Visible separation between approved treatments, experimental trials, and the reference trajectory.",
+      },
+      {
+        fr: "Aucune recommandation, aucun diagnostic et aucune sauvegarde d'information médicale.",
+        en: "No recommendations, diagnosis, or storage of medical information.",
+      },
+    ],
+    testing: [
+      {
+        fr: "Validation des états clavier, tactiles, mobiles et à mouvement réduit.",
+        en: "Keyboard, touch, mobile, and reduced-motion state validation.",
+      },
+      {
+        fr: "Vérification que chaque valeur dynamique demeure annoncée et que les sources sont accessibles.",
+        en: "Checks that every dynamic value remains announced and all sources are reachable.",
+      },
+      {
+        fr: "Tests de cohérence entre traitement, biomarqueurs, courbe et région cérébrale sélectionnée.",
+        en: "Consistency tests across treatment, biomarkers, chart, and selected brain region.",
+      },
+    ],
+    results: [
+      {
+        fr: "Une pièce de portfolio immersive qui démontre la capacité à construire un produit scientifique complet, pas seulement un graphique.",
+        en: "An immersive portfolio piece demonstrating the ability to build a complete scientific product, not merely a chart.",
+      },
+      {
+        fr: "Un modèle de documentation où provenance, incertitude et interaction restent visibles au même endroit.",
+        en: "A documentation model where provenance, uncertainty, and interaction remain visible in one place.",
+      },
+    ],
+    lessons: [
+      {
+        fr: "Une visualisation médicale puissante doit rendre ses limites aussi lisibles que ses résultats.",
+        en: "A powerful medical visualization must make its limitations as legible as its results.",
+      },
+      {
+        fr: "Le niveau de preuve est une donnée de produit, pas une note de bas de page.",
+        en: "Evidence level is product data, not a footnote.",
+      },
+    ],
+    currentStatus: {
+      fr: "Démonstrateur éducatif avancé créé pour le portfolio. Les valeurs de simulation sont synthétiques et ne représentent ni un outil clinique ni l'efficacité réelle d'un traitement.",
+      en: "Advanced educational demonstrator created for the portfolio. Simulation values are synthetic and represent neither a clinical tool nor real treatment efficacy.",
+    },
+  },
+  {
     slug: "operations-crm",
     index: "01",
     title: { fr: "CRM opérations", en: "Operations CRM" },

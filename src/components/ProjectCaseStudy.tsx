@@ -1,4 +1,5 @@
 import { ArchitectureFlow } from "./ArchitectureFlow";
+import { AlzheimerResearchLab } from "./AlzheimerResearchLab";
 import { SiteShell } from "./SiteShell";
 import { labels, type Locale } from "@/src/data/profile";
 import type { Project } from "@/src/data/projects";
@@ -58,6 +59,9 @@ export function ProjectCaseStudy({
 
             <div className="case-content">
               <p className="case-summary">{project.summary[locale]}</p>
+              {project.slug === "neuro-lens" ? (
+                <AlzheimerResearchLab locale={locale} />
+              ) : null}
               <div className="case-facts">
                 <section>
                   <span>01</span>

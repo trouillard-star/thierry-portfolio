@@ -10,9 +10,14 @@ export function ProjectCard({
 }) {
   const base = locale === "fr" ? "/projets" : "/en/projects";
   const copy = labels[locale];
+  const isFeatured = project.slug === "neuro-lens";
 
   return (
-    <article className="project-card" data-tilt data-reveal>
+    <article
+      className={`project-card${isFeatured ? " project-card-featured" : ""}`}
+      data-tilt
+      data-reveal
+    >
       <div className="project-card-top">
         <span className="project-index">{project.index}</span>
         <span className={`status status-${project.status}`}>
@@ -21,6 +26,23 @@ export function ProjectCard({
       </div>
       <h3>{project.title[locale]}</h3>
       <p className="project-tagline">{project.tagline[locale]}</p>
+      {isFeatured ? (
+        <div className="neuro-card-preview" aria-hidden="true">
+          <div className="neuro-card-brain">
+            <span />
+            <span />
+            <i />
+          </div>
+          <div className="neuro-card-signal">
+            <span>AMYLOÏDE</span>
+            <b style={{ "--signal": "68%" } as React.CSSProperties} />
+            <span>TAU</span>
+            <b style={{ "--signal": "46%" } as React.CSSProperties} />
+            <span>COGNITION</span>
+            <b style={{ "--signal": "78%" } as React.CSSProperties} />
+          </div>
+        </div>
+      ) : null}
       <ul className="tech-list" aria-label={copy.technologies}>
         {project.technologies.slice(0, 4).map((technology) => (
           <li key={technology}>{technology}</li>
