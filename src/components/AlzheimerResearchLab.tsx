@@ -3,6 +3,11 @@
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import type { Locale } from "@/src/data/profile";
 import { Brain3DViewer, type BrainRegionId } from "./Brain3DViewer";
+import {
+  NeuroBrainGuide,
+  NeuroGuidedExperience,
+  type NeuroAudienceMode,
+} from "./NeuroGuidedExperience";
 import { NeuroStudyConsole } from "./NeuroStudyConsole";
 
 type TreatmentId =
@@ -416,6 +421,7 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
   ]);
   const [selectedNetwork, setSelectedNetwork] = useState<NetworkId>("default");
   const [playing, setPlaying] = useState(false);
+  const [audienceMode, setAudienceMode] = useState<NeuroAudienceMode>("guided");
   const [exported, setExported] = useState(false);
   const [layers, setLayers] = useState({
     amyloid: true,
@@ -938,6 +944,23 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
   }[locale];
 
   const region = regions[selectedRegion];
+  const activeDiseaseNames = activeDiseases.map(
+    (diseaseId) =>
+      diseaseModels.find((disease) => disease.id === diseaseId)?.name[locale] ??
+      diseaseId,
+  );
+  const guidedControlCopy = {
+    fr: {
+      play: "Lancer la visite guidée",
+      pause: "Mettre la visite en pause",
+      treatment: "Choisir un scénario à comparer",
+    },
+    en: {
+      play: "Start guided tour",
+      pause: "Pause guided tour",
+      treatment: "Choose a scenario to compare",
+    },
+  }[locale];
   const categoryLabel =
     treatment.category === "approved"
       ? copy.approved
@@ -1002,7 +1025,10 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
   };
 
   return (
-    <section className="neuro-lab" aria-labelledby="neuro-lab-title">
+    <section
+      className={`neuro-lab is-${audienceMode}-mode`}
+      aria-labelledby="neuro-lab-title"
+    >
       <header className="neuro-lab-header">
         <div>
           <a className="neuro-lab-back" href={projectsHref}>
@@ -1017,6 +1043,24 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
           <span>{copy.synthetic}</span>
         </div>
       </header>
+
+      <NeuroGuidedExperience
+        locale={locale}
+        mode={audienceMode}
+        onModeChange={(mode) => {
+          setAudienceMode(mode);
+          setPlaying(false);
+        }}
+        year={year}
+        playing={playing}
+        treatmentName={treatment.name}
+        hasTreatment={treatment.id !== "baseline"}
+        selectedRegionName={region.label[locale]}
+        selectedRegionFunction={region.function[locale]}
+        activeDiseaseNames={activeDiseaseNames}
+        metrics={metrics}
+        baselineMetrics={baselineMetrics}
+      />
 
       <div className="neuro-protocol-bar" aria-label={copy.protocol}>
         <div>
@@ -1099,12 +1143,22 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
               aria-pressed={playing}
             >
               <span aria-hidden="true">{playing ? "Ⅱ" : "▶"}</span>
-              {playing ? copy.pause : copy.play}
+              {playing
+                ? audienceMode === "guided"
+                  ? guidedControlCopy.pause
+                  : copy.pause
+                : audienceMode === "guided"
+                  ? guidedControlCopy.play
+                  : copy.play}
             </button>
           </div>
 
           <fieldset className="neuro-treatment-list">
-            <legend>{copy.treatment}</legend>
+            <legend>
+              {audienceMode === "guided"
+                ? guidedControlCopy.treatment
+                : copy.treatment}
+            </legend>
             {treatments.map((item) => {
               const selected = item.id === treatmentId;
               const itemCategory =
@@ -1203,6 +1257,15 @@ export function AlzheimerResearchLab({ locale }: { locale: Locale }) {
               onSelectRegion={setSelectedRegion}
               ariaLabel={`${copy.brainTitle}. ${copy.amyloid}: ${Math.round(metrics.amyloid)}. ${copy.tau}: ${Math.round(metrics.tau)}.`}
             />
+            {audienceMode === "guided" ? (
+              <NeuroBrainGuide
+                locale={locale}
+                year={year}
+                playing={playing}
+                treatmentName={treatment.name}
+                hasTreatment={treatment.id !== "baseline"}
+              />
+            ) : null}
             <div className="neuro-region-dock" aria-label={copy.region}>
               {(Object.keys(regions) as RegionId[]).map((regionId, index) => (
                 <button

@@ -134,6 +134,12 @@ test("NeuroLens exposes the advanced bilingual research console", async () => {
   }
 
   assert.match(fr, /Exécuter l’analyse/);
+  assert.match(fr, /Mode guidé/);
+  assert.match(fr, /Lancer la visite guidée/);
+  assert.match(fr, /Les quatre nombres, en clair/);
   assert.match(en, /Run analysis/);
   assert.match(en, /Export ROI data/);
+  assert.match(en, /Guided mode/);
+  assert.match(en, /Start guided tour/);
+  assert.match(en, /The four numbers, in plain language/);
 });
