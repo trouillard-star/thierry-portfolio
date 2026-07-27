@@ -69,7 +69,7 @@ const themeBootstrap = `
 `;
 
 const pageInteractions = `
-  (() => {
+  addEventListener("load", () => {
     const root = document.documentElement;
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const hasHydratedLab = Boolean(document.querySelector(".neuro-lab"));
@@ -181,7 +181,7 @@ const pageInteractions = `
         });
       });
     }
-  })();
+  }, { once: true });
 `;
 
 export default function RootLayout({
