@@ -1,0 +1,57 @@
+{
+  "phase": "validation",
+  "completedTasks": [
+    "Auditer le rendu CSS public et la scène Three.js orpheline",
+    "Intégrer Brain3DViewer dans la mini-application NeuroLens publique",
+    "Remodeler les hémisphères, les lobes, la fissure longitudinale, le cervelet et le tronc cérébral",
+    "Améliorer les gyri, les sillons majeurs et les sillons secondaires",
+    "Rééquilibrer les matériaux turquoise, la transparence, les lumières et les particules",
+    "Remplacer les segments aléatoires par des ramifications courbes propres à chaque hémisphère",
+    "Ajouter trois niveaux de qualité, le mouvement réduit et un panneau de développement",
+    "Valider les onglets, la sélection des régions et l'absence d'erreurs WebGL",
+    "Capturer les vues biomarqueurs et connectome après modification"
+  ],
+  "currentTask": "Construire, tester et publier la version exacte sur AWS Amplify et Sites",
+  "filesModified": [
+    "app/globals.css",
+    "src/components/Brain3DViewer.tsx",
+    "src/components/ProjectDemo.tsx",
+    "tests/rendered-html.test.mjs",
+    "docs/audits/brain-3d-visual-audit.md",
+    "docs/audits/brain-3d-after.png",
+    "docs/audits/brain-3d-network-after.png",
+    ".codex/brain-3d-improvement-state.json"
+  ],
+  "technicalDecisions": [
+    "Conserver Three.js direct et la génération procédurale",
+    "Ne télécharger aucun modèle ou asset externe",
+    "Réutiliser Brain3DViewer dans la mini-application NeuroLens publique",
+    "Isoler le module Three.js de 580 Ko du module partagé des autres études de cas",
+    "Adapter automatiquement la densité géométrique et le ratio de pixels à l'appareil",
+    "Garder le panneau de réglage entièrement absent des builds de production",
+    "Limiter les animations avec prefers-reduced-motion et nettoyer toutes les ressources au démontage"
+  ],
+  "testsRun": [
+    "Prettier sur les fichiers modifiés",
+    "TypeScript sans émission",
+    "ESLint sans erreur",
+    "Build vinext réussi avec 23 routes pré-rendues",
+    "Tests de rendu: 7 sur 7 réussis",
+    "Liens internes: 23 pages validées",
+    "Analyse de secrets réussie",
+    "Interaction navigateur: onglet Réseaux",
+    "Interaction navigateur: sélection du Thalamus",
+    "Console navigateur: aucune erreur ni aucun avertissement"
+  ],
+  "remainingTasks": [
+    "Construire les sorties de production",
+    "Exécuter les tests de rendu, de liens, de formatage et de sécurité",
+    "Vérifier l'absence du panneau de développement en production",
+    "Publier sur AWS Amplify",
+    "Publier sur Sites",
+    "Vérifier les deux URLs publiques"
+  ],
+  "knownIssues": [
+    "La capture avant modification a échoué deux fois dans le navigateur intégré; l'audit textuel documente précisément l'ancien rendu CSS"
+  ]
+}

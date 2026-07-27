@@ -8608,3 +8608,113 @@ html[data-motion-ready="true"] [data-reveal].is-visible {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* NeuroLens anatomical WebGL brain */
+.demo-brain-3d {
+  position: relative;
+  min-height: 23rem;
+  margin: 0.85rem 0;
+  overflow: hidden;
+  isolation: isolate;
+  border: 1px solid #294854;
+  background:
+    radial-gradient(ellipse at 50% 48%, rgb(75 212 196 / 10%), transparent 50%),
+    linear-gradient(90deg, rgb(22 49 58 / 34%) 1px, transparent 1px) 0 0 /
+      2.5rem 2.5rem,
+    linear-gradient(rgb(22 49 58 / 34%) 1px, transparent 1px) 0 0 / 2.5rem
+      2.5rem,
+    #02090e;
+}
+
+.demo-brain-3d .brain-3d-host {
+  inset: -4% -3% -8%;
+}
+
+.demo-brain-3d canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.demo-brain-3d .brain-3d-reticle {
+  width: min(68%, 22rem);
+  opacity: 0.52;
+}
+
+.demo-brain-year {
+  position: absolute;
+  z-index: 4;
+  top: 0.7rem;
+  left: 0.75rem;
+  min-width: 2.4rem;
+  padding: 0.4rem 0.5rem;
+  border: 1px solid rgb(75 212 196 / 35%);
+  background: rgb(2 9 14 / 78%);
+  color: var(--demo-cyan);
+  font:
+    700 0.56rem/1 var(--font-geist-mono),
+    monospace;
+  text-align: center;
+  pointer-events: none;
+}
+
+.brain-3d-debug {
+  position: absolute;
+  z-index: 12;
+  top: 2.8rem;
+  left: 0.65rem;
+  width: 11rem;
+  max-height: calc(100% - 4rem);
+  overflow: auto;
+  border: 1px solid #31515e;
+  background: rgb(2 10 15 / 92%);
+  color: #8fa7b1;
+  font:
+    650 0.52rem/1.25 var(--font-geist-mono),
+    monospace;
+}
+
+.brain-3d-debug summary {
+  padding: 0.55rem 0.65rem;
+  color: var(--demo-cyan);
+  cursor: pointer;
+}
+
+.brain-3d-debug[open] summary {
+  border-bottom: 1px solid #29414c;
+}
+
+.brain-3d-debug label {
+  padding: 0.45rem 0.65rem;
+  display: grid;
+  grid-template-columns: 4.2rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.4rem;
+  border-bottom: 1px solid #1c333d;
+}
+
+.brain-3d-debug input,
+.brain-3d-debug select {
+  width: 100%;
+}
+
+.brain-3d-debug input[type="range"] {
+  min-height: 1rem;
+}
+
+.brain-3d-debug-toggle {
+  grid-template-columns: 1rem 1fr !important;
+}
+
+@media (max-width: 680px) {
+  .demo-brain-3d {
+    min-height: 19rem;
+  }
+
+  .demo-brain-3d .brain-3d-host {
+    inset: -2% -12% -6%;
+  }
+
+  .demo-brain-3d .brain-3d-axis {
+    display: none;
+  }
+}

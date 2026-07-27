@@ -100,8 +100,8 @@ test("project maturity and confidentiality boundaries are explicit", async () =>
   const response = await render(worker, "/projets/boreal");
   const html = await response.text();
 
-  assert.match(html, /Concept planifié/);
-  assert.match(html, /Aucun produit commercial/);
+  assert.match(html, /Concept (?:planifié|d’architecture)/);
+  assert.match(html, /Aucun (?:produit commercial|code de production)/);
   assert.doesNotMatch(
     html,
     /AKIA[0-9A-Z]{16}|aws_account_id|password\s*[:=]|api[_-]?key\s*[:=]/i,
@@ -155,4 +155,21 @@ test("French and English case studies expose equivalent navigation", async () =>
   assert.match(en, /View validation strategy/i);
   assert.match(fr, /href=["']\/en\/projects\/neuro-lens["']/);
   assert.match(en, /href=["']\/projets\/neuro-lens["']/);
+});
+
+test("NeuroLens renders the interactive anatomical brain without development controls", async () => {
+  const worker = await getWorker();
+  const [frResponse, enResponse] = await Promise.all([
+    render(worker, "/projets/neuro-lens"),
+    render(worker, "/en/projects/neuro-lens"),
+  ]);
+  const [fr, en] = await Promise.all([frResponse.text(), enResponse.text()]);
+
+  assert.match(fr, /<canvas[^>]+role=["']img["'][^>]+Cerveau 3D NeuroLens/i);
+  assert.match(en, /<canvas[^>]+role=["']img["'][^>]+NeuroLens 3D brain/i);
+  assert.match(fr, />Biomarqueurs</i);
+  assert.match(fr, />Réseaux</i);
+  assert.match(fr, />Étude</i);
+  assert.doesNotMatch(fr, /3D DEBUG/i);
+  assert.doesNotMatch(en, /3D DEBUG/i);
 });

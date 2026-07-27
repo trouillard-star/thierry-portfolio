@@ -1,7 +1,21 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties, type FormEvent } from "react";
+import {
+  lazy,
+  Suspense,
+  useEffect,
+  useState,
+  type CSSProperties,
+  type FormEvent,
+} from "react";
 import type { Locale } from "@/src/data/profile";
+import type { BrainRegionId } from "@/src/components/Brain3DViewer";
+
+const Brain3DViewer = lazy(() =>
+  import("@/src/components/Brain3DViewer").then((module) => ({
+    default: module.Brain3DViewer,
+  })),
+);
 
 type DemoCopy = {
   title: string;
@@ -2436,6 +2450,8 @@ function NeuroDemo({ locale, activeTab }: DemoProps) {
   const [profileIndex, setProfileIndex] = useState(1);
   const [year, setYear] = useState(3);
   const [regions, setRegions] = useState(["Hippocampe", "Cortex"]);
+  const [selectedBrainRegion, setSelectedBrainRegion] =
+    useState<BrainRegionId>("hippocampus");
   const [cohort, setCohort] = useState(240);
   const [iterations, setIterations] = useState(1000);
   const [studyRun, setStudyRun] = useState(0);
@@ -2449,8 +2465,21 @@ function NeuroDemo({ locale, activeTab }: DemoProps) {
     Math.max(18, profile.base[2] - year * 4),
   ];
   const regionOptions = ["Hippocampe", "Cortex", "Thalamus", "Cervelet"];
+  const brainRegionByLabel: Record<string, BrainRegionId> = {
+    Hippocampe: "hippocampus",
+    Cortex: "frontal",
+    Thalamus: "parietal",
+    Cervelet: "temporal",
+  };
+  const labelByBrainRegion: Record<BrainRegionId, string> = {
+    hippocampus: "Hippocampe",
+    frontal: "Cortex",
+    parietal: "Thalamus",
+    temporal: "Cervelet",
+  };
 
   function toggleRegion(region: string) {
+    setSelectedBrainRegion(brainRegionByLabel[region]);
     setRegions((items) =>
       items.includes(region)
         ? items.filter((item) => item !== region)
@@ -2527,24 +2556,49 @@ function NeuroDemo({ locale, activeTab }: DemoProps) {
                   ? "Connectivité fonctionnelle"
                   : "Functional connectivity"}
             </span>
-            <div
-              className={`demo-brain ${activeTab === 1 ? "is-network" : ""}`}
-            >
-              <span />
-              <i />
-              <b>{year}</b>
-              {regionOptions.map((region, index) => (
-                <button
-                  type="button"
-                  key={region}
-                  className={`region-${index + 1} ${regions.includes(region) ? "is-active" : ""}`}
-                  aria-label={region}
-                  aria-pressed={regions.includes(region)}
-                  onClick={() => toggleRegion(region)}
-                >
-                  {index + 1}
-                </button>
-              ))}
+            <div className="demo-brain-3d">
+              <Suspense
+                fallback={
+                  <div className="brain-3d-loading" aria-hidden="true" />
+                }
+              >
+                <Brain3DViewer
+                  metrics={{
+                    amyloid: values[0],
+                    tau: values[1],
+                    cognition: values[2],
+                    atrophy: Math.max(8, 100 - values[2]),
+                    hippocampus: Math.max(20, values[2] - year * 2),
+                  }}
+                  year={year}
+                  selectedRegion={selectedBrainRegion}
+                  layers={{
+                    amyloid: activeTab === 0,
+                    tau: activeTab === 0,
+                    network: activeTab === 1,
+                    delta: activeTab === 1,
+                  }}
+                  comparisonStrength={activeTab === 1 ? 0.48 : 0.12}
+                  onSelectRegion={(region) => {
+                    const label = labelByBrainRegion[region];
+                    setSelectedBrainRegion(region);
+                    setRegions((items) =>
+                      items.includes(label) ? items : [...items, label],
+                    );
+                    setFeedback(
+                      fr
+                        ? `${label} sélectionné dans le cerveau 3D.`
+                        : `${label} selected in the 3D brain.`,
+                    );
+                  }}
+                  ariaLabel={
+                    fr
+                      ? `Cerveau 3D NeuroLens, année ${year}, amyloïde ${values[0]}, Tau ${values[1]}.`
+                      : `NeuroLens 3D brain, year ${year}, amyloid ${values[0]}, Tau ${values[1]}.`
+                  }
+                />
+              </Suspense>
+              <b className="demo-brain-year">T+{year}</b>
             </div>
             <div className="demo-region-toggles">
               {regionOptions.map((region) => (
