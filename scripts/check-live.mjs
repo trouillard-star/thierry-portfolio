@@ -7,6 +7,7 @@ if (!base || !base.startsWith("https://")) {
 }
 
 const slugs = [
+  "neuro-lens",
   "operations-crm",
   "secure-client-portal",
   "mario-ai",
@@ -22,9 +23,11 @@ const informationalRoutes = [
   "/en/resume/",
   "/preuves-competences/",
   "/en/evidence/",
-  ...slugs.flatMap((slug) => [`/projets/${slug}/`, `/en/projects/${slug}/`]),
 ];
-const interactiveRoutes = ["/projets/neuro-lens/", "/en/projects/neuro-lens/"];
+const interactiveRoutes = slugs.flatMap((slug) => [
+  `/projets/${slug}/`,
+  `/en/projects/${slug}/`,
+]);
 const routes = [...informationalRoutes, ...interactiveRoutes];
 
 const pages = await Promise.all(

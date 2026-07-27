@@ -28,10 +28,21 @@ const frameworkScripts = files.filter(
     extname(file) === ".js" &&
     file.includes(`${join("_next", "static", "chunks")}`),
 );
-const interactivePages = new Set([
-  "projets/neuro-lens/index.html",
-  "en/projects/neuro-lens/index.html",
-]);
+const projectSlugs = [
+  "neuro-lens",
+  "operations-crm",
+  "secure-client-portal",
+  "mario-ai",
+  "remote-assist",
+  "boreal",
+  "pipe360-profiler",
+];
+const interactivePages = new Set(
+  projectSlugs.flatMap((slug) => [
+    `projets/${slug}/index.html`,
+    `en/projects/${slug}/index.html`,
+  ]),
+);
 
 let removedBytes = 0;
 let hydratedPages = 0;
