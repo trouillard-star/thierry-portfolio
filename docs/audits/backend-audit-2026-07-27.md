@@ -1,8 +1,8 @@
 # Backend and runtime audit
 
-Audit date: 2026-07-27  
-Scope: managed Worker runtime, static export, dependency security, build
-portability, live verification, and automated quality controls
+- Audit date: 2026-07-27
+- Scope: managed Worker runtime, static export, dependency security, build
+  portability, live verification, and automated quality controls
 
 ## Outcome
 
