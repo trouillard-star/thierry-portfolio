@@ -130,6 +130,9 @@ test("every project exposes a streamlined, functional case study", async () => {
     assert.match(html, /Architecture de la solution/i);
     assert.match(html, /Détails de réalisation/i);
     assert.match(html, /Projet suivant/i);
+    assert.match(html, /Démonstration portfolio/i);
+    assert.match(html, /Données anonymisées/i);
+    assert.match(html, /aria-pressed=/i);
     assert.match(html, new RegExp(`href=["']/diagrams/${slug}\\.mmd["']`));
     assert.match(html, /<details>/i);
   }

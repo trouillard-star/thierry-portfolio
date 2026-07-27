@@ -30,10 +30,10 @@ export const metadata: Metadata = {
       "Études de cas, architecture, automatisation, sécurité et résolution de problèmes techniques.",
     images: [
       {
-        url: "/og.png",
-        width: 1792,
-        height: 920,
-        alt: "Thierry Rouillard — Développement, TI et automatisation",
+        url: "/og-projects.png",
+        width: 1734,
+        height: 907,
+        alt: "Thierry Rouillard — Systèmes, TI, automatisation et projets interactifs",
       },
     ],
   },
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     title: "Thierry Rouillard — Développement · TI · Automatisation",
     description:
       "Portfolio bilingue axé sur les preuves, les systèmes et les problèmes concrets.",
-    images: ["/og.png"],
+    images: ["/og-projects.png"],
   },
   robots: {
     index: true,

@@ -1,4 +1,5 @@
 import { ArchitectureFlow } from "./ArchitectureFlow";
+import { ProjectDemo } from "./ProjectDemo";
 import { SiteShell } from "./SiteShell";
 import { labels, type Locale } from "@/src/data/profile";
 import { projects, type Project } from "@/src/data/projects";
@@ -107,6 +108,10 @@ export function ProjectCaseStudy({
               <a href="#validation">04 · {pageCopy.validation}</a>
             </nav>
           </header>
+
+          <div className="section-shell case-demo-shell">
+            <ProjectDemo slug={project.slug} locale={locale} />
+          </div>
 
           <div className="case-body case-body-simple section-shell">
             <aside className="case-aside case-aside-simple">
