@@ -31,6 +31,7 @@ const frameworkScripts = files.filter(
 const projectSlugs = [
   "neuro-lens",
   "operations-crm",
+  "report-automation",
   "secure-client-portal",
   "mario-ai",
   "remote-assist",

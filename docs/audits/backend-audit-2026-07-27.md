@@ -38,10 +38,16 @@ public clone, and covered by explicit regression tests.
    request timeout, and did not verify security headers. It now checks every
    declared project, uses bounded requests, and validates the production header
    baseline.
-8. The on-demand NeuroLens WebGL module was the only asset above the generic
-   Vite warning threshold. It remains isolated behind a lazy import and is not
-   shipped with informational pages. The build threshold now documents that
-   deliberate boundary instead of reporting a misleading global-bundle warning.
+8. The static-runtime optimization also omitted report-automation and removed
+   the JavaScript required by that demonstration on AWS. The project lists are
+   now parity-tested so every interactive route retains its runtime.
+9. The managed Worker did not apply the security headers declared for the
+   static host. The Worker now adds the same CSP, HSTS, permissions, referrer,
+   MIME-sniffing, and framing protections to every response.
+10. The on-demand NeuroLens WebGL module was the only asset above the generic
+    Vite warning threshold. It remains isolated behind a lazy import and is not
+    shipped with informational pages. The build threshold now documents that
+    deliberate boundary instead of reporting a misleading global-bundle warning.
 
 ## Accepted validation
 

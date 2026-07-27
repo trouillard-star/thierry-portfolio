@@ -55,6 +55,10 @@ const pages = await Promise.all(
 );
 
 const combined = pages.map(({ text }) => text).join("\n");
+const hasInteractiveRuntime = (text) =>
+  /self\.__next_f|\/_next\/static\/chunks\/[^"']+\.js|self\.__VINEXT_RSC_|id=["']_R_["'][^>]*>\s*import\(["']\/assets\/[^"']+\.js/i.test(
+    text,
+  );
 const failedRoutes = pages
   .filter(({ status }) => status !== 200)
   .map(({ route, status }) => `${route}:${status}`);
@@ -62,7 +66,10 @@ const findings = {
   localPath: /C:\\Users|ThierryRouillard\\OneDrive|localhost:/i.test(combined),
   awsKey: /AKIA[0-9A-Z]{16}/.test(combined),
   githubToken: /gh[opsu]_[A-Za-z0-9_]{20,}/.test(combined),
-  privateIp: /\b(?:10\.|192\.168\.|172\.(?:1[6-9]|2\d|3[01])\.)/.test(combined),
+  privateIp:
+    /\b(?:10(?:\.\d{1,3}){3}|192\.168(?:\.\d{1,3}){2}|172\.(?:1[6-9]|2\d|3[01])(?:\.\d{1,3}){2})\b/.test(
+      combined,
+    ),
   budgetEmail: /trouillard@hotmail\.com/i.test(combined),
   provisionalCopy:
     /Coordonnée professionnelle à confirmer|Professional contact detail to be confirmed|PDF à venir|PDF coming soon|Interface préparée|Interface prepared|Envoi bientôt disponible|Sending available soon|Certifications actuelles|Current certifications/i.test(
@@ -75,10 +82,7 @@ const findings = {
     ),
   missingInteractiveRuntime: pages
     .filter(({ route }) => interactiveRoutes.includes(route))
-    .some(
-      ({ text }) =>
-        !/self\.__next_f|\/_next\/static\/chunks\/[^"']+\.js/.test(text),
-    ),
+    .some(({ text }) => !hasInteractiveRuntime(text)),
   missingSecurityHeaders: [
     "content-security-policy",
     "permissions-policy",

@@ -218,6 +218,22 @@ test("the public worker rejects every mutating request", async () => {
   assert.equal(response.headers.get("cache-control"), "no-store");
 });
 
+test("the public worker applies the production security baseline", async () => {
+  const worker = await getWorker();
+  const response = await render(worker, "/");
+
+  for (const header of [
+    "content-security-policy",
+    "permissions-policy",
+    "referrer-policy",
+    "strict-transport-security",
+    "x-content-type-options",
+    "x-frame-options",
+  ]) {
+    assert.ok(response.headers.has(header), `${header} should be present`);
+  }
+});
+
 test("live verification covers every declared project", async () => {
   const projectSource = await readFile(
     new URL("../src/data/projects.ts", import.meta.url),
@@ -234,6 +250,14 @@ test("live verification covers every declared project", async () => {
   assert.deepEqual(new Set(declaredSlugs), new Set(slugs));
   for (const slug of declaredSlugs) {
     assert.match(liveCheck, new RegExp(`"${slug}"`));
+  }
+
+  const staticRuntimeStrip = await readFile(
+    new URL("../scripts/strip-static-runtime.mjs", import.meta.url),
+    "utf8",
+  );
+  for (const slug of declaredSlugs) {
+    assert.match(staticRuntimeStrip, new RegExp(`"${slug}"`));
   }
 });
 
