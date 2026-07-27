@@ -118,7 +118,24 @@ test("the contact interface does not transmit or store data", async () => {
   assert.doesNotMatch(html, /https?:\/\/(?:formspree|netlify|web3forms)/i);
 });
 
-test("NeuroLens exposes the advanced bilingual research console", async () => {
+test("every project exposes a streamlined, functional case study", async () => {
+  const worker = await getWorker();
+
+  for (const slug of slugs) {
+    const response = await render(worker, `/projets/${slug}`);
+    const html = await response.text();
+
+    assert.match(html, /Étude de cas/i);
+    assert.match(html, /Résumé exécutif/i);
+    assert.match(html, /Architecture de la solution/i);
+    assert.match(html, /Détails de réalisation/i);
+    assert.match(html, /Projet suivant/i);
+    assert.match(html, new RegExp(`href=["']/diagrams/${slug}\\.mmd["']`));
+    assert.match(html, /<details>/i);
+  }
+});
+
+test("French and English case studies expose equivalent navigation", async () => {
   const worker = await getWorker();
   const [frResponse, enResponse] = await Promise.all([
     render(worker, "/projets/neuro-lens"),
@@ -126,20 +143,12 @@ test("NeuroLens exposes the advanced bilingual research console", async () => {
   ]);
   const [fr, en] = await Promise.all([frResponse.text(), enResponse.text()]);
 
-  for (const html of [fr, en]) {
-    assert.match(html, /STUDY DESIGNER \/ SYNTHETIC TRIAL/);
-    assert.match(html, /NL-AD-042/);
-    assert.match(html, /SUVR/);
-    assert.match(html, /CONNECTOME \/ MULTI-PATHOLOGY/);
-  }
-
-  assert.match(fr, /Exécuter l’analyse/);
-  assert.match(fr, /Mode guidé/);
-  assert.match(fr, /Lancer la visite guidée/);
-  assert.match(fr, /Les quatre nombres, en clair/);
-  assert.match(en, /Run analysis/);
-  assert.match(en, /Export ROI data/);
-  assert.match(en, /Guided mode/);
-  assert.match(en, /Start guided tour/);
-  assert.match(en, /The four numbers, in plain language/);
+  assert.match(fr, /Vue d’ensemble/i);
+  assert.match(fr, /Résultats et apprentissages/i);
+  assert.match(fr, /Voir la stratégie de validation/i);
+  assert.match(en, /Executive summary/i);
+  assert.match(en, /Outcomes and learnings/i);
+  assert.match(en, /View validation strategy/i);
+  assert.match(fr, /href=["']\/en\/projects\/neuro-lens["']/);
+  assert.match(en, /href=["']\/projets\/neuro-lens["']/);
 });
