@@ -77,7 +77,7 @@ export const projects: Project[] = [
     technologies: [
       "React",
       "TypeScript",
-      "Canvas 2D",
+      "Three.js / WebGL",
       "Data visualization",
       "Scientific UX",
       "Accessibility",

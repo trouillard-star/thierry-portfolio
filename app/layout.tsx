@@ -72,6 +72,7 @@ const pageInteractions = `
   (() => {
     const root = document.documentElement;
     const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const hasHydratedLab = Boolean(document.querySelector(".neuro-lab"));
     const themeButton = document.querySelector("[data-theme-toggle]");
     if (themeButton instanceof HTMLButtonElement) {
       const syncThemeLabel = () => {
@@ -85,7 +86,7 @@ const pageInteractions = `
         }
       };
 
-      syncThemeLabel();
+      if (!hasHydratedLab) syncThemeLabel();
       themeButton.addEventListener("click", () => {
         const current =
           root.dataset.theme === "light" ? "light" : "dark";
@@ -111,9 +112,11 @@ const pageInteractions = `
       ".evidence-principles article",
       ".resume-timeline li",
     ];
-    document.querySelectorAll(revealSelectors.join(",")).forEach((element) => {
-      element.setAttribute("data-reveal", "");
-    });
+    if (!hasHydratedLab) {
+      document.querySelectorAll(revealSelectors.join(",")).forEach((element) => {
+        element.setAttribute("data-reveal", "");
+      });
+    }
 
     const revealTargets = [...document.querySelectorAll("[data-reveal]")];
     revealTargets.forEach((element, index) => {

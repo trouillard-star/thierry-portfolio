@@ -1,5 +1,5 @@
 import { readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
-import { extname, join } from "node:path";
+import { extname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const outputRoot = fileURLToPath(new URL("../out/", import.meta.url));
@@ -28,11 +28,26 @@ const frameworkScripts = files.filter(
     extname(file) === ".js" &&
     file.includes(`${join("_next", "static", "chunks")}`),
 );
+const interactivePages = new Set([
+  "projets/neuro-lens/index.html",
+  "en/projects/neuro-lens/index.html",
+]);
 
 let removedBytes = 0;
+let hydratedPages = 0;
 
 for (const file of htmlFiles) {
   const original = await readFile(file, "utf8");
+  const outputPath = relative(outputRoot, file).replaceAll("\\", "/");
+
+  if (interactivePages.has(outputPath)) {
+    if (!/\/_next\/static\/chunks\/[^"]+\.js/.test(original)) {
+      throw new Error(`Interactive runtime is missing from ${file}`);
+    }
+    hydratedPages += 1;
+    continue;
+  }
+
   const stripped = original
     .replace(scriptSourcePattern, "")
     .replace(scriptPreloadPattern, "")
@@ -61,11 +76,13 @@ for (const file of htmlFiles) {
   await writeFile(file, stripped);
 }
 
-for (const file of frameworkScripts) {
-  removedBytes += (await stat(file)).size;
-  await rm(file);
+if (hydratedPages === 0) {
+  for (const file of frameworkScripts) {
+    removedBytes += (await stat(file)).size;
+    await rm(file);
+  }
 }
 
 console.log(
-  `Static runtime removed from ${htmlFiles.length} pages; ${frameworkScripts.length} unused JavaScript files deleted; ${Math.round(removedBytes / 1024)} KiB removed.`,
+  `Static runtime removed from ${htmlFiles.length - hydratedPages} pages; retained for ${hydratedPages} interactive pages; ${hydratedPages === 0 ? frameworkScripts.length : 0} unused JavaScript files deleted; ${Math.round(removedBytes / 1024)} KiB removed.`,
 );

@@ -15,7 +15,7 @@ const slugs = [
   "pipe360-profiler",
 ];
 
-const routes = [
+const informationalRoutes = [
   "/",
   "/en/",
   "/cv/",
@@ -24,6 +24,8 @@ const routes = [
   "/en/evidence/",
   ...slugs.flatMap((slug) => [`/projets/${slug}/`, `/en/projects/${slug}/`]),
 ];
+const interactiveRoutes = ["/projets/neuro-lens/", "/en/projects/neuro-lens/"];
+const routes = [...informationalRoutes, ...interactiveRoutes];
 
 const pages = await Promise.all(
   routes.map(async (route) => {
@@ -50,9 +52,17 @@ const findings = {
     /Coordonnée professionnelle à confirmer|Professional contact detail to be confirmed|PDF à venir|PDF coming soon|Interface préparée|Interface prepared|Envoi bientôt disponible|Sending available soon|Certifications actuelles|Current certifications/i.test(
       combined,
     ),
-  nextRuntime: /self\.__next_f|\/_next\/static\/chunks\/[^"']+\.js/.test(
-    combined,
-  ),
+  nextRuntimeOnInformationalPage: pages
+    .filter(({ route }) => informationalRoutes.includes(route))
+    .some(({ text }) =>
+      /self\.__next_f|\/_next\/static\/chunks\/[^"']+\.js/.test(text),
+    ),
+  missingInteractiveRuntime: pages
+    .filter(({ route }) => interactiveRoutes.includes(route))
+    .some(
+      ({ text }) =>
+        !/self\.__next_f|\/_next\/static\/chunks\/[^"']+\.js/.test(text),
+    ),
 };
 
 const frenchHome = pages.find(({ route }) => route === "/")?.text ?? "";

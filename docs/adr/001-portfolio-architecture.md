@@ -37,7 +37,8 @@ constraint, not a claim that Next is universally superior.
 
 - Static pages are cacheable and inexpensive to host.
 - Typed data keeps content separate from presentation.
-- Almost all pages ship without feature-specific client state.
+- Almost all pages ship without feature-specific client state; the NeuroLens
+  research lab hydrates only where its real-time controls require it.
 - The same repository can target AWS Amplify and the managed Sites runtime.
 - No public API, database, authentication service, or paid contact backend is
   required.
@@ -53,18 +54,18 @@ constraint, not a claim that Next is universally superior.
 
 The Amplify target uses ordinary document links and native inline interactions
 for theme preference, printing, scroll reveals, pointer depth, and reading
-progress. It does not require React hydration or an animation library in the
-browser. Motion is additive, never required for navigation or comprehension,
-and is bypassed when the user requests reduced motion. After `next build`, a
-validated post-build step removes Next.js client scripts and Flight data from
-the static HTML while preserving CSS, metadata, structured data, and the native
-controls.
+progress. Motion is additive and is bypassed when the user requests reduced
+motion. The NeuroLens project is the deliberate exception: its 3D brain,
+timeline, therapeutic scenarios, biomarker layers, and region inspector require
+React hydration and WebGL.
 
-This removes approximately 1 MiB from the static artifact and avoids loading
-unused framework JavaScript. The post-build step fails if a framework script
-reference remains, and route, link, browser-interaction, accessibility, and
-Lighthouse checks run against the stripped output. The managed Sites/vinext
-target keeps its own runtime because that deployment uses a Worker entrypoint.
+After `next build`, a validated post-build step removes Next.js client scripts
+and Flight data from informational HTML while retaining them for the French and
+English NeuroLens routes. Framework chunks remain in the artifact because those
+two routes load them. The step fails if an informational page keeps a runtime or
+if an interactive NeuroLens page loses it. Route, link, browser-interaction,
+accessibility, and Lighthouse checks run against this selective-hydration
+output. The managed Sites/vinext target keeps its Worker runtime.
 
 ## Security and accessibility
 

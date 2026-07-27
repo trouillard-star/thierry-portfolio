@@ -22,11 +22,12 @@ Public source:
 - Static-first pages and typed content modules
 - vinext build target for the managed Sites runtime
 - Next static-export target for AWS Amplify Hosting
-- Native theme and print controls without a hydrated React client
+- Native theme and print controls on informational pages
 - Native scroll reveals, pointer depth, ambient motion, and reading progress
 - Full `prefers-reduced-motion` fallback
 - Responsive editorial CV with a dedicated print layout
-- Post-build removal of the unused Next.js client runtime from the static export
+- Selective hydration for the NeuroLens 3D research lab
+- Post-build removal of the unused Next.js client runtime from informational pages
 - No database, authentication service, analytics, or contact backend
 
 The decision and trade-offs are recorded in

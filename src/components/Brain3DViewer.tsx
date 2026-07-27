@@ -589,10 +589,10 @@ export function Brain3DViewer({
       tauMaterial,
     };
 
-    const clock = new THREE.Clock();
+    const animationStartedAt = performance.now();
     let animationFrame = 0;
-    const animate = () => {
-      const elapsed = clock.getElapsedTime();
+    const animate = (now: number) => {
+      const elapsed = (now - animationStartedAt) / 1000;
       controls.update();
       orbitRing.rotation.z = elapsed * 0.045;
       orbitRing2.rotation.z = -elapsed * 0.032;
@@ -608,7 +608,7 @@ export function Brain3DViewer({
       renderer.render(scene, camera);
       animationFrame = window.requestAnimationFrame(animate);
     };
-    animate();
+    animate(animationStartedAt);
 
     host.dataset.webgl = "ready";
 
