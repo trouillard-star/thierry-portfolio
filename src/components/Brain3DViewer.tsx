@@ -58,7 +58,7 @@ const regions: Array<{
   { id: "hippocampus", position: [-0.3, -0.34, 0.56] },
 ];
 
-const HEMISPHERE_CENTER = 0.36;
+const HEMISPHERE_CENTER = 0.2;
 
 function seededRandom(seed: number) {
   const value = Math.sin(seed * 12.9898 + 78.233) * 43758.5453;
@@ -72,26 +72,38 @@ function cortexPoint(
   sourceZ: number,
   includeFolds = true,
 ) {
-  const outerWeight = THREE.MathUtils.smoothstep(side * sourceX, -0.16, 0.22);
-  const lateralScale = THREE.MathUtils.lerp(0.34, 0.67, outerWeight);
-  const anteriorBulge = 1 + Math.max(0, sourceY) * 0.075;
-  const posteriorTaper = 1 - Math.max(0, -sourceY - 0.32) * 0.09;
+  const outerWeight = THREE.MathUtils.smoothstep(side * sourceX, -0.12, 0.32);
+  const lateralScale = THREE.MathUtils.lerp(0.2, 0.73, outerWeight);
+  const anteriorBulge = 1 + Math.max(0, sourceY) * 0.085;
+  const posteriorTaper = 1 - Math.max(0, -sourceY - 0.28) * 0.14;
+  const superiorDome = sourceZ >= 0 ? 0.96 : 0.68;
   const temporalBulge =
     1 +
-    Math.exp(-Math.pow((sourceY + 0.2) / 0.38, 2)) *
+    Math.exp(-Math.pow((sourceY + 0.02) / 0.44, 2)) *
       Math.max(0, -sourceZ) *
-      0.15;
+      outerWeight *
+      0.34;
+  const frontalLift =
+    Math.exp(-Math.pow((sourceY - 0.58) / 0.42, 2)) *
+    Math.max(0, sourceZ) *
+    0.065;
+  const occipitalRound =
+    Math.exp(-Math.pow((sourceY + 0.72) / 0.32, 2)) *
+    Math.max(0, sourceZ) *
+    0.035;
   const ridge =
-    Math.sin(sourceY * 17 + sourceZ * 8.5) * 0.43 +
-    Math.sin(sourceX * 21 - sourceY * 7) * 0.31 +
-    Math.sin((sourceX + sourceZ) * 29) * 0.18 +
-    Math.sin(sourceY * 34 - sourceZ * 13) * 0.08;
-  const fold = includeFolds ? 1 + ridge * 0.048 : 1;
+    Math.sin(sourceY * 16 + sourceZ * 7.5) * 0.44 +
+    Math.sin(sourceX * 18 - sourceY * 6.5) * 0.29 +
+    Math.sin((sourceX + sourceZ) * 26) * 0.17 +
+    Math.sin(sourceY * 31 - sourceZ * 12) * 0.07;
+  const fold = includeFolds ? 1 + ridge * 0.034 : 1;
 
   return new THREE.Vector3(
     side * HEMISPHERE_CENTER + sourceX * lateralScale * fold * posteriorTaper,
-    sourceY * 1.24 * fold * anteriorBulge,
-    sourceZ * 0.86 * fold * temporalBulge,
+    sourceY * 1.28 * fold * anteriorBulge,
+    sourceZ * superiorDome * fold * temporalBulge +
+      frontalLift +
+      occipitalRound,
   );
 }
 
@@ -451,6 +463,45 @@ function createLateralFurrows(side: -1 | 1) {
   return group;
 }
 
+function createLongitudinalFissure() {
+  const group = new THREE.Group();
+  const points = Array.from({ length: 31 }, (_, index) => {
+    const progress = index / 30;
+    const y = THREE.MathUtils.lerp(-1.08, 1.12, progress);
+    const normalizedY = y / 1.3;
+    const z =
+      Math.sqrt(Math.max(0.025, 1 - normalizedY * normalizedY)) * 0.965 +
+      Math.sin(progress * Math.PI * 7) * 0.006;
+    return new THREE.Vector3(0, y, z);
+  });
+  const curve = new THREE.CatmullRomCurve3(points);
+  group.add(
+    new THREE.Mesh(
+      new THREE.TubeGeometry(curve, 56, 0.018, 8, false),
+      new THREE.MeshBasicMaterial({
+        color: "#01090d",
+        transparent: true,
+        opacity: 0.96,
+        depthWrite: false,
+      }),
+    ),
+  );
+
+  const highlight = new THREE.Mesh(
+    new THREE.TubeGeometry(curve, 56, 0.004, 6, false),
+    new THREE.MeshBasicMaterial({
+      color: "#66e7dc",
+      transparent: true,
+      opacity: 0.22,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    }),
+  );
+  highlight.position.z += 0.012;
+  group.add(highlight);
+  return group;
+}
+
 function createSupportingAnatomy(brainMaterials: THREE.MeshPhysicalMaterial[]) {
   const group = new THREE.Group();
   const createMaterial = (color: string, emissive: string, opacity: number) => {
@@ -469,64 +520,74 @@ function createSupportingAnatomy(brainMaterials: THREE.MeshPhysicalMaterial[]) {
     return material;
   };
 
-  for (const side of [-1, 1] as const) {
-    const temporal = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(0.62, 3),
-      createMaterial("#087579", "#063e44", 0.89),
-    );
-    temporal.scale.set(0.76, 0.88, 0.56);
-    temporal.position.set(side * 0.6, -0.35, -0.3);
-    temporal.rotation.z = side * -0.12;
-    group.add(temporal);
+  const cerebellumGeometry = new THREE.IcosahedronGeometry(0.64, 5);
+  const cerebellumPositions = cerebellumGeometry.attributes.position;
+  for (let index = 0; index < cerebellumPositions.count; index += 1) {
+    const x = cerebellumPositions.getX(index);
+    const y = cerebellumPositions.getY(index);
+    const z = cerebellumPositions.getZ(index);
+    const folia = 1 + Math.sin(y * 34) * 0.025 + Math.sin((x + z) * 21) * 0.012;
+    cerebellumPositions.setXYZ(index, x * folia, y * folia, z * folia);
+  }
+  cerebellumGeometry.computeVertexNormals();
+  const cerebellum = new THREE.Mesh(
+    cerebellumGeometry,
+    createMaterial("#0a6970", "#04343a", 0.96),
+  );
+  cerebellum.scale.set(1.12, 0.72, 0.58);
+  cerebellum.position.set(0, -0.98, -0.56);
+  cerebellum.rotation.x = -0.08;
+  group.add(cerebellum);
 
-    const cerebellum = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(0.56, 4),
-      createMaterial("#07575e", "#042d34", 0.93),
-    );
-    cerebellum.scale.set(0.78, 0.68, 0.52);
-    cerebellum.position.set(side * 0.3, -1.0, -0.5);
-    group.add(cerebellum);
-
-    const foliaMaterial = new THREE.MeshBasicMaterial({
-      color: "#03282e",
-      transparent: true,
-      opacity: 0.76,
-      depthWrite: false,
+  const foliaMaterial = new THREE.MeshBasicMaterial({
+    color: "#03272d",
+    transparent: true,
+    opacity: 0.82,
+    depthWrite: false,
+  });
+  for (let index = 0; index < 13; index += 1) {
+    const normalized = index / 12;
+    const y = -1.33 + normalized * 0.62;
+    const halfWidth = 0.24 + Math.sin(normalized * Math.PI) * 0.46;
+    const points = Array.from({ length: 17 }, (_, pointIndex) => {
+      const progress = pointIndex / 16;
+      const x = THREE.MathUtils.lerp(-halfWidth, halfWidth, progress);
+      const lateralCurve = Math.pow((progress - 0.5) * 2, 2);
+      const z =
+        -0.34 -
+        lateralCurve * 0.18 -
+        Math.abs(normalized - 0.52) * 0.16 +
+        Math.sin(progress * Math.PI * 4) * 0.012;
+      return new THREE.Vector3(x, y, z);
     });
-    for (let index = 0; index < 8; index += 1) {
-      const y = -1.28 + index * 0.075;
-      const halfWidth = 0.25 + Math.sin((index / 7) * Math.PI) * 0.18;
-      const points = Array.from({ length: 9 }, (_, pointIndex) => {
-        const progress = pointIndex / 8;
-        const x =
-          side * 0.3 + THREE.MathUtils.lerp(-halfWidth, halfWidth, progress);
-        const z =
-          -0.22 -
-          Math.pow((progress - 0.5) * 2, 2) * 0.11 -
-          Math.abs(y + 1.02) * 0.18;
-        return new THREE.Vector3(x, y, z);
-      });
-      group.add(
-        new THREE.Mesh(
-          new THREE.TubeGeometry(
-            new THREE.CatmullRomCurve3(points),
-            16,
-            0.008,
-            5,
-            false,
-          ),
-          foliaMaterial,
+    group.add(
+      new THREE.Mesh(
+        new THREE.TubeGeometry(
+          new THREE.CatmullRomCurve3(points),
+          28,
+          0.007,
+          5,
+          false,
         ),
-      );
-    }
+        foliaMaterial,
+      ),
+    );
   }
 
-  const brainStem = new THREE.Mesh(
-    new THREE.CapsuleGeometry(0.17, 0.58, 8, 18),
-    createMaterial("#0a6268", "#06383c", 0.94),
+  const pons = new THREE.Mesh(
+    new THREE.SphereGeometry(0.28, 24, 18),
+    createMaterial("#0b747a", "#064047", 0.97),
   );
-  brainStem.position.set(0, -0.6, -0.85);
-  brainStem.rotation.x = -0.28;
+  pons.scale.set(0.92, 0.72, 0.82);
+  pons.position.set(0, -0.5, -0.72);
+  group.add(pons);
+
+  const brainStem = new THREE.Mesh(
+    new THREE.CapsuleGeometry(0.14, 0.55, 10, 22),
+    createMaterial("#0a6268", "#06383c", 0.98),
+  );
+  brainStem.position.set(0, -0.54, -0.99);
+  brainStem.rotation.x = Math.PI / 2;
   group.add(brainStem);
 
   return group;
@@ -581,19 +642,19 @@ export function Brain3DViewer({
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2("#02080d", 0.09);
 
-    const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
-    camera.position.set(5.35, 0.38, 2.45);
+    const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+    camera.position.set(4.65, 3.05, 2.55);
 
     const controls = new OrbitControls(camera, canvas);
     controls.enableDamping = true;
     controls.dampingFactor = 0.055;
     controls.enablePan = false;
     controls.minDistance = 3.4;
-    controls.maxDistance = 8.2;
-    controls.autoRotate = !window.matchMedia("(prefers-reduced-motion: reduce)")
-      .matches;
-    controls.autoRotateSpeed = 0.34;
-    controls.target.set(0, -0.08, -0.06);
+    controls.maxDistance = 7.2;
+    controls.minPolarAngle = 0.42;
+    controls.maxPolarAngle = 2.18;
+    controls.autoRotate = false;
+    controls.target.set(0, -0.08, -0.12);
 
     const ambient = new THREE.AmbientLight("#8ceee2", 1.05);
     const tealLight = new THREE.PointLight("#4bd4c4", 13, 10);
@@ -613,16 +674,16 @@ export function Brain3DViewer({
       const cortexGeometry = makeCortexGeometry(side);
       const cortexMaterial = new THREE.MeshPhysicalMaterial({
         vertexColors: true,
-        roughness: 0.28,
-        metalness: 0.08,
-        clearcoat: 0.55,
-        clearcoatRoughness: 0.22,
-        transmission: 0.08,
-        thickness: 0.8,
+        roughness: 0.36,
+        metalness: 0.03,
+        clearcoat: 0.38,
+        clearcoatRoughness: 0.3,
+        transmission: 0.025,
+        thickness: 0.45,
         transparent: true,
-        opacity: 0.83,
-        emissive: new THREE.Color("#063d42"),
-        emissiveIntensity: 0.72,
+        opacity: 0.94,
+        emissive: new THREE.Color("#05373c"),
+        emissiveIntensity: 0.54,
         side: THREE.DoubleSide,
       });
       brainMaterials.push(cortexMaterial);
@@ -649,6 +710,7 @@ export function Brain3DViewer({
       modelRoot.add(createMajorSulci(side));
     }
 
+    modelRoot.add(createLongitudinalFissure());
     modelRoot.add(createSupportingAnatomy(brainMaterials));
 
     const neuralField = createNeuralField();
@@ -956,8 +1018,8 @@ export function Brain3DViewer({
     const atrophyScale = 1 - metrics.atrophy * 0.00165;
     runtime.modelRoot.scale.setScalar(atrophyScale);
     runtime.brainMaterials.forEach((material) => {
-      material.opacity = 0.86 - metrics.atrophy * 0.0022;
-      material.emissiveIntensity = 0.5 + (metrics.cognition / 100) * 0.36;
+      material.opacity = 0.94 - metrics.atrophy * 0.0011;
+      material.emissiveIntensity = 0.38 + (metrics.cognition / 100) * 0.3;
     });
 
     runtime.differenceHeat.visible = layers.delta && comparisonStrength > 0.01;
