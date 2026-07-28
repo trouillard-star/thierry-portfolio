@@ -84,10 +84,6 @@ export const labels = {
     quickWinsTitle: "Les petits outils qui font gagner des heures",
     quickWinsIntro:
       "À côté des grands systèmes, une partie constante de mon travail consiste à supprimer les tâches répétitives dès qu’elles apparaissent.",
-    labEyebrow: "Laboratoire",
-    labTitle: "Ce que je construis pour apprendre",
-    labIntro:
-      "Un projet personnel, sans lien avec mon travail, où je pousse volontairement la technique plus loin que ce qu’un mandat exigerait.",
     methodEyebrow: "Méthode",
     methodTitle: "Comment je travaille",
     methodIntro:
@@ -163,10 +159,6 @@ export const labels = {
     quickWinsTitle: "The small tools that save hours",
     quickWinsIntro:
       "Alongside the larger systems, a constant part of my work is removing repetitive tasks as soon as they show up.",
-    labEyebrow: "Laboratory",
-    labTitle: "What I build to learn",
-    labIntro:
-      "A personal project, unrelated to my work, where I deliberately push the technique further than any mandate would require.",
     methodEyebrow: "Method",
     methodTitle: "How I work",
     methodIntro:

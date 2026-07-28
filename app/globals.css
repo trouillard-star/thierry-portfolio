@@ -11936,3 +11936,21 @@ body::after {
     transform: none;
   }
 }
+
+/* --- Contraste en thème clair ---
+   L'accent clair (#087f74) donne 4,29:1 sur le fond papier : suffisant pour
+   les grands chiffres (seuil 3:1) mais sous le seuil AA de 4,5:1 pour les
+   petits libellés. On bascule ceux-ci sur --accent-strong (5,97:1). */
+
+:root[data-theme="light"] .featured-label {
+  background: var(--accent-strong);
+  color: var(--paper);
+}
+
+:root[data-theme="light"] .hero-proofline strong,
+:root[data-theme="light"] .method-list > li > span,
+:root[data-theme="light"] .quick-strength-grid article > span,
+:root[data-theme="light"] .quick-method-grid ol li > span,
+:root[data-theme="light"] .case-shift-after > span {
+  color: var(--accent-strong);
+}

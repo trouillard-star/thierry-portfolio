@@ -1159,14 +1159,6 @@ export const projects: Project[] = [
   },
 ];
 
-export const workProjects = projects.filter(
-  (project) => project.track === "work",
-);
-
-export const labProjects = projects.filter(
-  (project) => project.track === "lab",
-);
-
 export const featuredProjectSlugs = [
   "operations-crm",
   "report-automation",
