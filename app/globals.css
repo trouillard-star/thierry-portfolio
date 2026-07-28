@@ -12170,3 +12170,156 @@ body::after {
     display: none;
   }
 }
+
+/* ============================================================
+   PERFORMANCE ET PROFONDEUR
+   Mesuré avant/après : le coût de rendu vient des animations
+   infinies hors écran et des repeints plein écran, pas du serveur.
+   ============================================================ */
+
+/* --- 1. Halo de curseur composité ---
+   Auparavant : un dégradé radial repeint sur tout le viewport à chaque
+   mouvement de souris. Désormais : un calque de taille fixe simplement
+   déplacé par `translate`, donc composité par le GPU sans repeint. */
+
+body::before {
+  inset: auto;
+  top: 0;
+  left: 0;
+  width: 76rem;
+  height: 76rem;
+  margin: -38rem 0 0 -38rem;
+  background: radial-gradient(
+    38rem circle at center,
+    color-mix(in srgb, var(--accent) 7%, transparent),
+    transparent 68%
+  );
+  translate: var(--pointer-x) var(--pointer-y);
+  will-change: translate;
+}
+
+/* --- 2. Les liserés animés ne tournent qu'au survol ---
+   Ces pseudo-éléments sont à opacity 0 au repos : laisser leur
+   background-position s'animer en boucle était du repeint invisible,
+   multiplié par le nombre de cartes à l'écran. */
+
+.project-card::before,
+.quickwin-card::before {
+  animation-play-state: paused;
+}
+
+.project-card:hover::before,
+.project-card:focus-within::before,
+.quickwin-card:hover::before,
+.quickwin-card:focus-within::before {
+  animation-play-state: running;
+}
+
+/* --- 3. Le rendu hors écran est sauté ---
+   `content-visibility` évite layout, paint et animations pour les
+   sections non visibles. La taille intrinsèque garde la barre de
+   défilement stable. La section projets en est exclue : elle porte les
+   view-transition-name nécessaires à la morphose entre pages. */
+
+.quickwins-section,
+.method-section,
+.skills-section,
+.experience-section {
+  content-visibility: auto;
+  /* Measured at 1.1–1.9 viewports tall; a viewport-relative estimate scales
+     with the screen instead of a fixed length tuned for one breakpoint. The
+     `auto` keyword lets the browser substitute the real size once rendered,
+     so the scrollbar settles after the first pass instead of jumping. */
+  contain-intrinsic-size: auto 125vh;
+}
+
+@media print {
+  .quickwins-section,
+  .method-section,
+  .skills-section,
+  .experience-section {
+    content-visibility: visible;
+  }
+}
+
+/* --- 4. Barre de progression pilotée par le scroll, sans JavaScript ---
+   L'ancienne version écrivait une variable CSS sur :root à chaque
+   événement de défilement, ce qui invalide le style de tout le document.
+   La timeline native supprime ce coût. */
+
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    transform: scaleX(0);
+    animation: progress-advance linear both;
+    animation-timeline: scroll(root block);
+  }
+}
+
+@keyframes progress-advance {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* --- 5. Profondeur au défilement ---
+   Les couches du hero et les titres de section dérivent à des rythmes
+   différents. `translate` uniquement : composité, et sans conflit avec
+   le `transform` du tilt ni avec le système [data-reveal]. */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .system-grid {
+      animation: depth-drift linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 90vh;
+    }
+
+    .section-heading h2,
+    .impact-heading h2 {
+      animation: depth-lift linear both;
+      animation-timeline: view();
+      animation-range: entry 4% cover 30%;
+    }
+
+    .skill-group {
+      animation: signal-settle linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 28%;
+    }
+
+    .case-shift article {
+      animation: depth-converge linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 40%;
+    }
+  }
+}
+
+@keyframes depth-drift {
+  to {
+    translate: 0 -2.4rem;
+  }
+}
+
+@keyframes depth-lift {
+  from {
+    translate: 0 1.1rem;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+@keyframes depth-converge {
+  from {
+    translate: 0 1.4rem;
+    scale: 0.985;
+  }
+  to {
+    translate: 0 0;
+    scale: 1;
+  }
+}

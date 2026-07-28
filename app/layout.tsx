@@ -158,8 +158,13 @@ const pageInteractions = `
       root.style.setProperty("--scroll-progress", String(progress));
     };
 
-    updateScrollProgress();
-    addEventListener("scroll", updateScrollProgress, { passive: true });
+    // Native scroll timelines drive the progress bar in CSS. Falling back to a
+    // scroll listener writes a custom property on :root, which invalidates
+    // style for the whole document on every scroll event.
+    if (!CSS.supports("animation-timeline: scroll()")) {
+      updateScrollProgress();
+      addEventListener("scroll", updateScrollProgress, { passive: true });
+    }
 
     if (!reducedMotion && matchMedia("(pointer: fine)").matches) {
       addEventListener("pointermove", updateAmbientMotion, { passive: true });
