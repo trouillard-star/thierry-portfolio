@@ -35,7 +35,7 @@
   if (!gl) return;
 
   /** Metres of pipe between defect slots, in shader units. */
-  const SLOT = 2.6;
+  const SLOT = 1.9;
   /** Shader units to metres, for the readout. */
   const METRES = 3.0;
 
@@ -103,49 +103,90 @@ float turnDist(float a, float b) {
   return d;
 }
 
-// One defect slot. Returns coverage in x and severity 1..5 in y.
-vec2 defectAt(uint slot, float depth, float turn) {
+// One defect slot. Defects are cut into the surface rather than painted over
+// it: x darkens the concrete (a gap, a shadow, a wet patch), y adds the
+// highlight that a broken lip or a wet crest catches, z is how much of the
+// severity colour the detector overlay should add, w is the grade.
+vec4 defectAt(uint slot, float depth, float turn) {
   float type = floor(h01(slot * 4u + 1u) * 5.0);
   float severity = floor(h01(slot * 4u + 2u) * 5.0) + 1.0;
   float around = h01(slot * 4u + 3u);
   float jitter = h01(slot * 4u + 4u);
 
   float centre = float(slot) * SLOT + 0.6 + jitter * 1.2;
+  // A joint defect has to sit on a joint. The rings are at fract(depth) == 0.5,
+  // so the slot's jittered position is snapped to the nearest one instead of
+  // landing on plain barrel.
+  if (type > 1.5 && type < 2.5) centre = floor(centre) + 0.5;
+
   float dz = depth - centre;
-  float coverage = 0.0;
+  float dark = 0.0;
+  float light = 0.0;
+  float tint = 0.0;
 
   if (type < 1.0) {
-    // Longitudinal crack: narrow across the barrel, long down the pipe, with
-    // a noise-driven wander so it never reads as a straight ruled line.
+    // Longitudinal crack: a dark gap with a lit lip where the broken edge
+    // catches the camera light. The wander keeps it off a ruled line.
     float wander = (fbm(vec2(depth * 5.0, float(slot))) - 0.5) * 0.06;
     float across = turnDist(turn, around + wander);
-    coverage = smoothstep(0.012, 0.0, across) * smoothstep(0.85, 0.0, abs(dz));
+    float along = smoothstep(1.30, 0.0, abs(dz));
+    float gap = smoothstep(0.014, 0.0, across) * along;
+    float lip = smoothstep(0.030, 0.014, across) * along;
+    dark = gap * 1.15;
+    light = lip * 0.42;
+    tint = gap * 0.5;
   } else if (type < 2.0) {
-    // Root intrusion: a soft organic cluster hanging into the barrel. The
-    // noise gate has to stay generous, otherwise the cluster reads as a few
-    // stray pixels against the concrete instead of a mass.
+    // Roots: ridged noise, domain-warped, so the mass resolves into strands
+    // instead of a smudge. Tips catch light, the body blocks it.
     float across = turnDist(turn, around);
-    float blob = fbm(vec2(turn * 22.0, depth * 5.0 + float(slot)));
-    float mask = smoothstep(0.15, 0.0, across) * smoothstep(0.55, 0.0, abs(dz));
-    coverage = mask * smoothstep(0.26, 0.60, blob) * 1.35;
+    float along = smoothstep(0.95, 0.0, abs(dz));
+    vec2 rp = vec2(turn * 30.0, depth * 7.0 + float(slot) * 3.0);
+    float fil = fbm(rp + vec2(fbm(rp * 0.6) * 1.6, 0.0));
+    float ridge = 1.0 - abs(fil * 2.0 - 1.0);
+    float envelope = smoothstep(0.19, 0.0, across) * along;
+    float mass = smoothstep(0.52, 0.92, ridge);
+    dark = mass * envelope * 1.2;
+    light = smoothstep(0.88, 1.0, ridge) * envelope * 0.38;
+    tint = mass * envelope * 0.55;
   } else if (type < 3.0) {
-    // Offset joint: a band right at the segment ring. Kept well below full
-    // coverage so a severe grade tints the ring rather than clipping it white.
-    coverage = smoothstep(0.055, 0.0, abs(dz)) * (0.30 + 0.26 * sin(turn * 6.28318));
+    // Displaced joint: half the ring steps out of line, throwing a shadow on
+    // one side while the exposed edge opposite catches light.
+    float side = step(0.5, fract(turn - around + 1.0));
+    float ring = smoothstep(0.075, 0.0, abs(dz));
+    float shadow = smoothstep(0.045, 0.0, abs(dz + 0.012));
+    dark = ring * (0.35 + 0.85 * side) + shadow * 0.4 * side;
+    light = smoothstep(0.022, 0.0, abs(dz - 0.020)) * (1.0 - side) * 0.75;
+    tint = ring * 0.45;
   } else if (type < 4.0) {
-    // Infiltration: a wet patch running down from the crown.
+    // Infiltration: wet concrete reads darker than dry, with glints where the
+    // water actually runs.
     float across = turnDist(turn, around);
+    float along = smoothstep(0.95, 0.0, abs(dz));
     float wet = fbm(vec2(turn * 14.0, depth * 3.0 + float(slot) * 2.0));
-    coverage = smoothstep(0.13, 0.0, across) * smoothstep(0.55, 0.0, abs(dz)) * wet * 1.4;
+    float streak = smoothstep(0.15, 0.0, across) * along;
+    dark = streak * (0.45 + wet * 0.55) * 0.95;
+    light = streak * smoothstep(0.62, 0.96, wet) * 0.85;
+    tint = streak * 0.4;
   } else {
-    // Sediment: settles along the invert, so it is pinned to the bottom of
-    // the barrel rather than placed at a random angle.
+    // Sediment: a mound in the invert with a defined crest, so it occludes the
+    // bottom of the barrel rather than tinting it.
+    float fill = 0.085 + severity * 0.016;
     float across = turnDist(turn, 0.75);
-    float bed = fbm(vec2(turn * 8.0, depth * 2.0));
-    coverage = smoothstep(0.16, 0.0, across) * smoothstep(0.75, 0.0, abs(dz)) * (0.5 + bed);
+    float along = smoothstep(1.25, 0.0, abs(dz));
+    float body = smoothstep(fill, fill - 0.022, across) * along;
+    float crest = (smoothstep(fill, fill - 0.008, across)
+                 - smoothstep(fill - 0.010, fill - 0.020, across)) * along;
+    dark = body * 1.0;
+    light = max(crest, 0.0) * 0.55;
+    tint = body * 0.35;
   }
 
-  return vec2(clamp(coverage, 0.0, 1.0), severity);
+  return vec4(
+    clamp(dark, 0.0, 1.4),
+    clamp(light, 0.0, 1.0),
+    clamp(tint, 0.0, 1.0),
+    severity
+  );
 }
 
 void main() {
@@ -160,33 +201,52 @@ void main() {
   float turn = angle / 6.28318;
   vec2 wallUv = vec2(turn, depth);
 
+  // Texture detail has to fade with distance. Depth goes to infinity at the
+  // vanishing point, so full-frequency noise there samples faster than the
+  // pixel grid and turns the far barrel into radial smear.
+  float detail = smoothstep(0.05, 0.42, radius);
+
   // Concrete, then vertical staining where water has run down the barrel.
-  float wall = fbm(vec2(wallUv.x * 26.0, wallUv.y * 6.0));
-  wall = 0.34 + wall * 0.52;
-  wall *= 0.86 + 0.14 * fbm(vec2(wallUv.x * 64.0, wallUv.y * 1.1));
+  float wall = fbm(vec2(wallUv.x * 30.0, wallUv.y * 4.5));
+  wall = 0.30 + wall * 0.44;
+  wall += (fbm(vec2(wallUv.x * 88.0, wallUv.y * 12.0)) - 0.5) * 0.30 * detail;
+  wall *= 0.88 + 0.12 * fbm(vec2(wallUv.x * 64.0, wallUv.y * 1.1));
 
-  // Segment joints, one per metre of pipe.
+  // Segment joints, one per metre of pipe: a recessed groove with a lit lip on
+  // the near side. Several rings receding is what sells the depth.
   float segment = fract(depth);
-  float joint = smoothstep(0.05, 0.0, abs(segment - 0.5));
+  float toJoint = abs(segment - 0.5);
+  float joint = smoothstep(0.045, 0.0, toJoint);
+  float jointLip = smoothstep(0.075, 0.045, toJoint);
 
-  // Only the two slots straddling this fragment can contribute, so the cost
-  // stays flat however far down the pipe the camera has travelled.
+  // Three slots, not two: the depth windows are wider than the slot spacing,
+  // so a defect centred one slot back can still reach this fragment. Checking
+  // only the two ahead dropped roughly every second finding. Cost stays flat
+  // however far down the pipe the camera has travelled.
   float reach = min(depth, uTravel + 46.0);
   float slotF = floor(reach / SLOT);
-  vec2 near = vec2(0.0);
-  if (slotF >= 0.0) {
-    vec2 a = defectAt(uint(slotF), reach, turn);
-    vec2 b = defectAt(uint(slotF) + 1u, reach, turn);
-    near = a.x >= b.x ? a : b;
+  vec4 near = vec4(0.0, 0.0, 0.0, 1.0);
+  if (slotF >= 1.0) {
+    vec4 a = defectAt(uint(slotF) - 1u, reach, turn);
+    vec4 b = defectAt(uint(slotF), reach, turn);
+    vec4 c = defectAt(uint(slotF) + 1u, reach, turn);
+    near = (a.x + a.z) >= (b.x + b.z) ? a : b;
+    near = (c.x + c.z) >= (near.x + near.z) ? c : near;
+  } else if (slotF >= 0.0) {
+    vec4 b = defectAt(uint(slotF), reach, turn);
+    vec4 c = defectAt(uint(slotF) + 1u, reach, turn);
+    near = (c.x + c.z) >= (b.x + b.z) ? c : b;
   }
 
-  float reveal = smoothstep(0.30, 0.70, uPhase);
-  float defect = near.x * reveal;
-  float severity = near.y;
+  // Defects are always drawn. Gating them on scroll progress meant nothing was
+  // visible at the top of the page, while the brackets and the log still
+  // announced findings the image did not show.
+  float severity = near.w;
 
-  // Measurement sweep running ahead of the camera, introduced mid-descent.
+  // Measurement sweep running ahead of the camera. The hero is only about half
+  // a screen tall, so scroll progress never climbs far before it leaves the
+  // viewport; anything held back for later would simply never be seen.
   float sweep = smoothstep(0.035, 0.0, abs(fract(depth * 0.5 - uTravel * 0.6) - 0.5));
-  sweep *= smoothstep(0.12, 0.45, uPhase);
 
   vec3 navy = vec3(0.027, 0.075, 0.122);
   vec3 teal = vec3(0.294, 0.831, 0.769);
@@ -197,18 +257,31 @@ void main() {
   // turn amber, severe go red. Same scale as the log.
   vec3 defectColor = severity <= 2.0 ? teal : (severity <= 3.0 ? amber : alarm);
 
-  vec3 color = mix(navy, vec3(0.40, 0.48, 0.55), wall);
-  color = mix(color, navy * 0.45, joint * 0.72);
-  color += teal * joint * 0.34;
-  // Severity raises the intensity, but the ceiling stays under 1.15 so a
-  // grade 5 reads as saturated colour rather than blown-out white.
-  color += defectColor * defect * (0.55 + severity * 0.11);
-  color += teal * sweep * 0.09;
-  color += teal * 0.055 * smoothstep(0.30, 1.45, radius);
+  vec3 color = mix(navy, vec3(0.46, 0.53, 0.59), wall);
 
-  // Darkness towards the vanishing point; the mouth opens up as we descend.
-  color *= smoothstep(0.0, 0.82 - uPhase * 0.16, radius);
-  color *= 1.0 - 0.34 * smoothstep(0.95, 1.95, radius);
+  // Joints read as a dark groove with a lit lip, not a glowing hoop.
+  color *= 1.0 - joint * 0.80;
+  color += vec3(0.52, 0.58, 0.63) * jointLip * 0.40;
+
+  // Damage is cut into the surface before any distance shading, so it reads as
+  // part of the pipe rather than a wash laid over it.
+  color *= 1.0 - min(near.x * 0.88, 0.96);
+  color += vec3(0.60, 0.66, 0.72) * near.y;
+
+  color += teal * sweep * 0.07;
+
+  // A camera ring light: bright close to the lens, falling away hard down the
+  // barrel. This is what makes it read as a pipe rather than a flat disc.
+  float lamp = smoothstep(0.03, 0.62, radius);
+  lamp *= 1.0 - 0.42 * smoothstep(0.85, 1.9, radius);
+  color *= lamp;
+  color += teal * 0.05 * smoothstep(0.35, 1.3, radius);
+
+  // The classification tint is applied after the falloff and keeps a floor, so
+  // a finding stays legible well down the barrel. It stays deliberately light:
+  // the damage itself should carry the image, not the colour over it.
+  color += defectColor * near.z * (0.30 + severity * 0.07)
+         * (0.34 + 0.66 * smoothstep(0.02, 0.40, radius));
   color += (hash(gl_FragCoord.xy + fract(uTravel)) - 0.5) * 0.022;
 
   outColor = vec4(max(color, 0.0), 1.0);
@@ -293,7 +366,10 @@ void main() {
     const severity = Math.floor(h01(slot * 4 + 2) * 5) + 1;
     const around = h01(slot * 4 + 3);
     const jitter = h01(slot * 4 + 4);
-    const centre = slot * SLOT + 0.6 + jitter * 1.2;
+    let centre = slot * SLOT + 0.6 + jitter * 1.2;
+    // Mirrors the shader: a joint defect is snapped onto an actual joint ring,
+    // otherwise the bracket would sit on plain barrel next to it.
+    if (type === 2) centre = Math.floor(centre) + 0.5;
     // Sediment settles along the invert in the shader, so its marker has to
     // follow the same rule rather than the slot's random angle.
     const turn = type === 4 ? 0.75 : around;
