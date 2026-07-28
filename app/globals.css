@@ -12226,11 +12226,21 @@ body::before {
 .skills-section,
 .experience-section {
   content-visibility: auto;
-  /* Measured at 1.1–1.9 viewports tall; a viewport-relative estimate scales
-     with the screen instead of a fixed length tuned for one breakpoint. The
-     `auto` keyword lets the browser substitute the real size once rendered,
-     so the scrollbar settles after the first pass instead of jumping. */
+  /* Measured height is ~1.25 viewports on wide screens and ~1.5 on narrow
+     ones, where text wraps into more rows. No single value fits both: 125vh
+     was out by -6.9% narrow, 150vh by +8.6% wide. Splitting at the layout
+     breakpoint keeps both within ~2%, so the scrollbar barely moves on the
+     first pass. `auto` then substitutes the measured size. */
   contain-intrinsic-size: auto 125vh;
+}
+
+@media (max-width: 1000px) {
+  .quickwins-section,
+  .method-section,
+  .skills-section,
+  .experience-section {
+    contain-intrinsic-size: auto 150vh;
+  }
 }
 
 @media print {
