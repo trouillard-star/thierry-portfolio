@@ -115,8 +115,34 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
             }
           >
             <div className="system-heading">
-              <span>SYS.MAP / 07</span>
+              <span className="heading-map">SYS.MAP / 07</span>
+              <span className="heading-descent">
+                {locale === "fr" ? "INSPECTION / 360°" : "INSPECTION / 360°"}
+              </span>
               <span className="system-state">ONLINE</span>
+            </div>
+            {/* Replaces the capability map only once the shader has compiled;
+                see public/hero-descent.js. */}
+            <div
+              className="descent-stage"
+              data-hero-descent
+              data-descent-label={
+                locale === "fr"
+                  ? "Vue d’inspection : caméra descendant dans une conduite"
+                  : "Inspection view: camera descending through a pipe"
+              }
+            >
+              <canvas aria-hidden="true" />
+              <div className="descent-readout" aria-hidden="true">
+                <div>
+                  <b data-descent-distance>0.0</b>
+                  <span>{locale === "fr" ? "m parcourus" : "m travelled"}</span>
+                </div>
+                <div>
+                  <b data-descent-defects>0</b>
+                  <span>{locale === "fr" ? "relevés" : "readings"}</span>
+                </div>
+              </div>
             </div>
             <div className="system-grid">
               <div className="system-node node-code">
@@ -151,6 +177,7 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
                 : "Observe · model · build · verify"}
             </p>
           </div>
+          <script src="/hero-descent.js" defer />
         </section>
 
         <section
