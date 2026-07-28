@@ -12471,7 +12471,7 @@ body::before {
 .descent-log li {
   padding: 0.4rem 0.55rem;
   display: grid;
-  grid-template-columns: 3.6rem 2.3rem minmax(0, 1fr) auto;
+  grid-template-columns: 3.6rem 2.9rem minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.55rem;
   border: 1px solid color-mix(in srgb, var(--line-strong) 70%, transparent);
@@ -12573,7 +12573,7 @@ body::before {
 
 @media (max-width: 1000px) {
   .descent-log li {
-    grid-template-columns: 3.2rem 2.1rem minmax(0, 1fr);
+    grid-template-columns: 3.2rem 2.7rem minmax(0, 1fr);
   }
 
   .descent-log i {

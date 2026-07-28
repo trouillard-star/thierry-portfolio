@@ -108,7 +108,7 @@ float turnDist(float a, float b) {
 // highlight that a broken lip or a wet crest catches, z is how much of the
 // severity colour the detector overlay should add, w is the grade.
 vec4 defectAt(uint slot, float depth, float turn) {
-  float type = floor(h01(slot * 4u + 1u) * 5.0);
+  float type = floor(h01(slot * 4u + 1u) * 6.0);
   float severity = floor(h01(slot * 4u + 2u) * 5.0) + 1.0;
   float around = h01(slot * 4u + 3u);
   float jitter = h01(slot * 4u + 4u);
@@ -136,18 +136,21 @@ vec4 defectAt(uint slot, float depth, float turn) {
     light = lip * 0.42;
     tint = gap * 0.5;
   } else if (type < 2.0) {
-    // Roots: ridged noise, domain-warped, so the mass resolves into strands
-    // instead of a smudge. Tips catch light, the body blocks it.
-    float across = turnDist(turn, around);
-    float along = smoothstep(0.95, 0.0, abs(dz));
-    vec2 rp = vec2(turn * 30.0, depth * 7.0 + float(slot) * 3.0);
-    float fil = fbm(rp + vec2(fbm(rp * 0.6) * 1.6, 0.0));
-    float ridge = 1.0 - abs(fil * 2.0 - 1.0);
-    float envelope = smoothstep(0.19, 0.0, across) * along;
-    float mass = smoothstep(0.52, 0.92, ridge);
-    dark = mass * envelope * 1.2;
-    light = smoothstep(0.88, 1.0, ridge) * envelope * 0.38;
-    tint = mass * envelope * 0.55;
+    // Roots: a bushy cluster, not a set of lines. Ridged noise was used here
+    // before and it produced long straight strands that read as multiple
+    // fractures. This builds an irregular blob around an entry point and
+    // varies it with fine hair radiating outward, which keeps the silhouette
+    // organic instead of linear.
+    vec2 rel = vec2(turnDist(turn, around), dz * 0.30);
+    float dist = length(rel);
+    float bearing = atan(rel.y, rel.x);
+    float wobble = (fbm(vec2(bearing * 2.4, float(slot))) - 0.5) * 0.09;
+    float blob = smoothstep(0.15 + wobble, 0.015, dist);
+    float hair = fbm(vec2(bearing * 26.0, dist * 44.0 + float(slot) * 5.0));
+    float mass = blob * (0.5 + 0.5 * smoothstep(0.32, 0.72, hair));
+    dark = mass * 1.25;
+    light = blob * smoothstep(0.80, 0.99, hair) * 0.30;
+    tint = mass * 0.55;
   } else if (type < 3.0) {
     // Displaced joint: half the ring steps out of line, throwing a shadow on
     // one side while the exposed edge opposite catches light.
@@ -167,7 +170,7 @@ vec4 defectAt(uint slot, float depth, float turn) {
     dark = streak * (0.45 + wet * 0.55) * 0.95;
     light = streak * smoothstep(0.62, 0.96, wet) * 0.85;
     tint = streak * 0.4;
-  } else {
+  } else if (type < 5.0) {
     // Sediment: a mound in the invert with a defined crest, so it occludes the
     // bottom of the barrel rather than tinting it.
     float fill = 0.085 + severity * 0.016;
@@ -179,6 +182,19 @@ vec4 defectAt(uint slot, float depth, float turn) {
     dark = body * 1.0;
     light = max(crest, 0.0) * 0.55;
     tint = body * 0.35;
+  } else {
+    // Service connection: an opening in the barrel with a lit rim. Pushed
+    // towards the springline, since a lateral rarely enters at the invert
+    // where the flow runs.
+    float side = around < 0.5 ? 0.03 : 0.53;
+    vec2 rel = vec2(turnDist(turn, side), dz * 0.44);
+    float d = length(rel);
+    float bore = 0.052 + severity * 0.004;
+    float hole = smoothstep(bore, bore * 0.70, d);
+    float rim = max(smoothstep(bore * 1.40, bore, d) - hole, 0.0);
+    dark = hole * 1.35;
+    light = rim * 0.58;
+    tint = hole * 0.40;
   }
 
   return vec4(
@@ -211,6 +227,18 @@ void main() {
   wall = 0.30 + wall * 0.44;
   wall += (fbm(vec2(wallUv.x * 88.0, wallUv.y * 12.0)) - 0.5) * 0.30 * detail;
   wall *= 0.88 + 0.12 * fbm(vec2(wallUv.x * 64.0, wallUv.y * 1.1));
+
+  // Exposed aggregate: bright grains and dark pits, close to the lens only.
+  float grit = fbm(vec2(wallUv.x * 190.0, wallUv.y * 24.0));
+  wall += (smoothstep(0.63, 0.88, grit) - smoothstep(0.14, 0.37, grit)) * 0.11 * detail;
+
+  // Flow in the invert, and the tide mark left above it. A dry tube is the
+  // main thing that stopped this reading as a real inspection.
+  float toInvert = turnDist(turn, 0.75);
+  float waterLine = 0.082;
+  float water = smoothstep(waterLine, waterLine - 0.010, toInvert);
+  float tide = smoothstep(waterLine + 0.032, waterLine, toInvert)
+             * smoothstep(waterLine - 0.006, waterLine + 0.006, toInvert);
 
   // Segment joints, one per metre of pipe: a recessed groove with a lit lip on
   // the near side. Several rings receding is what sells the depth.
@@ -262,6 +290,15 @@ void main() {
   // Joints read as a dark groove with a lit lip, not a glowing hoop.
   color *= 1.0 - joint * 0.80;
   color += vec3(0.52, 0.58, 0.63) * jointLip * 0.40;
+
+  // The tide mark stains the concrete just above the flow.
+  color *= 1.0 - tide * 0.30;
+
+  // Water: darker than the wall, and it throws back the lamp in glints that
+  // travel with the current rather than with the camera.
+  float glint = fbm(vec2(turn * 42.0, depth * 7.0 - uTravel * 2.6));
+  color = mix(color, color * 0.34 + navy * 0.5, water);
+  color += vec3(0.56, 0.63, 0.68) * water * smoothstep(0.60, 0.94, glint) * 0.60;
 
   // Damage is cut into the surface before any distance shading, so it reads as
   // part of the pipe rather than a wash laid over it.
@@ -329,21 +366,61 @@ void main() {
   const logOut = stage.querySelector("[data-descent-log]");
 
   const english = document.documentElement.lang.startsWith("en");
-  const CATALOGUE = english
-    ? [
-        { code: "CRK", name: "Longitudinal crack" },
-        { code: "ROO", name: "Root intrusion" },
-        { code: "JNT", name: "Offset joint" },
-        { code: "INF", name: "Infiltration" },
-        { code: "DEP", name: "Sediment deposit" },
-      ]
-    : [
-        { code: "FIS", name: "Fissure longitudinale" },
-        { code: "RAC", name: "Intrusion de racines" },
-        { code: "JNT", name: "Joint déboîté" },
-        { code: "INF", name: "Infiltration" },
-        { code: "DEP", name: "Dépôt de sédiments" },
-      ];
+  // NASSCO PACP codes. These are the published industry nomenclature, and the
+  // code follows from the grade the way an analyst would assign it: a crack
+  // that opens becomes a fracture, fine roots become a ball, a weeper becomes
+  // a runner. Infiltration maps one to one onto grades 1-5.
+  const CLASSES = [
+    // Opening in the barrel: no visible gap is a crack, an open one a fracture.
+    [
+      { code: "CL", fr: "Fissure longitudinale", en: "Crack longitudinal" },
+      { code: "CL", fr: "Fissure longitudinale", en: "Crack longitudinal" },
+      { code: "FL", fr: "Fracture longitudinale", en: "Fracture longitudinal" },
+      { code: "FM", fr: "Fractures multiples", en: "Fracture multiple" },
+      { code: "FM", fr: "Fractures multiples", en: "Fracture multiple" },
+    ],
+    [
+      { code: "RF", fr: "Radicelles", en: "Roots fine" },
+      { code: "RF", fr: "Radicelles", en: "Roots fine" },
+      { code: "RM", fr: "Racines moyennes", en: "Roots medium" },
+      { code: "RB", fr: "Racines en balle", en: "Roots ball" },
+      { code: "RB", fr: "Racines en balle", en: "Roots ball" },
+    ],
+    [
+      { code: "JOS", fr: "Joint décalé faible", en: "Joint offset small" },
+      { code: "JOM", fr: "Joint décalé moyen", en: "Joint offset medium" },
+      { code: "JOM", fr: "Joint décalé moyen", en: "Joint offset medium" },
+      { code: "JOL", fr: "Joint décalé important", en: "Joint offset large" },
+      { code: "JOL", fr: "Joint décalé important", en: "Joint offset large" },
+    ],
+    [
+      { code: "IS", fr: "Traces d’infiltration", en: "Infiltration stain" },
+      { code: "IW", fr: "Suintement", en: "Infiltration weeper" },
+      { code: "ID", fr: "Goutte à goutte", en: "Infiltration dripper" },
+      { code: "IR", fr: "Écoulement continu", en: "Infiltration runner" },
+      { code: "IG", fr: "Écoulement sous pression", en: "Infiltration gusher" },
+    ],
+    [
+      { code: "DSF", fr: "Dépôts fins", en: "Deposits settled fine" },
+      { code: "DSF", fr: "Dépôts fins", en: "Deposits settled fine" },
+      { code: "DSGV", fr: "Dépôts de gravier", en: "Deposits settled gravel" },
+      { code: "DSC", fr: "Dépôts compactés", en: "Deposits settled compacted" },
+      { code: "DSC", fr: "Dépôts compactés", en: "Deposits settled compacted" },
+    ],
+    [
+      { code: "TF", fr: "Raccordement usine", en: "Tap factory" },
+      { code: "TF", fr: "Raccordement usine", en: "Tap factory" },
+      { code: "TBA", fr: "Raccordement aligné", en: "Tap break-in aligned" },
+      { code: "TBI", fr: "Raccordement intrusif", en: "Tap bored intruding" },
+      { code: "TBI", fr: "Raccordement intrusif", en: "Tap bored intruding" },
+    ],
+  ];
+
+  function classify(type, severity) {
+    const family = CLASSES[type] ?? CLASSES[0];
+    const entry = family[Math.min(Math.max(severity, 1), 5) - 1];
+    return { code: entry.code, name: english ? entry.en : entry.fr };
+  }
   const GRADE = english ? "Grade" : "Cote";
 
   // --- The JavaScript half of the shared hash -------------------------------
@@ -362,7 +439,7 @@ void main() {
   }
 
   function defectForSlot(slot) {
-    const type = Math.floor(h01(slot * 4 + 1) * 5);
+    const type = Math.floor(h01(slot * 4 + 1) * 6);
     const severity = Math.floor(h01(slot * 4 + 2) * 5) + 1;
     const around = h01(slot * 4 + 3);
     const jitter = h01(slot * 4 + 4);
@@ -443,7 +520,7 @@ void main() {
 
       if (marker.slot !== slot) {
         marker.slot = slot;
-        const entry = CATALOGUE[type] ?? CATALOGUE[0];
+        const entry = classify(type, severity);
         if (marker.label) {
           marker.label.textContent = `${entry.code} ${confidence}%`;
         }
@@ -504,7 +581,7 @@ void main() {
   function logDefect(slot, travel) {
     if (!logOut) return;
     const { type, severity } = defectForSlot(slot);
-    const entry = CATALOGUE[type] ?? CATALOGUE[0];
+    const entry = classify(type, severity);
 
     const row = document.createElement("li");
     row.dataset.grade = String(severity);
