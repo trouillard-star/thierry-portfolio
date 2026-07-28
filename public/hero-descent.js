@@ -128,6 +128,14 @@ vec4 defectAt(uint slot, float depth, float turn, float rad) {
   if (type > 1.5 && type < 2.5) centre = floor(centre) + 0.5;
 
   float dz = depth - centre;
+
+  // Nothing to evaluate if this fragment is nowhere near the slot. Three slots
+  // are tested per fragment and most are far from all of them, so returning
+  // before touching any noise removes the bulk of the shader's work. The bound
+  // covers the widest window, plus the reach of an intruding lateral, which
+  // extends in screen radius rather than along the barrel.
+  if (abs(dz) > 2.2) return vec4(0.0, 0.0, 0.0, severity);
+
   float dark = 0.0;
   float light = 0.0;
   float tint = 0.0;
@@ -276,6 +284,10 @@ void main() {
   p.x *= uResolution.x / uResolution.y;
   p -= uLook * 0.14;
 
+  // Crawler heads carry wide-angle optics, and the barrel distortion that
+  // comes with them is part of how this footage reads.
+  p *= 1.0 + 0.062 * dot(p, p);
+
   float radius = max(length(p), 0.0015);
   float angle = atan(p.y, p.x);
   float depth = 0.34 / radius + uTravel;
@@ -297,7 +309,12 @@ void main() {
 
   float wall = 0.30 + height * 0.32;
   wall *= 1.0 + relief * 0.62;
-  wall *= 0.88 + 0.12 * fbm(vec2(wallUv.x * 64.0, wallUv.y * 1.1));
+
+  // Broad patchy staining. Reused for both tone and hue, so the wall drifts
+  // between clean grey concrete and the ochre and near-black of a barrel that
+  // has carried water for decades, instead of holding one flat colour.
+  float stain = fbm(vec2(wallUv.x * 3.2, wallUv.y * 0.9));
+  wall *= 0.86 + 0.14 * fbm(vec2(wallUv.x * 64.0, wallUv.y * 1.1));
 
   // Exposed aggregate: bright grains and dark pits, close to the lens only.
   float grit = fbm(vec2(wallUv.x * 190.0, wallUv.y * 24.0));
@@ -356,7 +373,13 @@ void main() {
   // turn amber, severe go red. Same scale as the log.
   vec3 defectColor = severity <= 2.0 ? teal : (severity <= 3.0 ? amber : alarm);
 
-  vec3 color = mix(navy, vec3(0.46, 0.53, 0.59), wall);
+  vec3 concrete = mix(
+    vec3(0.48, 0.54, 0.59),
+    vec3(0.45, 0.40, 0.33),
+    smoothstep(0.40, 0.78, stain)
+  );
+  concrete = mix(concrete, vec3(0.20, 0.23, 0.21), smoothstep(0.70, 0.94, stain));
+  vec3 color = mix(navy, concrete, wall);
 
   // Joints read as a dark groove with a lit lip, not a glowing hoop.
   color *= 1.0 - joint * 0.80;
@@ -403,6 +426,17 @@ void main() {
   // the damage itself should carry the image, not the colour over it.
   color += defectColor * near.z * (0.30 + severity * 0.07)
          * (0.34 + 0.66 * smoothstep(0.02, 0.40, radius));
+  // Lateral chromatic aberration, which a cheap wide-angle shows at the edges.
+  float fringe = smoothstep(0.45, 1.55, radius) * 0.035;
+  color.r *= 1.0 + fringe;
+  color.b *= 1.0 - fringe;
+
+  // Roll the highlights off instead of clipping them. A linear ramp to white
+  // is the other tell of a render; real footage compresses at the top. The
+  // curve stays near-linear through the shadows and mid-tones so it does not
+  // flatten the image, and only bends near the top.
+  color = color * (1.0 + color * 0.55) / (1.0 + color * 0.75);
+
   // Sensor grain, heavier in shadow. A low-light CCTV head is noisiest exactly
   // where the lamp does not reach, and a clean dark end is the giveaway that
   // an image was rendered rather than filmed.
