@@ -115,7 +115,7 @@ float turnDist(float a, float b) {
 // it: x darkens the concrete (a gap, a shadow, a wet patch), y adds the
 // highlight that a broken lip or a wet crest catches, z is how much of the
 // severity colour the detector overlay should add, w is the grade.
-vec4 defectAt(uint slot, float depth, float turn) {
+vec4 defectAt(uint slot, float depth, float turn, float rad) {
   float type = floor(h01(slot * 4u + 1u) * 6.0);
   float severity = floor(h01(slot * 4u + 2u) * 5.0) + 1.0;
   float around = h01(slot * 4u + 3u);
@@ -133,15 +133,24 @@ vec4 defectAt(uint slot, float depth, float turn) {
   float tint = 0.0;
 
   if (type < 1.0) {
-    // Longitudinal crack: a dark gap with a lit lip where the broken edge
-    // catches the camera light. The wander keeps it off a ruled line.
+    // Longitudinal crack. Real ones wander, pinch and widen along their run
+    // and never close as a smooth curve, so both the path and the width are
+    // driven by noise. The lit lip sits on one side only: the camera-facing
+    // edge of a broken face catches the lamp, the other falls away.
     float wander = (fbm(vec2(depth * 5.0, float(slot))) - 0.5) * 0.06;
-    float across = turnDist(turn, around + wander);
+    float path = around + wander;
+    float signed = fract(turn - path + 0.5) - 0.5;
+    float across = abs(signed);
     float along = smoothstep(1.30, 0.0, abs(dz));
-    float gap = smoothstep(0.014, 0.0, across) * along;
-    float lip = smoothstep(0.030, 0.014, across) * along;
-    dark = gap * 1.15;
-    light = lip * 0.42;
+    // Width pinches and swells, and tapers to nothing at both ends.
+    float widen = 0.006 + 0.012 * fbm(vec2(depth * 9.0, float(slot) * 2.0));
+    widen *= smoothstep(1.30, 0.55, abs(dz));
+    float gap = smoothstep(widen, widen * 0.35, across) * along;
+    // Spalled edge on the near side of the break.
+    float lip = smoothstep(widen * 2.6, widen, across)
+              * step(0.0, signed) * along;
+    dark = gap * 1.30;
+    light = lip * 0.50;
     tint = gap * 0.5;
   } else if (type < 2.0) {
     // Roots: a bushy cluster, not a set of lines. Ridged noise was used here
@@ -153,31 +162,59 @@ vec4 defectAt(uint slot, float depth, float turn) {
     float dist = length(rel);
     float bearing = atan(rel.y, rel.x);
     float wobble = (fbm(vec2(bearing * 2.4, float(slot))) - 0.5) * 0.09;
-    float blob = smoothstep(0.15 + wobble, 0.015, dist);
-    float hair = fbm(vec2(bearing * 26.0, dist * 44.0 + float(slot) * 5.0));
-    float mass = blob * (0.5 + 0.5 * smoothstep(0.32, 0.72, hair));
-    dark = mass * 1.25;
-    light = blob * smoothstep(0.80, 0.99, hair) * 0.30;
+    float reach = 0.15 + wobble;
+    float blob = smoothstep(reach, 0.015, dist);
+
+    // Individual tendrils: a high-frequency band in bearing, thinning as it
+    // runs outward, so the mass resolves into strands near its edge instead
+    // of ending on a smooth outline.
+    float strand = fbm(vec2(bearing * 34.0, dist * 26.0 + float(slot) * 5.0));
+    float fringe = smoothstep(reach * 0.45, reach, dist);
+    float tendril = smoothstep(0.46, 0.78, strand);
+    float mass = blob * mix(0.85, tendril, fringe);
+
+    // Contact shadow where the mass meets the wall behind it.
+    float contact = smoothstep(reach * 1.30, reach * 0.85, dist)
+                  * (1.0 - blob) * 0.55;
+
+    dark = mass * 1.30 + contact;
+    light = mass * smoothstep(0.74, 0.98, strand) * 0.34;
     tint = mass * 0.55;
   } else if (type < 3.0) {
     // Displaced joint: half the ring steps out of line, throwing a shadow on
     // one side while the exposed edge opposite catches light.
-    float side = step(0.5, fract(turn - around + 1.0));
-    float ring = smoothstep(0.075, 0.0, abs(dz));
-    float shadow = smoothstep(0.045, 0.0, abs(dz + 0.012));
-    dark = ring * (0.35 + 0.85 * side) + shadow * 0.4 * side;
-    light = smoothstep(0.022, 0.0, abs(dz - 0.020)) * (1.0 - side) * 0.75;
-    tint = ring * 0.45;
+    // The offset varies smoothly around the barrel rather than flipping at a
+    // hard seam, which is how a pipe actually sits out of line.
+    float lean = cos((turn - around) * 6.28318);
+    float drop = max(lean, 0.0);
+    float rise = max(-lean, 0.0);
+    // Open gap at the joint, widening on the side that has dropped.
+    float mouth = 0.020 + 0.030 * drop;
+    float gapAt = smoothstep(mouth, mouth * 0.3, abs(dz));
+    // The dropped lip throws a shadow just downstream of the gap. Avoid the
+    // name cast here: it is reserved in GLSL. And no backticks anywhere in
+    // this shader, since the whole thing lives in a template literal.
+    float thrown = smoothstep(0.055, 0.0, abs(dz + 0.030)) * drop * 0.75;
+    // The raised lip presents its face to the lamp.
+    float face = smoothstep(0.030, 0.0, abs(dz - 0.022)) * rise;
+    dark = gapAt * 1.25 + thrown;
+    light = face * 0.80;
+    tint = gapAt * 0.5;
   } else if (type < 4.0) {
     // Infiltration: wet concrete reads darker than dry, with glints where the
     // water actually runs.
+    // Water leaves a mineral crust as it evaporates, so the run is bracketed
+    // by pale calcite while the wet channel itself stays dark and glossy.
     float across = turnDist(turn, around);
     float along = smoothstep(0.95, 0.0, abs(dz));
-    float wet = fbm(vec2(turn * 14.0, depth * 3.0 + float(slot) * 2.0));
-    float streak = smoothstep(0.15, 0.0, across) * along;
-    dark = streak * (0.45 + wet * 0.55) * 0.95;
-    light = streak * smoothstep(0.62, 0.96, wet) * 0.85;
-    tint = streak * 0.4;
+    float wet = fbm(vec2(turn * 22.0, depth * 4.0 + float(slot) * 2.0));
+    float channel = smoothstep(0.075, 0.0, across) * along;
+    float crust = (smoothstep(0.17, 0.075, across)
+                 - smoothstep(0.075, 0.045, across)) * along;
+    dark = channel * (0.5 + wet * 0.55) * 1.05;
+    light = channel * smoothstep(0.60, 0.95, wet) * 0.95
+          + max(crust, 0.0) * (0.35 + 0.30 * wet);
+    tint = channel * 0.45;
   } else if (type < 5.0) {
     // Sediment: a mound in the invert with a defined crest, so it occludes the
     // bottom of the barrel rather than tinting it.
@@ -191,18 +228,38 @@ vec4 defectAt(uint slot, float depth, float turn) {
     light = max(crest, 0.0) * 0.55;
     tint = body * 0.35;
   } else {
-    // Service connection: an opening in the barrel with a lit rim. Pushed
-    // towards the springline, since a lateral rarely enters at the invert
-    // where the flow runs.
+    // Service connection, at the springline since a lateral rarely enters at
+    // the invert where the flow runs.
     float side = around < 0.5 ? 0.03 : 0.53;
-    vec2 rel = vec2(turnDist(turn, side), dz * 0.44);
+    float across = turnDist(turn, side);
+    float bore = 0.055;
+
+    // The opening itself, ringed by the cut edge of the barrel wall.
+    vec2 rel = vec2(across, dz * 0.44);
     float d = length(rel);
-    float bore = 0.052 + severity * 0.004;
-    float hole = smoothstep(bore, bore * 0.70, d);
-    float rim = max(smoothstep(bore * 1.40, bore, d) - hole, 0.0);
-    dark = hole * 1.35;
-    light = rim * 0.58;
-    tint = hole * 0.40;
+    float hole = smoothstep(bore, bore * 0.72, d);
+    float cut = max(smoothstep(bore * 1.32, bore, d) - hole, 0.0);
+    dark = hole * 1.40;
+    light = cut * 0.60;
+    tint = hole * 0.42;
+
+    if (severity >= 4.0) {
+      // Intruding lateral: the branch is pushed through so its cut end stands
+      // proud inside the barrel. Seen down the axis that is a stub reaching
+      // from the bore towards the centre of frame. Its flank is the nearest
+      // thing to the lamp, so it reads bright against the wall behind it.
+      float wallRadius = 0.34 / max(centre - uTravel, 0.03);
+      float tip = wallRadius * 0.56;
+      float band = smoothstep(bore * 1.25, bore * 0.45, across);
+      float flank = band
+                  * smoothstep(tip * 0.94, tip * 1.08, rad)
+                  * smoothstep(wallRadius * 1.10, wallRadius * 0.94, rad);
+      // Its own bore, a dark ellipse at the standing end.
+      float mouth = band * smoothstep(tip * 1.08, tip * 0.86, rad);
+      light += flank * 0.85;
+      dark += mouth * 1.20;
+      tint += (flank + mouth) * 0.45;
+    }
   }
 
   return vec4(
@@ -269,15 +326,15 @@ void main() {
   float slotF = floor(reach / SLOT);
   vec4 near = vec4(0.0, 0.0, 0.0, 1.0);
   if (slotF >= 1.0) {
-    vec4 a = defectAt(uint(slotF) - 1u, reach, turn);
-    vec4 b = defectAt(uint(slotF), reach, turn);
-    vec4 c = defectAt(uint(slotF) + 1u, reach, turn);
-    near = (a.x + a.z) >= (b.x + b.z) ? a : b;
-    near = (c.x + c.z) >= (near.x + near.z) ? c : near;
+    vec4 a = defectAt(uint(slotF) - 1u, reach, turn, radius);
+    vec4 b = defectAt(uint(slotF), reach, turn, radius);
+    vec4 c = defectAt(uint(slotF) + 1u, reach, turn, radius);
+    near = (a.x + a.y + a.z) >= (b.x + b.y + b.z) ? a : b;
+    near = (c.x + c.y + c.z) >= (near.x + near.y + near.z) ? c : near;
   } else if (slotF >= 0.0) {
-    vec4 b = defectAt(uint(slotF), reach, turn);
-    vec4 c = defectAt(uint(slotF) + 1u, reach, turn);
-    near = (c.x + c.z) >= (b.x + b.z) ? c : b;
+    vec4 b = defectAt(uint(slotF), reach, turn, radius);
+    vec4 c = defectAt(uint(slotF) + 1u, reach, turn, radius);
+    near = (c.x + c.y + c.z) >= (b.x + b.y + b.z) ? c : b;
   }
 
   // Defects are always drawn. Gating them on scroll progress meant nothing was
@@ -361,6 +418,13 @@ void main() {
     gl.shaderSource(shader, source);
     gl.compileShader(shader);
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      // Failing silently here is correct for visitors, who simply keep the
+      // capability map, but it hides a broken shader during development: the
+      // page looks intentional either way.
+      console.warn(
+        "hero-descent: shader failed to compile\n" +
+          gl.getShaderInfoLog(shader),
+      );
       gl.deleteShader(shader);
       return null;
     }
