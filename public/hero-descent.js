@@ -97,6 +97,14 @@ float fbm(vec2 p) {
   return value;
 }
 
+// Height of the concrete surface. Used for tone and, more importantly, for
+// its gradient: shading the slope is what separates a surface from a texture.
+float surfaceHeight(vec2 uv2) {
+  float h = fbm(vec2(uv2.x * 30.0, uv2.y * 4.5));
+  h += fbm(vec2(uv2.x * 88.0, uv2.y * 12.0)) * 0.35;
+  return h;
+}
+
 // Shortest distance between two angular coordinates expressed in turns.
 float turnDist(float a, float b) {
   float d = abs(fract(a - b + 0.5) - 0.5);
@@ -222,10 +230,16 @@ void main() {
   // pixel grid and turns the far barrel into radial smear.
   float detail = smoothstep(0.05, 0.42, radius);
 
-  // Concrete, then vertical staining where water has run down the barrel.
-  float wall = fbm(vec2(wallUv.x * 30.0, wallUv.y * 4.5));
-  wall = 0.30 + wall * 0.44;
-  wall += (fbm(vec2(wallUv.x * 88.0, wallUv.y * 12.0)) - 0.5) * 0.30 * detail;
+  // Relief shading. The lamp rides with the lens, so a slope facing back up
+  // the pipe catches light while the far side of the same bump falls into
+  // shadow. Sampling the height gradient is what gives the concrete its grain.
+  float height = surfaceHeight(wallUv);
+  float step = 0.006;
+  float slope = (height - surfaceHeight(wallUv + vec2(0.0, step))) / step;
+  float relief = clamp(slope * 0.011, -0.85, 0.85) * detail;
+
+  float wall = 0.30 + height * 0.32;
+  wall *= 1.0 + relief * 0.62;
   wall *= 0.88 + 0.12 * fbm(vec2(wallUv.x * 64.0, wallUv.y * 1.1));
 
   // Exposed aggregate: bright grains and dark pits, close to the lens only.
@@ -305,21 +319,39 @@ void main() {
   color *= 1.0 - min(near.x * 0.88, 0.96);
   color += vec3(0.60, 0.66, 0.72) * near.y;
 
+  // Wet surfaces throw back a highlight where the relief faces the lamp.
+  float sheen = pow(max(relief, 0.0), 2.0) * (water * 0.85 + tide * 0.35 + 0.12);
+  color += vec3(0.62, 0.70, 0.76) * sheen * 0.55;
+
   color += teal * sweep * 0.07;
 
-  // A camera ring light: bright close to the lens, falling away hard down the
-  // barrel. This is what makes it read as a pipe rather than a flat disc.
-  float lamp = smoothstep(0.03, 0.62, radius);
-  lamp *= 1.0 - 0.42 * smoothstep(0.85, 1.9, radius);
+  // The lamp rides with the lens, so brightness follows inverse square of the
+  // distance ahead rather than an arbitrary curve on screen radius. This is
+  // what makes the barrel read as a receding tube instead of a flat disc.
+  // Irradiance is cos(incidence) over distance squared. Far down the barrel
+  // the wall is both distant and seen edge-on, and it is that second term,
+  // missing at first, that keeps the vanishing point properly black.
+  float ahead = max(depth - uTravel, 0.02);
+  float incidence = smoothstep(0.0, 0.55, radius);
+  float lamp = incidence / (1.0 + ahead * ahead * 0.42);
   color *= lamp;
-  color += teal * 0.05 * smoothstep(0.35, 1.3, radius);
+
+  // Humid air scattering the beam, and the lens vignette.
+  color += vec3(0.30, 0.38, 0.42) * 0.055 * lamp * smoothstep(0.10, 1.20, radius);
+  color *= 1.0 - 0.30 * smoothstep(0.95, 1.90, radius);
+  color += teal * 0.045 * smoothstep(0.35, 1.3, radius);
 
   // The classification tint is applied after the falloff and keeps a floor, so
   // a finding stays legible well down the barrel. It stays deliberately light:
   // the damage itself should carry the image, not the colour over it.
   color += defectColor * near.z * (0.30 + severity * 0.07)
          * (0.34 + 0.66 * smoothstep(0.02, 0.40, radius));
-  color += (hash(gl_FragCoord.xy + fract(uTravel)) - 0.5) * 0.022;
+  // Sensor grain, heavier in shadow. A low-light CCTV head is noisiest exactly
+  // where the lamp does not reach, and a clean dark end is the giveaway that
+  // an image was rendered rather than filmed.
+  float tone = dot(color, vec3(0.299, 0.587, 0.114));
+  float grain = hash(gl_FragCoord.xy + fract(uTravel * 37.0)) - 0.5;
+  color += grain * (0.012 + 0.055 * (1.0 - smoothstep(0.0, 0.34, tone)));
 
   outColor = vec4(max(color, 0.0), 1.0);
 }`;
