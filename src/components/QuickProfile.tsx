@@ -252,7 +252,7 @@ export function QuickProfile({ locale }: { locale: Locale }) {
 function Proof({ value, label }: { value: string; label: string }) {
   return (
     <div>
-      <dt>{value}</dt>
+      <dt data-tally="">{value}</dt>
       <dd>{label}</dd>
     </div>
   );

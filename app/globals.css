@@ -11954,3 +11954,219 @@ body::after {
 :root[data-theme="light"] .case-shift-after > span {
   color: var(--accent-strong);
 }
+
+/* ============================================================
+   COUCHE SIGNATURE — transitions de page et animations liées au scroll
+   Progressive : chaque effet est encapsulé dans @supports et
+   désactivé sous prefers-reduced-motion.
+   ============================================================ */
+
+/* --- Transitions entre documents ---
+   Les pages sont des documents statiques distincts ; la navigation
+   morphe le titre de la carte projet vers le titre de l'étude de cas
+   au lieu d'un rechargement brutal. */
+
+@view-transition {
+  navigation: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-group(*) {
+    animation-duration: 460ms;
+    animation-timing-function: cubic-bezier(0.2, 0.75, 0.2, 1);
+  }
+
+  ::view-transition-old(root) {
+    animation: vt-recede 240ms cubic-bezier(0.4, 0, 1, 1) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: vt-advance 420ms cubic-bezier(0.2, 0.75, 0.2, 1) both;
+  }
+}
+
+@keyframes vt-recede {
+  to {
+    opacity: 0;
+    scale: 0.985;
+  }
+}
+
+@keyframes vt-advance {
+  from {
+    opacity: 0;
+    translate: 0 1.4rem;
+  }
+}
+
+/* L'en-tête et la barre de progression restent fixes pendant la morphose. */
+.site-header {
+  view-transition-name: site-header;
+}
+
+.scroll-progress {
+  view-transition-name: scroll-progress;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* --- Animations liées au scroll ---
+   `translate` et `scale` sont des propriétés indépendantes : elles se
+   composent avec le `transform` du tilt et n'entrent pas en conflit avec
+   le système [data-reveal], qui pilote opacity/translate/filter. */
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Les tuiles d'impact montent une à une au fil du défilement. */
+    .impact-tile {
+      animation: signal-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 8% cover 34%;
+    }
+
+    /* La barre d'accent se trace comme un relevé d'instrument. */
+    .impact-tile::before {
+      animation: signal-sweep linear both;
+      animation-timeline: view();
+      animation-range: entry 24% cover 52%;
+    }
+
+    /* Les chiffres se posent avec un léger retard sur leur tuile. */
+    .impact-tile dt {
+      animation: signal-settle linear both;
+      animation-timeline: view();
+      animation-range: entry 14% cover 44%;
+    }
+
+    .case-impact > div {
+      animation: signal-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 8% cover 36%;
+    }
+
+    /* Les cartes de réalisation et les étapes de méthode portent déjà
+       [data-reveal] : on n'ajoute qu'un affinage sur `scale`. */
+    .quickwin-card,
+    .quick-strength-grid article {
+      animation: signal-settle linear both;
+      animation-timeline: view();
+      animation-range: entry 6% cover 30%;
+    }
+
+    /* Le liseré des lignes de méthode se déploie à l'entrée. */
+    .method-list > li > span {
+      animation: signal-mark linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 40%;
+    }
+  }
+}
+
+@keyframes signal-rise {
+  from {
+    translate: 0 1.9rem;
+  }
+  to {
+    translate: 0 0;
+  }
+}
+
+@keyframes signal-sweep {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes signal-settle {
+  from {
+    scale: 0.965;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+@keyframes signal-mark {
+  from {
+    opacity: 0.15;
+    translate: -0.5rem 0;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* --- Compteurs animés --- */
+
+.tally {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Boutons magnétiques --- */
+
+.button {
+  transition:
+    border-color 260ms ease,
+    box-shadow 260ms ease,
+    color 260ms ease,
+    translate 320ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.button[data-magnetic] {
+  will-change: translate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button[data-magnetic] {
+    translate: none !important;
+  }
+}
+
+/* --- Halo de bordure suivant le curseur sur les fiches projet --- */
+
+.project-card {
+  position: relative;
+}
+
+.project-card::after {
+  position: absolute;
+  /* Above the card background so the ring is actually painted; the mask keeps
+     it to the border band and pointer-events stay off. */
+  z-index: 3;
+  inset: -1px;
+  padding: 1.5px;
+  background: radial-gradient(
+    14rem circle at var(--spot-x) var(--spot-y),
+    color-mix(in srgb, var(--accent) 55%, transparent),
+    transparent 62%
+  );
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  opacity: 0;
+  transition: opacity 420ms cubic-bezier(0.2, 0.75, 0.2, 1);
+  content: "";
+  pointer-events: none;
+}
+
+.project-card:hover::after,
+.project-card:focus-within::after {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-card::after {
+    display: none;
+  }
+}

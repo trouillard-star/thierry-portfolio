@@ -141,14 +141,16 @@ export function ProjectCaseStudy({
               <span className="case-sector">{project.sector[locale]}</span>
             </div>
 
-            <h1>{project.title[locale]}</h1>
+            <h1 style={{ viewTransitionName: `proj-${project.slug}` }}>
+              {project.title[locale]}
+            </h1>
             <p className="case-tagline">{project.tagline[locale]}</p>
             <p className="case-lead">{project.summary[locale]}</p>
 
             <dl className="case-impact" aria-label={pageCopy.keyResults}>
               {project.impact.map((metric) => (
                 <div key={metric.label.en}>
-                  <dt>{metric.value}</dt>
+                  <dt data-tally="">{metric.value}</dt>
                   <dd>{metric.label[locale]}</dd>
                 </div>
               ))}

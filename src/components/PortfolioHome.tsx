@@ -69,10 +69,18 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
             </p>
             <p className="hero-intro">{profile.introduction[locale]}</p>
             <div className="button-row">
-              <a className="button button-primary" href={quickProfile}>
+              <a
+                className="button button-primary"
+                href={quickProfile}
+                data-magnetic=""
+              >
                 {copy.quickProfile}
               </a>
-              <a className="button button-secondary" href="#projets">
+              <a
+                className="button button-secondary"
+                href="#projets"
+                data-magnetic=""
+              >
                 {copy.viewProjects}
               </a>
               <a className="button button-quiet" href={resume}>
@@ -156,7 +164,7 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
           <dl className="impact-band" data-reveal>
             {impactHighlights.map((item) => (
               <div className="impact-tile" key={item.label.en}>
-                <dt>{item.value}</dt>
+                <dt data-tally="">{item.value}</dt>
                 <dd>{item.label[locale]}</dd>
               </div>
             ))}

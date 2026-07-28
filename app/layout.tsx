@@ -181,6 +181,57 @@ const pageInteractions = `
         });
       });
     }
+
+    // Counters read their target from the rendered text, so the figure stays
+    // correct and selectable when scripting is unavailable.
+    const counters = [...document.querySelectorAll("[data-tally]")].filter(
+      (element) => /^\\d+$/.test(element.textContent.trim()),
+    );
+
+    if (counters.length && !reducedMotion && "IntersectionObserver" in window) {
+      const countObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            countObserver.unobserve(entry.target);
+            const element = entry.target;
+            const target = Number(element.textContent.trim());
+            if (!target) return;
+            const duration = 900;
+            const start = performance.now();
+            element.classList.add("tally");
+            const step = (now) => {
+              const progress = Math.min((now - start) / duration, 1);
+              const eased = 1 - Math.pow(1 - progress, 3);
+              element.textContent = String(Math.round(target * eased));
+              if (progress < 1) requestAnimationFrame(step);
+            };
+            element.textContent = "0";
+            requestAnimationFrame(step);
+          });
+        },
+        { threshold: 0.6 },
+      );
+      counters.forEach((element) => countObserver.observe(element));
+    }
+
+    // Magnetic pull on primary actions, capped so the hit area stays honest.
+    if (!reducedMotion && matchMedia("(pointer: fine)").matches) {
+      document.querySelectorAll("[data-magnetic]").forEach((element) => {
+        const strength = 0.22;
+        const cap = 9;
+        element.addEventListener("pointermove", (event) => {
+          const bounds = element.getBoundingClientRect();
+          const dx = event.clientX - (bounds.left + bounds.width / 2);
+          const dy = event.clientY - (bounds.top + bounds.height / 2);
+          const clamp = (value) => Math.max(-cap, Math.min(cap, value * strength));
+          element.style.translate = clamp(dx) + "px " + clamp(dy) + "px";
+        });
+        element.addEventListener("pointerleave", () => {
+          element.style.translate = "";
+        });
+      });
+    }
   }, { once: true });
 `;
 

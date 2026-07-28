@@ -31,7 +31,9 @@ export function ProjectCard({
           </span>
         </div>
       </div>
-      <h3>{project.title[locale]}</h3>
+      <h3 style={{ viewTransitionName: `proj-${project.slug}` }}>
+        {project.title[locale]}
+      </h3>
       <p className="project-sector">{project.sector[locale]}</p>
       <p className="project-tagline">{project.tagline[locale]}</p>
       {headline ? (
