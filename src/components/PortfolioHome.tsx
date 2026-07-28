@@ -133,6 +133,17 @@ export function PortfolioHome({ locale }: { locale: Locale }) {
               }
             >
               <canvas aria-hidden="true" />
+              <div className="descent-track" data-descent-track aria-hidden="true" />
+              <p className="descent-status" aria-hidden="true">
+                <i />
+                {locale === "fr"
+                  ? "Analyse autonome · détection en continu"
+                  : "Autonomous analysis · continuous detection"}
+              </p>
+              <ul className="descent-log" data-descent-log aria-hidden="true" />
+              <span className="descent-sim" aria-hidden="true">
+                SIMULATION
+              </span>
               <div className="descent-readout" aria-hidden="true">
                 <div>
                   <b data-descent-distance>0.0</b>
