@@ -23,7 +23,7 @@
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run build && npm test && npm run build:static && npm run links && npm run security:scan && npm run security:dependencies"
   },
   "dependencies": {
-    "next": "16.2.12",
+    "next": "16.4.3",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "three": "^0.185.1"
